@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #090b14;
+    color: #e5e7eb;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface-900 text-slate-100 antialiased transition-colors duration-300;
+    min-height: 100vh;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .glass-card {
+    @apply rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-glow p-6;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-primary-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/20 transition duration-300 hover:bg-primary-400;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:border-primary-500 hover:bg-primary-500/10;
+  }
+
+  .input-field {
+    @apply w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-gray-700 dark:bg-dark-900 dark:text-white;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center rounded-full border border-primary-500 px-6 py-3 text-sm font-semibold text-primary-100 transition duration-300 hover:bg-primary-500/10;
+  }
+
+  .section-heading {
+    @apply text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl;
+  }
+
+  .section-subheading {
+    @apply max-w-3xl text-lg text-slate-300;
+  }
+
+  .card {
+    @apply glass-card;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 24px rgba(99,102,241,0.18);
+  }
+
+  .section-fade {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.9s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

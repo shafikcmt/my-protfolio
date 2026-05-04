@@ -1,0 +1,57 @@
+import mongoose from 'mongoose'
+import bcryptjs from 'bcryptjs'
+import { IUser } from '@/types/auth'
+
+const UserSchema = new mongoose.Schema<IUser>(
+  {
+    email: {
+      type: String,
+      required: [true, 'Please provide an email'],
+      unique: true,
+      lowercase: true,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        'Please provide a valid email',
+      ],
+    },
+    password: {
+      type: String,
+      required: [true, 'Please provide a password'],
+      minlength: 6,
+      select: false,
+    },
+    name: {
+      type: String,
+      required: [true, 'Please provide a name'],
+    },
+    role: {
+      type: String,
+      enum: ['admin', 'client', 'student'],
+      default: 'student',
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+)
+
+// Hash password before saving
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next()
+  }
+
+  const salt = await bcryptjs.genSalt(10)
+  this.password = await bcryptjs.hash(this.password, salt)
+})
+
+// Method to compare password
+UserSchema.methods.matchPassword = async function (enteredPassword: string) {
+  return await bcryptjs.compare(enteredPassword, this.password)
+}
+
+export default mongoose.models.User || mongoose.model('User', UserSchema)
