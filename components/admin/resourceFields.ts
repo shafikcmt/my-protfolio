@@ -136,3 +136,66 @@ export const skillFields: AdminFieldConfig[] = [
     { label: 'Expert', value: 'Expert' },
   ] },
 ]
+
+export const userFields: AdminFieldConfig[] = [
+  { name: 'name', label: 'Full Name', type: 'text', required: true },
+  { name: 'email', label: 'Email', type: 'email', required: true },
+  { name: 'password', label: 'Password', type: 'text', helpText: 'Required when creating a user. Leave blank while editing to keep current password.' },
+  { name: 'role', label: 'Role', type: 'select', required: true, options: [
+    { label: 'Admin', value: 'admin' },
+    { label: 'Client', value: 'client' },
+    { label: 'Student', value: 'student' },
+  ] },
+  { name: 'isActive', label: 'Active User', type: 'checkbox', placeholder: 'Allow this user to sign in' },
+]
+
+export const studentFields: AdminFieldConfig[] = [
+  { name: 'name', label: 'Student Name', type: 'text', required: true },
+  { name: 'email', label: 'Student Email', type: 'email', required: true },
+  { name: 'password', label: 'Password', type: 'text', helpText: 'Required when creating a student. Leave blank while editing to keep current password.' },
+  { name: 'isActive', label: 'Active Student', type: 'checkbox', placeholder: 'Allow this student to sign in' },
+]
+
+export const certificateFields: AdminFieldConfig[] = [
+  { name: 'studentId', label: 'Student ID', type: 'text', helpText: 'Paste the MongoDB _id of the student.' },
+  { name: 'courseId', label: 'Course ID', type: 'text', helpText: 'Paste the MongoDB _id of the course.' },
+  { name: 'enrollmentId', label: 'Enrollment ID', type: 'text', required: true, helpText: 'Paste the MongoDB _id of the enrollment.' },
+  { name: 'studentName', label: 'Student Name', type: 'text', required: true },
+  { name: 'courseName', label: 'Course Name', type: 'text', required: true },
+  { name: 'instructorName', label: 'Instructor Name', type: 'text', required: true, placeholder: 'Md Shafiqul Islam' },
+  { name: 'completionDate', label: 'Completion Date', type: 'date', required: true },
+  { name: 'certificateId', label: 'Certificate ID', type: 'text', required: true },
+  { name: 'certificateUrl', label: 'Certificate URL', type: 'url' },
+]
+
+export const contactMessageFields: AdminFieldConfig[] = [
+  { name: 'name', label: 'Name', type: 'text', required: true },
+  { name: 'email', label: 'Email', type: 'email', required: true },
+  { name: 'phone', label: 'Phone', type: 'text' },
+  { name: 'subject', label: 'Subject', type: 'text', required: true },
+  { name: 'message', label: 'Message', type: 'textarea', required: true, rows: 6 },
+  { name: 'status', label: 'Status', type: 'select', options: [
+    { label: 'New', value: 'new' },
+    { label: 'Read', value: 'read' },
+    { label: 'Replied', value: 'replied' },
+    { label: 'Archived', value: 'archived' },
+  ] },
+]
+
+export const websiteSettingFields: AdminFieldConfig[] = [
+  { name: 'siteName', label: 'Site Name', type: 'text' },
+  { name: 'logo', label: 'Logo URL', type: 'text' },
+  { name: 'email', label: 'Email', type: 'email' },
+  { name: 'phone', label: 'Phone', type: 'text' },
+  { name: 'whatsapp', label: 'WhatsApp', type: 'text' },
+  { name: 'address', label: 'Address', type: 'textarea', rows: 3 },
+  { name: 'github', label: 'GitHub URL', type: 'url' },
+  { name: 'linkedin', label: 'LinkedIn URL', type: 'url' },
+  { name: 'facebook', label: 'Facebook URL', type: 'url' },
+  { name: 'seoTitle', label: 'SEO Title', type: 'text' },
+  { name: 'seoDescription', label: 'SEO Description', type: 'textarea', rows: 3 },
+  { name: 'heroTitle', label: 'Hero Title', type: 'textarea', rows: 3 },
+  { name: 'heroSubtitle', label: 'Hero Subtitle', type: 'textarea', rows: 4 },
+  { name: 'resumeUrl', label: 'Resume URL', type: 'text' },
+  { name: 'maintenanceMode', label: 'Maintenance Mode', type: 'checkbox', placeholder: 'Temporarily show the maintenance overlay' },
+]

@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="bg-surface-900 text-slate-100">
+      <body className="bg-slate-50 text-slate-900">
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
