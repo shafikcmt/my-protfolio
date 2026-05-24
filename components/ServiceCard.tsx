@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ArrowRight, BadgeCheck } from 'lucide-react'
 
 interface ServiceCardProps {
   title: string
@@ -10,24 +11,36 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ title, description, price, technologies, slug }: ServiceCardProps) {
   return (
-    <div className="glass-card border-slate-700/70 hover:-translate-y-1 transition-transform">
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <h3 className="text-xl font-semibold text-white">{title}</h3>
-        {price !== undefined && <span className="text-sm text-primary-300">Starts at ${price}</span>}
+    <div className="surface-card p-7 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full bg-teal-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
+            <BadgeCheck className="h-3.5 w-3.5" />
+            Premium Service
+          </span>
+          <h3 className="mt-3 text-2xl font-black text-slate-950">{title}</h3>
+        </div>
+        {price !== undefined && (
+          <div className="rounded-2xl bg-slate-50 px-4 py-3 text-right">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Starts from</p>
+            <p className="text-xl font-black text-teal-700">${price}</p>
+          </div>
+        )}
       </div>
-      <p className="text-slate-300 leading-7 mb-5">{description}</p>
-      <div className="mb-6 flex flex-wrap gap-2">
+      <p className="mb-6 text-base leading-8 text-slate-600">{description}</p>
+      <div className="mb-7 flex flex-wrap gap-2.5">
         {technologies.map((tech) => (
-          <span key={tech} className="rounded-full border border-slate-700/70 bg-slate-900/70 px-3 py-1 text-xs text-slate-200">
+          <span key={tech} className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-600">
             {tech}
           </span>
         ))}
       </div>
       <Link
         href={`/services/${slug}`}
-        className="inline-flex items-center gap-2 rounded-full border border-primary-400 px-4 py-2 text-sm font-semibold text-primary-100 transition hover:bg-primary-500/10"
+        className="inline-flex items-center gap-2 text-sm font-bold text-teal-700 transition hover:gap-3"
       >
-        Order Service →
+        Explore service
+        <ArrowRight className="h-4 w-4" />
       </Link>
     </div>
   )

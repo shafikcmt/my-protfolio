@@ -2,95 +2,88 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import ThemeToggle from '@/components/ThemeToggle'
+import { ArrowRight, Menu, X } from 'lucide-react'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
-  const toggleMenu = () => setIsOpen(!isOpen)
-
   const navLinks = [
-    { label: 'Home', href: '#' },
-    { label: 'About', href: '#about' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Skills', href: '#skills' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Home', href: '/' },
+    { label: 'About', href: '/#about' },
+    { label: 'Services', href: '/#services' },
+    { label: 'Projects', href: '/#projects' },
+    { label: 'Testimonials', href: '/#testimonials' },
+    { label: 'Contact', href: '/contact' },
   ]
 
   return (
-    <nav className="sticky top-0 z-50 bg-white dark:bg-dark-900 shadow-md">
+    <nav className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
       <div className="container-custom">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="text-2xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 transition-colors"
-          >
-            Portfolio
+        <div className="flex h-20 items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-500 text-lg font-black text-white shadow-[0_10px_25px_rgba(13,148,136,0.28)]">
+              SI
+            </div>
+            <div>
+              <p className="text-lg font-black tracking-tight text-slate-900">Shafiqul</p>
+              <p className="text-xs font-medium uppercase tracking-[0.25em] text-slate-500">Portfolio & LMS</p>
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden items-center gap-8 lg:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium"
+                className="text-sm font-semibold text-slate-600 transition hover:text-teal-600"
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          {/* Controls */}
-          <div className="hidden md:flex items-center gap-3">
-            <ThemeToggle />
-            <button className="btn-primary text-sm">
-              Get in Touch
-            </button>
+          <div className="hidden items-center gap-3 lg:flex">
+            <Link href="/dashboard" className="btn-secondary px-5 py-2.5">
+              Dashboard
+            </Link>
+            <Link href="/contact" className="btn-primary px-5 py-2.5">
+              Let&apos;s Talk
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
 
-          {/* Mobile Menu Button */}
           <button
-            onClick={toggleMenu}
-            className="md:hidden flex flex-col gap-1.5 focus:outline-none"
+            onClick={() => setIsOpen((prev) => !prev)}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm lg:hidden"
             aria-label="Toggle menu"
           >
-            <span
-              className={`h-0.5 w-6 bg-gray-900 dark:bg-gray-100 transition-transform ${
-                isOpen ? 'rotate-45 translate-y-2' : ''
-              }`}
-            />
-            <span
-              className={`h-0.5 w-6 bg-gray-900 dark:bg-gray-100 transition-opacity ${
-                isOpen ? 'opacity-0' : ''
-              }`}
-            />
-            <span
-              className={`h-0.5 w-6 bg-gray-900 dark:bg-gray-100 transition-transform ${
-                isOpen ? '-rotate-45 -translate-y-2' : ''
-              }`}
-            />
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden border-t border-gray-200 dark:border-gray-700 py-4">
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium px-4"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <button className="btn-primary w-full mt-2">
-                Get in Touch
-              </button>
+          <div className="pb-5 lg:hidden">
+            <div className="surface-card overflow-hidden rounded-[1.75rem] p-3">
+              <div className="flex flex-col gap-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-teal-600"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="mt-2 grid gap-2 px-2 pb-2 sm:grid-cols-2">
+                  <Link href="/dashboard" className="btn-secondary w-full" onClick={() => setIsOpen(false)}>
+                    Dashboard
+                  </Link>
+                  <Link href="/contact" className="btn-primary w-full" onClick={() => setIsOpen(false)}>
+                    Let&apos;s Talk
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         )}

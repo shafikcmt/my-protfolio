@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useAuth } from '@/contexts/AuthContext'
 import DashboardLayout from '@/components/DashboardLayout'
+import ProtectedRoute from '@/components/ProtectedRoute'
 
 export default function ProfileEditPage() {
   const { user } = useAuth()
@@ -87,7 +88,8 @@ export default function ProfileEditPage() {
   }
 
   return (
-    <DashboardLayout
+    <ProtectedRoute>
+      <DashboardLayout
       title="Edit Profile"
       breadcrumbs={[
         { label: 'Dashboard', href: '/dashboard' },
@@ -236,6 +238,7 @@ export default function ProfileEditPage() {
           </form>
         </div>
       </div>
-    </DashboardLayout>
+      </DashboardLayout>
+    </ProtectedRoute>
   )
 }

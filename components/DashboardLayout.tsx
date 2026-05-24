@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Bell, ChevronRight, LogOut, Menu, PanelLeftClose, Search } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import DashboardSidebar from '@/components/DashboardSidebar'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -25,126 +27,81 @@ export default function DashboardLayout({
     router.push('/')
   }
 
-  const menuItems = [
-    { label: 'Dashboard', icon: '📊', href: `/dashboard/${user?.role}` },
-    { label: 'Profile', icon: '👤', href: `/dashboard/${user?.role}/profile` },
-    ...(user?.role === 'admin'
-      ? [
-          { label: '--- Content Management ---', icon: '', href: '#', disabled: true },
-          { label: 'Projects', icon: '🚀', href: '/dashboard/admin/projects' },
-          { label: 'Services', icon: '⚙️', href: '/dashboard/admin/services' },
-          { label: 'Skills', icon: '🧠', href: '/dashboard/admin/skills' },
-          { label: 'Courses', icon: '📚', href: '/dashboard/admin/courses' },
-          { label: 'Lessons', icon: '📝', href: '/dashboard/admin/lessons' },
-          { label: 'Live Classes', icon: '🎥', href: '/dashboard/admin/live-classes' },
-          { label: 'Students', icon: '🎓', href: '/dashboard/admin/students' },
-          { label: 'Certificates', icon: '🏆', href: '/dashboard/admin/certificates' },
-          { label: 'Testimonials', icon: '⭐', href: '/dashboard/admin/testimonials' },
-          { label: 'Blogs', icon: '📰', href: '/dashboard/admin/blogs' },
-          { label: 'Users', icon: '👥', href: '/dashboard/admin/users' },
-          { label: 'Orders', icon: '🛒', href: '/dashboard/admin/orders' },
-          { label: 'Bookings', icon: '📅', href: '/dashboard/admin/bookings' },
-          { label: 'Settings', icon: '🔧', href: '/dashboard/admin/settings' },
-          { label: '--- Messages ---', icon: '', href: '#', disabled: true },
-          { label: 'Contact Messages', icon: '💬', href: '/dashboard/admin/contact-messages' },
-        ]
-      : []),
-    ...(user?.role === 'client'
-      ? [
-          { label: 'Orders', icon: '🛒', href: '/dashboard/client/orders' },
-          { label: 'Bookings', icon: '📅', href: '/dashboard/client/bookings' },
-        ]
-      : []),
-    ...(user?.role === 'student'
-      ? [
-          { label: 'Courses', icon: '📚', href: '/dashboard/student/courses' },
-          { label: 'Live Classes', icon: '🎥', href: '/dashboard/student/live-classes' },
-        ]
-      : []),
-  ]
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-dark-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-slate-50">
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm"
               aria-label="Toggle sidebar"
             >
-              ☰
+              {sidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Dashboard</p>
+              <h1 className="text-2xl font-black tracking-tight text-slate-950">{title}</h1>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {user?.name}
-              </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">
-                {user?.role}
-              </p>
+          <div className="hidden flex-1 max-w-xl xl:block">
+            <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <Search className="h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search anything here..."
+                className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button className="hidden h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 shadow-sm sm:inline-flex">
+              <Bell className="h-4 w-4" />
+            </button>
+            <div className="hidden text-right sm:block">
+              <p className="text-sm font-bold text-slate-900">{user?.name || 'Dashboard User'}</p>
+              <p className="text-xs capitalize text-slate-500">{user?.role || 'member'}</p>
+            </div>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-500 text-sm font-black text-white shadow-[0_10px_25px_rgba(13,148,136,0.28)]">
+              {user?.name?.charAt(0)?.toUpperCase() || 'U'}
             </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+              className="inline-flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-600 transition hover:bg-rose-100"
             >
-              Logout
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </div>
       </header>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <aside
-          className={`${
-            sidebarOpen ? 'w-64' : 'w-0'
-          } bg-white dark:bg-dark-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 overflow-hidden`}
-        >
-          <nav className="p-4 space-y-2">
-            {menuItems.map((item) => (
-              item.disabled ? (
-                <div
-                  key={item.href}
-                  className="px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                >
-                  {item.label}
-                </div>
-              ) : (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <span className="text-xl">{item.icon}</span>
-                  <span className="font-medium">{item.label}</span>
-                </Link>
-              )
-            ))}
-          </nav>
-        </aside>
+      <div className="mx-auto flex max-w-[1600px] gap-6 px-4 py-6 sm:px-6 lg:px-8">
+        {sidebarOpen && (
+          <aside className="hidden w-[290px] shrink-0 xl:block">
+            <DashboardSidebar role={(user?.role as 'admin' | 'client' | 'student') || 'student'} />
+          </aside>
+        )}
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          {/* Breadcrumbs */}
+        <main className="min-w-0 flex-1">
           {breadcrumbs.length > 0 && (
-            <div className="mb-6 flex gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mb-5 flex flex-wrap items-center gap-2 text-sm text-slate-500">
               {breadcrumbs.map((crumb, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <Link href={crumb.href} className="hover:text-primary-600">
+                <div key={`${crumb.href}-${index}`} className="flex items-center gap-2">
+                  <Link href={crumb.href} className="font-medium transition hover:text-teal-600">
                     {crumb.label}
                   </Link>
-                  {index < breadcrumbs.length - 1 && <span>/</span>}
+                  {index < breadcrumbs.length - 1 && <ChevronRight className="h-4 w-4" />}
                 </div>
               ))}
             </div>
           )}
 
-          {children}
+          <div className="rounded-[2rem] border border-slate-200 bg-white/70 p-4 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-sm sm:p-6 lg:p-8">
+            {children}
+          </div>
         </main>
       </div>
     </div>
