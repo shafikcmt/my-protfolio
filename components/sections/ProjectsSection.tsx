@@ -7,7 +7,7 @@ import { ArrowRight, ArrowUpRight, CheckCircle2 } from 'lucide-react'
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Project {
-  id: string
+  slug: string
   title: string
   description: string
   tags: string[]
@@ -21,7 +21,7 @@ interface Project {
 
 const projects: Project[] = [
   {
-    id: 'lms',
+    slug: 'laravel-learning-management-system',
     title: 'Laravel Learning Management System',
     description:
       'Full-featured LMS platform with course management, student tracking, quizzes and instructor panel.',
@@ -39,7 +39,7 @@ const projects: Project[] = [
     featured: true,
   },
   {
-    id: 'blog',
+    slug: 'php-oop-blog-site',
     title: 'PHP OOP Blog Site',
     description:
       'Clean blog platform with OOP architecture, user auth, comments and category management.',
@@ -50,7 +50,7 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 'ecommerce',
+    slug: 'laravel-multi-vendor-ecommerce',
     title: 'Laravel Multi-Vendor eCommerce',
     description:
       'Multi-vendor marketplace with seller dashboards, order management and secure payment checkout.',
@@ -61,7 +61,7 @@ const projects: Project[] = [
     ],
   },
   {
-    id: 'tracker',
+    slug: 'production-tracking-system-with-qr-code',
     title: 'Production Tracking System with QR Code',
     description:
       'Smart production tracker with QR scanning, real-time progress monitoring and REST API integration.',
@@ -253,19 +253,19 @@ function FeaturedCard({ project }: { project: Project }) {
           {/* Action buttons */}
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
-              href={`/projects/${project.id}`}
+              href={`/projects/${project.slug}`}
               className="inline-flex items-center gap-2 rounded-full bg-teal-500 px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 hover:bg-teal-400 hover:shadow-[0_0_24px_rgba(0,212,170,0.45)]"
             >
               View Details
             </Link>
             <Link
-              href={`/order-project?project=${project.id}`}
+              href={`/order-project?project=${project.slug}`}
               className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-2.5 text-sm font-bold text-white/80 transition-all duration-200 hover:border-white/40 hover:text-white"
             >
               Send Enquiry
             </Link>
             <Link
-              href={`/order-project?project=${project.id}&type=demo`}
+              href={`/order-project?project=${project.slug}&type=demo`}
               className="inline-flex items-center gap-1 text-sm font-bold text-teal-400 transition hover:text-teal-300"
             >
               Request Demo <ArrowUpRight className="h-3.5 w-3.5" />
@@ -353,13 +353,13 @@ function GridCard({ project, index }: { project: Project; index: number }) {
         {/* Actions pinned to bottom */}
         <div className="mt-auto flex items-center gap-3 pt-5">
           <Link
-            href={`/projects/${project.id}`}
+            href={`/projects/${project.slug}`}
             className="inline-flex items-center gap-1.5 rounded-full bg-teal-600/80 px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:bg-teal-500 hover:shadow-[0_0_16px_rgba(0,212,170,0.35)]"
           >
             View Details
           </Link>
           <Link
-            href={`/order-project?project=${project.id}`}
+            href={`/order-project?project=${project.slug}`}
             className="text-xs font-bold text-slate-500 transition hover:text-teal-400"
           >
             Enquiry →
@@ -438,7 +438,7 @@ export default function ProjectsSection() {
         {/* ── Project grid ── */}
         <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3">
           {gridProjects.map((project, index) => (
-            <GridCard key={project.id} project={project} index={index} />
+            <GridCard key={project.slug} project={project} index={index} />
           ))}
         </div>
 

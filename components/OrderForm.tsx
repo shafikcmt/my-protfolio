@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-export default function OrderForm() {
+export default function OrderForm({ initialProject }: { initialProject?: string }) {
   const [formData, setFormData] = useState({
     clientName: '',
     clientEmail: '',
     clientPhone: '',
     companyName: '',
-    projectType: '',
+    projectType: initialProject || '',
     budgetRange: '',
     deadline: '',
     preferredTechnology: '',
