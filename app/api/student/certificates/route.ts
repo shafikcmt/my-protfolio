@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'Certificate already generated', data: existing })
     }
 
-    const user = await User.findById(student.id).lean()
+    const user = await User.findById(student.id).lean() as any
     const certificateId = makeCertificateId(student.id, toId(course._id))
 
     const certificate = await Certificate.create({

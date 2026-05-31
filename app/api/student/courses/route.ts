@@ -32,12 +32,12 @@ export async function GET(request: NextRequest) {
     const courseId = url.searchParams.get('id')
 
     if (courseId) {
-      const course = await Course.findById(courseId).lean()
+      const course = await Course.findById(courseId).lean() as any
       if (!course || !course.published) {
         return NextResponse.json({ success: false, message: 'Course not found' }, { status: 404 })
       }
 
-      const enrollment = await Enrollment.findOne({ studentId: student.id, courseId }).lean()
+      const enrollment = await Enrollment.findOne({ studentId: student.id, courseId }).lean() as any
       const isEnrolled = Boolean(enrollment)
       const lessons = await Lesson.find({ courseId }).sort({ order: 1 }).lean()
       const certificate = enrollment

@@ -5,6 +5,7 @@ import Blog from '@/models/Blog'
 import Certificate from '@/models/Certificate'
 import ContactMessage from '@/models/ContactMessage'
 import Course from '@/models/Course'
+import Enrollment from '@/models/Enrollment'
 import Lesson from '@/models/Lesson'
 import LiveClass from '@/models/LiveClass'
 import Project from '@/models/Project'
@@ -45,6 +46,11 @@ const resourceMap: Record<string, ResourceConfig> = {
   },
   certificates: { model: Certificate, entityName: 'Certificate', populate: ['studentId', 'courseId', 'enrollmentId'] },
   'contact-messages': { model: ContactMessage, entityName: 'Contact Message' },
+  enrollments: {
+    model: Enrollment,
+    entityName: 'Enrollment',
+    populate: ['studentId', 'courseId'],
+  },
 }
 
 function getConfig(resource: string) {

@@ -13,10 +13,10 @@ const calculateProgress = (completedLessons: any[], totalLessons: number) => {
 }
 
 async function getLessonAccess(studentId: string, lessonId: string) {
-  const lesson = await Lesson.findById(lessonId).lean()
+  const lesson = await Lesson.findById(lessonId).lean() as any
   if (!lesson) return null
 
-  const course = await Course.findById(lesson.courseId).lean()
+  const course = await Course.findById(lesson.courseId).lean() as any
   if (!course || !course.published) return null
 
   const enrollment = await Enrollment.findOne({ studentId, courseId: lesson.courseId })

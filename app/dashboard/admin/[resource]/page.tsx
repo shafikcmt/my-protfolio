@@ -1,275 +1,380 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useParams, useRouter } from 'next/navigation'
 import axios from 'axios'
-import {
-  ArrowRight,
-  BookOpen,
-  Briefcase,
-  CalendarDays,
-  FolderKanban,
-  GraduationCap,
-  LayoutGrid,
-  MessageSquare,
-  Newspaper,
-  Settings,
-  ShoppingBag,
-  Star,
-  Users,
-} from 'lucide-react'
+import { Pencil, Plus, RefreshCw, Search, Trash2 } from 'lucide-react'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/DashboardLayout'
-import DashboardStatsCard from '@/components/DashboardStatsCard'
+import EmptyState from '@/components/EmptyState'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import {
+  getAdminResourceConfig,
+  type AdminResourceColumn,
+} from '@/components/admin/adminResourceConfig'
 
-const statResources = [
-  { key: 'projects', label: 'Projects', path: '/dashboard/admin/projects', api: '/api/admin/projects', icon: FolderKanban, helper: 'Published portfolio works' },
-  { key: 'services', label: 'Services', path: '/dashboard/admin/services', api: '/api/admin/services', icon: Briefcase, helper: 'Service packages listed' },
-  { key: 'courses', label: 'Courses', path: '/dashboard/admin/courses', api: '/api/admin/courses', icon: BookOpen, helper: 'Courses in the LMS' },
-  { key: 'students', label: 'Students', path: '/dashboard/admin/students', api: '/api/admin/students', icon: GraduationCap, helper: 'Registered learners' },
-  { key: 'orders', label: 'Orders', path: '/dashboard/admin/orders', api: '/api/admin/orders', icon: ShoppingBag, helper: 'Project requests' },
-  { key: 'bookings', label: 'Bookings', path: '/dashboard/admin/bookings', api: '/api/admin/bookings', icon: CalendarDays, helper: 'Consultation requests' },
-  { key: 'blogs', label: 'Blogs', path: '/dashboard/admin/blogs', api: '/api/admin/blogs', icon: Newspaper, helper: 'Blog posts added' },
-  { key: 'messages', label: 'Messages', path: '/dashboard/admin/contact-messages', api: '/api/admin/contact-messages', icon: MessageSquare, helper: 'Incoming contact messages' },
-]
+// ─── Badge colour map ─────────────────────────────────────────────────────────
+const BADGE_COLORS: Record<string, string> = {
+  draft:         'bg-slate-100 text-slate-700',
+  published:     'bg-emerald-100 text-emerald-700',
+  archived:      'bg-amber-100 text-amber-700',
+  pending:       'bg-amber-100 text-amber-700',
+  discussing:    'bg-sky-100 text-sky-700',
+  accepted:      'bg-teal-100 text-teal-700',
+  in_progress:   'bg-violet-100 text-violet-700',
+  testing:       'bg-orange-100 text-orange-700',
+  delivered:     'bg-cyan-100 text-cyan-700',
+  completed:     'bg-emerald-100 text-emerald-700',
+  cancelled:     'bg-red-100 text-red-700',
+  scheduled:     'bg-sky-100 text-sky-700',
+  live:          'bg-emerald-100 text-emerald-700',
+  ended:         'bg-slate-100 text-slate-600',
+  active:        'bg-emerald-100 text-emerald-700',
+  beginner:      'bg-sky-100 text-sky-700',
+  intermediate:  'bg-violet-100 text-violet-700',
+  advanced:      'bg-amber-100 text-amber-700',
+  expert:        'bg-rose-100 text-rose-700',
+  new:           'bg-sky-100 text-sky-700',
+  read:          'bg-slate-100 text-slate-600',
+  replied:       'bg-emerald-100 text-emerald-700',
+  admin:         'bg-rose-100 text-rose-700',
+  client:        'bg-violet-100 text-violet-700',
+  student:       'bg-sky-100 text-sky-700',
+  requested:     'bg-amber-100 text-amber-700',
+  approved:      'bg-teal-100 text-teal-700',
+  confirmed:     'bg-teal-100 text-teal-700',
+  rejected:      'bg-red-100 text-red-700',
+}
 
-const quickActions = [
-  { title: 'Manage Projects', description: 'Update portfolio case studies and featured work.', href: '/dashboard/admin/projects', icon: FolderKanban },
-  { title: 'Manage Courses', description: 'Create or edit course content, lessons and classes.', href: '/dashboard/admin/courses', icon: BookOpen },
-  { title: 'Review Orders', description: 'Track client orders, requirements and project flow.', href: '/dashboard/admin/orders', icon: ShoppingBag },
-  { title: 'Open Settings', description: 'Configure website settings and platform preferences.', href: '/dashboard/admin/settings', icon: Settings },
-]
+// ─── Cell renderer ────────────────────────────────────────────────────────────
+function renderCell(col: AdminResourceColumn, value: unknown, _row: Record<string, unknown>) {
+  const { type } = col
 
-const managementGroups = [
-  {
-    title: 'Content & Portfolio',
-    description: 'Keep the public website fresh and polished with services, projects, and blogs.',
-    items: [
-      { label: 'Projects', href: '/dashboard/admin/projects', icon: FolderKanban },
-      { label: 'Services', href: '/dashboard/admin/services', icon: Briefcase },
-      { label: 'Skills', href: '/dashboard/admin/skills', icon: LayoutGrid },
-      { label: 'Blogs', href: '/dashboard/admin/blogs', icon: Newspaper },
-    ],
-  },
-  {
-    title: 'Learning Platform',
-    description: 'Manage the full student experience from courses to certificates.',
-    items: [
-      { label: 'Courses', href: '/dashboard/admin/courses', icon: BookOpen },
-      { label: 'Lessons', href: '/dashboard/admin/lessons', icon: LayoutGrid },
-      { label: 'Live Classes', href: '/dashboard/admin/live-classes', icon: CalendarDays },
-      { label: 'Students', href: '/dashboard/admin/students', icon: GraduationCap },
-      { label: 'Certificates', href: '/dashboard/admin/certificates', icon: Star },
-    ],
-  },
-  {
-    title: 'Operations',
-    description: 'Handle clients, support, system setup, and daily admin activity from one place.',
-    items: [
-      { label: 'Orders', href: '/dashboard/admin/orders', icon: ShoppingBag },
-      { label: 'Bookings', href: '/dashboard/admin/bookings', icon: CalendarDays },
-      { label: 'Users', href: '/dashboard/admin/users', icon: Users },
-      { label: 'Messages', href: '/dashboard/admin/contact-messages', icon: MessageSquare },
-      { label: 'Settings', href: '/dashboard/admin/settings', icon: Settings },
-    ],
-  },
-]
+  if (type === 'boolean') {
+    return (
+      <span
+        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+          value ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+        }`}
+      >
+        {value ? 'Yes' : 'No'}
+      </span>
+    )
+  }
 
-export default function AdminDashboardPage() {
-  const [counts, setCounts] = useState<Record<string, number>>({})
+  if (type === 'badge') {
+    const str = String(value ?? '').toLowerCase().replace(/[\s-]/g, '_')
+    const colorClass = BADGE_COLORS[str] ?? 'bg-slate-100 text-slate-700'
+    return (
+      <span
+        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${colorClass}`}
+      >
+        {String(value ?? '').replace(/[_-]/g, ' ')}
+      </span>
+    )
+  }
+
+  if (type === 'date') {
+    if (!value) return <span className="text-slate-400">—</span>
+    try {
+      return (
+        <span className="whitespace-nowrap text-slate-600">
+          {new Date(value as string).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
+        </span>
+      )
+    } catch {
+      return <span className="text-slate-400">—</span>
+    }
+  }
+
+  if (type === 'array') {
+    const arr: string[] = Array.isArray(value) ? (value as string[]) : []
+    if (!arr.length) return <span className="text-slate-400">—</span>
+    return (
+      <div className="flex flex-wrap gap-1">
+        {arr.slice(0, 3).map((item, i) => (
+          <span
+            key={i}
+            className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600"
+          >
+            {item}
+          </span>
+        ))}
+        {arr.length > 3 && (
+          <span className="text-xs text-slate-400">+{arr.length - 3}</span>
+        )}
+      </div>
+    )
+  }
+
+  if (type === 'relation') {
+    if (!value) return <span className="text-slate-400">—</span>
+    if (typeof value === 'object' && value !== null) {
+      const obj = value as Record<string, unknown>
+      const label = obj.title ?? obj.name ?? obj.email
+      return (
+        <span className="text-sm text-slate-700">
+          {label ? String(label) : String(obj._id ?? '').slice(-8)}
+        </span>
+      )
+    }
+    return (
+      <span className="font-mono text-xs text-slate-500">{String(value).slice(-8)}</span>
+    )
+  }
+
+  if (type === 'email') {
+    return <span className="text-sm text-slate-700">{String(value ?? '—')}</span>
+  }
+
+  if (value === null || value === undefined || value === '') {
+    return <span className="text-slate-400">—</span>
+  }
+
+  const str = String(value)
+  return (
+    <span className="block max-w-[220px] truncate text-slate-700" title={str}>
+      {str}
+    </span>
+  )
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+export default function AdminResourceListPage() {
+  const params = useParams()
+  const router = useRouter()
+  const resource = String(params.resource ?? '')
+  const config = getAdminResourceConfig(resource)
+
+  const [items, setItems] = useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = useState(true)
+  const [deletingId, setDeletingId] = useState('')
+  const [search, setSearch] = useState('')
+  const [error, setError] = useState('')
+
+  const fetchItems = useCallback(async () => {
+    if (!config) return
+    try {
+      setLoading(true)
+      setError('')
+      const { data } = await axios.get(config.apiPath)
+      setItems(data.data ?? [])
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } }
+      setError(axiosErr?.response?.data?.message ?? `Failed to load ${config.title.toLowerCase()}`)
+    } finally {
+      setLoading(false)
+    }
+  }, [config])
 
   useEffect(() => {
-    const loadStats = async () => {
-      try {
-        setLoading(true)
-        const responses = await Promise.allSettled(statResources.map((resource) => axios.get(resource.api)))
+    fetchItems()
+  }, [fetchItems])
 
-        const nextCounts: Record<string, number> = {}
-        responses.forEach((response, index) => {
-          const key = statResources[index].key
-          if (response.status === 'fulfilled') {
-            const data = response.value.data?.data
-            nextCounts[key] = Array.isArray(data) ? data.length : 0
-          } else {
-            nextCounts[key] = 0
-          }
-        })
-        setCounts(nextCounts)
-      } finally {
-        setLoading(false)
-      }
+  const filtered = useMemo(() => {
+    if (!search.trim()) return items
+    const q = search.toLowerCase()
+    return items.filter((item) =>
+      config?.columns.some((col) => {
+        const val = item[col.key]
+        return val != null && String(val).toLowerCase().includes(q)
+      })
+    )
+  }, [items, search, config])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm(`Delete this ${config?.singular.toLowerCase()}? This cannot be undone.`)) return
+    try {
+      setDeletingId(id)
+      await axios.delete(config!.apiPath, { data: { id } })
+      setItems((prev) => prev.filter((item) => String(item._id ?? item.id) !== id))
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } }
+      alert(axiosErr?.response?.data?.message ?? 'Failed to delete item')
+    } finally {
+      setDeletingId('')
     }
+  }
 
-    loadStats()
-  }, [])
-
-  const totalActivity = useMemo(() => (counts.orders || 0) + (counts.bookings || 0) + (counts.messages || 0), [counts])
-  const contentTotal = useMemo(() => (counts.projects || 0) + (counts.services || 0) + (counts.blogs || 0), [counts])
-  const learningTotal = useMemo(() => (counts.courses || 0) + (counts.students || 0), [counts])
-
-  const barStats = useMemo(
-    () => [
-      { label: 'Content', value: contentTotal, color: 'bg-teal-500' },
-      { label: 'Learning', value: learningTotal, color: 'bg-cyan-500' },
-      { label: 'Activity', value: totalActivity, color: 'bg-slate-400' },
-      { label: 'Orders', value: counts.orders || 0, color: 'bg-emerald-500' },
-      { label: 'Messages', value: counts.messages || 0, color: 'bg-amber-500' },
-    ],
-    [contentTotal, learningTotal, totalActivity, counts.orders, counts.messages]
-  )
-
-  const maxBarValue = Math.max(...barStats.map((item) => item.value), 1)
+  if (!config) {
+    return (
+      <ProtectedRoute requiredRoles={['admin']}>
+        <DashboardLayout title="Admin">
+          <EmptyState
+            title="Resource not found"
+            message="This admin resource page does not exist."
+            actionLabel="Back to Dashboard"
+            onAction={() => router.push('/dashboard/admin')}
+          />
+        </DashboardLayout>
+      </ProtectedRoute>
+    )
+  }
 
   return (
     <ProtectedRoute requiredRoles={['admin']}>
-      <DashboardLayout title="Admin Dashboard">
-        <div className="space-y-8">
-          <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-[linear-gradient(135deg,#0f172a_0%,#115e59_100%)] p-7 text-white sm:p-8 lg:p-10">
-            <div className="grid gap-8 xl:grid-cols-[1.2fr_0.8fr] xl:items-center">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.26em] text-white/70">Overview</p>
-                <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">A cleaner and more user-friendly admin workspace.</h1>
-                <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">
-                  Inspired by modern dashboard references, this updated admin page brings cleaner spacing, better hierarchy, softer cards, and clearer quick access to your key resources.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Link href="/dashboard/admin/projects" className="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-bold text-slate-900 transition hover:bg-slate-100">
-                    Manage Content
-                  </Link>
-                  <Link href="/dashboard/admin/settings" className="inline-flex items-center justify-center rounded-full border border-white/20 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10">
-                    Update Settings
-                  </Link>
-                </div>
-              </div>
+      <DashboardLayout
+        title={config.title}
+        breadcrumbs={[
+          { label: 'Admin Dashboard', href: '/dashboard/admin' },
+          { label: config.title, href: config.listPath },
+        ]}
+      >
+        <div className="space-y-5">
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-[1.5rem] bg-white/10 p-5 backdrop-blur">
-                  <p className="text-sm font-semibold text-white/70">Business Activity</p>
-                  <p className="mt-3 text-4xl font-black">{loading ? '...' : totalActivity}</p>
-                  <p className="mt-2 text-sm text-white/70">orders + bookings + messages</p>
-                </div>
-                <div className="rounded-[1.5rem] bg-white/10 p-5 backdrop-blur">
-                  <p className="text-sm font-semibold text-white/70">Learning Space</p>
-                  <p className="mt-3 text-4xl font-black">{loading ? '...' : learningTotal}</p>
-                  <p className="mt-2 text-sm text-white/70">courses + students</p>
-                </div>
-                <div className="rounded-[1.5rem] bg-white/10 p-5 backdrop-blur sm:col-span-2">
-                  <p className="text-sm font-semibold text-white/70">Quick Actions</p>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    {quickActions.slice(0, 4).map(({ title, href }) => (
-                      <Link key={href} href={href} className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15">
-                        {title}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+          {/* ── Header ── */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-black tracking-tight text-slate-900">
+                {config.title}
+              </h1>
+              <p className="mt-1 text-sm text-slate-500">
+                {loading ? 'Loading…' : `${items.length} total`}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={fetchItems}
+                disabled={loading}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:border-teal-300 hover:text-teal-600 disabled:opacity-40"
+                title="Refresh"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+              <Link
+                href={`${config.listPath}/new`}
+                className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-teal-500"
+              >
+                <Plus className="h-4 w-4" />
+                {config.addLabel ?? `Add ${config.singular}`}
+              </Link>
+            </div>
+          </div>
+
+          {/* ── Search ── */}
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={`Search ${config.title.toLowerCase()}…`}
+              className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
+            />
+          </div>
+
+          {/* ── Error ── */}
+          {error && (
+            <div className="flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <span>{error}</span>
+              <button onClick={fetchItems} className="font-semibold underline">
+                Retry
+              </button>
+            </div>
+          )}
+
+          {/* ── Content ── */}
+          {loading ? (
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-14 text-center shadow-sm">
+              <LoadingSpinner />
+              <p className="mt-4 text-sm text-slate-500">
+                Loading {config.title.toLowerCase()}…
+              </p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <EmptyState
+              title={
+                search
+                  ? `No results for "${search}"`
+                  : `No ${config.title.toLowerCase()} yet`
+              }
+              message={
+                search
+                  ? 'Try a different search term.'
+                  : `Add your first ${config.singular.toLowerCase()} to get started.`
+              }
+              actionLabel={
+                !search ? (config.addLabel ?? `Add ${config.singular}`) : undefined
+              }
+              onAction={
+                !search
+                  ? () => router.push(`${config.listPath}/new`)
+                  : undefined
+              }
+            />
+          ) : (
+            <div className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[640px]">
+                  <thead>
+                    <tr className="border-b border-slate-100 bg-slate-50/80">
+                      {config.columns.map((col) => (
+                        <th
+                          key={col.key}
+                          className="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.14em] text-slate-500"
+                        >
+                          {col.label}
+                        </th>
+                      ))}
+                      <th className="px-5 py-3.5 text-right text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filtered.map((item) => {
+                      const id = String(item._id ?? item.id ?? '')
+                      const isDeleting = deletingId === id
+                      return (
+                        <tr
+                          key={id}
+                          className={`transition hover:bg-slate-50/60 ${isDeleting ? 'opacity-40' : ''}`}
+                        >
+                          {config.columns.map((col) => (
+                            <td
+                              key={`${id}-${col.key}`}
+                              className="px-5 py-3.5 text-sm"
+                            >
+                              {renderCell(col, item[col.key], item)}
+                            </td>
+                          ))}
+                          <td className="px-5 py-3.5">
+                            <div className="flex items-center justify-end gap-2">
+                              <Link
+                                href={`${config.listPath}/${id}`}
+                                className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-700 transition hover:bg-teal-100"
+                              >
+                                <Pencil className="h-3 w-3" />
+                                Edit
+                              </Link>
+                              <button
+                                onClick={() => handleDelete(id)}
+                                disabled={isDeleting}
+                                className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-50"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                                {isDeleting ? '…' : 'Delete'}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div className="border-t border-slate-100 px-5 py-3 text-xs text-slate-400">
+                Showing {filtered.length} of {items.length}{' '}
+                {config.title.toLowerCase()}
+                {search ? ' (filtered)' : ''}
               </div>
             </div>
-          </section>
-
-          <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-            {loading ? (
-              <div className="col-span-full rounded-[1.75rem] border border-slate-200 bg-white p-10 text-center shadow-sm">
-                <LoadingSpinner />
-                <p className="mt-4 text-sm text-slate-500">Loading admin stats...</p>
-              </div>
-            ) : (
-              statResources.map((resource) => (
-                <Link key={resource.key} href={resource.path}>
-                  <DashboardStatsCard
-                    title={resource.label}
-                    value={counts[resource.key] || 0}
-                    icon={resource.icon}
-                    helperText={resource.helper}
-                    trend="updated"
-                  />
-                </Link>
-              ))
-            )}
-          </section>
-
-          <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
-              <div className="mb-6 flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Analytics Snapshot</p>
-                  <h2 className="mt-1 text-2xl font-black text-slate-950">Platform distribution</h2>
-                </div>
-                <div className="rounded-2xl bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-600">Live overview</div>
-              </div>
-              <div className="grid items-end gap-4 sm:grid-cols-5">
-                {barStats.map((item) => (
-                  <div key={item.label} className="flex flex-col items-center gap-3">
-                    <div className="flex h-56 w-full items-end rounded-[1.5rem] bg-slate-50 p-3">
-                      <div className={`w-full rounded-[1rem] ${item.color}`} style={{ height: `${Math.max((item.value / maxBarValue) * 100, 14)}%` }} />
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm font-bold text-slate-900">{item.value}</p>
-                      <p className="text-xs font-medium text-slate-500">{item.label}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
-              <div className="mb-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Quick Access</p>
-                <h2 className="mt-1 text-2xl font-black text-slate-950">Popular admin tasks</h2>
-              </div>
-              <div className="space-y-3">
-                {quickActions.map(({ title, description, href, icon: Icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    className="flex items-center justify-between gap-4 rounded-[1.25rem] border border-slate-200 p-4 transition hover:border-teal-200 hover:bg-teal-50/50"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-teal-700">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="font-black text-slate-900">{title}</p>
-                        <p className="mt-1 text-sm text-slate-600">{description}</p>
-                      </div>
-                    </div>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-slate-400" />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="grid gap-6 xl:grid-cols-3">
-            {managementGroups.map((group) => (
-              <div key={group.title} className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-black text-slate-950">{group.title}</h2>
-                <p className="mt-2 text-sm leading-7 text-slate-600">{group.description}</p>
-                <div className="mt-6 grid gap-3">
-                  {group.items.map((item) => {
-                    const Icon = item.icon
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="flex items-center justify-between rounded-[1.25rem] border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700"
-                      >
-                        <span className="flex items-center gap-3">
-                          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
-                            <Icon className="h-4 w-4" />
-                          </span>
-                          {item.label}
-                        </span>
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
-          </section>
+          )}
         </div>
       </DashboardLayout>
     </ProtectedRoute>

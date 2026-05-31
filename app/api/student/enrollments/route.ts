@@ -14,7 +14,7 @@ const calculateProgress = (completedLessons: any[], totalLessons: number) => {
 }
 
 async function populateEnrollment(enrollment: any) {
-  const fresh = await Enrollment.findById(enrollment._id).populate('courseId').lean()
+  const fresh = await Enrollment.findById(enrollment._id).populate('courseId').lean() as any
   if (!fresh) return null
 
   const lessons = await Lesson.find({ courseId: fresh.courseId?._id || fresh.courseId })

@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       if (slug) filter.slug = slug
       if (id) filter._id = id
 
-      const course = await Course.findOne(filter).lean()
+      const course = await Course.findOne(filter).lean() as any
       if (!course) {
         return NextResponse.json({ success: false, message: 'Course not found' }, { status: 404 })
       }

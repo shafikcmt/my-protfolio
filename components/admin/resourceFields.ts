@@ -182,6 +182,19 @@ export const contactMessageFields: AdminFieldConfig[] = [
   ] },
 ]
 
+export const enrollmentFields: AdminFieldConfig[] = [
+  { name: 'studentId', label: 'Student ID', type: 'text', required: true, helpText: 'Paste the MongoDB _id of the student.' },
+  { name: 'courseId', label: 'Course ID', type: 'text', required: true, helpText: 'Paste the MongoDB _id of the course.' },
+  { name: 'status', label: 'Status', type: 'select', options: [
+    { label: 'Active', value: 'active' },
+    { label: 'Completed', value: 'completed' },
+  ] },
+  { name: 'progress', label: 'Progress %', type: 'number' },
+  { name: 'certificateIssued', label: 'Certificate Issued', type: 'checkbox', placeholder: 'Certificate has been issued to the student' },
+  { name: 'enrolledAt', label: 'Enrolled At', type: 'date' },
+  { name: 'completedAt', label: 'Completed At', type: 'date' },
+]
+
 export const websiteSettingFields: AdminFieldConfig[] = [
   { name: 'siteName', label: 'Site Name', type: 'text' },
   { name: 'logo', label: 'Logo URL', type: 'text' },

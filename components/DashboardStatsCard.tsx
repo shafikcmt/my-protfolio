@@ -1,12 +1,12 @@
 import { ArrowUpRight } from 'lucide-react'
 import { isValidElement } from 'react'
-import type { ElementType, ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 
 interface DashboardStatsCardProps {
   label?: string
   title?: string
   value: string | number
-  icon?: ReactNode | ElementType
+  icon?: ReactNode | ComponentType<{ className?: string }>
   helperText?: string
   trend?: string
 }
@@ -28,7 +28,9 @@ export default function DashboardStatsCard({
     typeof icon !== 'number' &&
     typeof icon !== 'boolean'
 
-  const IconComponent = isComponentIcon ? (icon as ElementType) : null
+  const IconComponent = isComponentIcon
+    ? (icon as ComponentType<{ className?: string }>)
+    : null
 
   return (
     <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_12px_32px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
@@ -48,7 +50,7 @@ export default function DashboardStatsCard({
           ) : isReactElementIcon ? (
             icon
           ) : (
-            <span className="text-2xl">{icon || '📊'}</span>
+            <span className="text-2xl">{(icon as ReactNode) || '📊'}</span>
           )}
         </div>
       </div>
