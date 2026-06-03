@@ -9,10 +9,10 @@ export default function Navbar() {
 
   const navLinks = [
     { label: 'Home', href: '/' },
-    { label: 'About', href: '/#about' },
+    { label: 'Projects', href: '/#ready-projects' },
     { label: 'Services', href: '/#services' },
-    { label: 'Projects', href: '/#projects' },
-    { label: 'Testimonials', href: '/#testimonials' },
+    { label: 'Courses', href: '/courses' },
+    { label: 'Training', href: '/#training' },
     { label: 'Contact', href: '/contact' },
   ]
 
@@ -47,7 +47,7 @@ export default function Navbar() {
               Dashboard
             </Link>
             <Link href="/contact" className="btn-primary px-5 py-2.5">
-              Let&apos;s Talk
+              Hire Me
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
@@ -80,7 +80,7 @@ export default function Navbar() {
                     Dashboard
                   </Link>
                   <Link href="/contact" className="btn-primary w-full" onClick={() => setIsOpen(false)}>
-                    Let&apos;s Talk
+                    Hire Me
                   </Link>
                 </div>
               </div>

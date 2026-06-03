@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { connectDB } from '@/lib/db'
 import { withAdminAuth } from '@/lib/crud'
 import Blog from '@/models/Blog'
@@ -186,6 +187,11 @@ export async function POST(
     const item = await config.model.create(payload)
     const saved = await findById(config, item._id)
 
+    if (resource === 'projects') {
+      revalidatePath('/')
+      revalidatePath('/projects')
+    }
+
     return NextResponse.json(
       { success: true, message: `${config.entityName} created successfully`, data: toSafeObject(saved) },
       { status: 201 }
@@ -238,6 +244,13 @@ export async function PUT(
     await item.save()
     const updated = await findById(config, item._id)
 
+    if (resource === 'projects') {
+      revalidatePath('/')
+      revalidatePath('/projects')
+      const slug = (updated as any)?.slug
+      if (slug) revalidatePath(`/projects/${slug}`)
+    }
+
     return NextResponse.json({
       success: true,
       message: `${config.entityName} updated successfully`,
@@ -277,6 +290,11 @@ export async function DELETE(
     const item = await config.model.findByIdAndDelete(id)
     if (!item) {
       return NextResponse.json({ success: false, message: `${config.entityName} not found` }, { status: 404 })
+    }
+
+    if (resource === 'projects') {
+      revalidatePath('/')
+      revalidatePath('/projects')
     }
 
     return NextResponse.json({ success: true, message: `${config.entityName} deleted successfully` })

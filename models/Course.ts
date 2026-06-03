@@ -52,6 +52,7 @@ const CourseSchema = new mongoose.Schema(
       default: 0,
     },
     syllabus: [String],
+    screenshots: [String],
     learningOutcomes: [String],
     requirements: [String],
     certificateEnabled: {

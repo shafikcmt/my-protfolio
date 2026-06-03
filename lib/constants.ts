@@ -32,13 +32,13 @@ export const HERO_TITLES = [
 ]
 
 export const ABOUT_SUMMARY =
-  'I design and build secure, scalable web applications, LMS platforms and business-grade software for startups and companies. With 4+ years of professional experience in Laravel, MERN, Next.js and technical training, I help organizations deliver modern digital products and train the next generation of developers.'
+  'I design and build secure, scalable web applications, LMS platforms and business-grade software for startups and companies. With 5+ years of professional experience in Laravel, MERN, Next.js and technical training, I help organizations deliver modern digital products and train the next generation of developers.'
 
 export const ABOUT_COUNTERS = [
-  { label: 'Years Experience', value: '4+' },
-  { label: 'Training Hours', value: '200+' },
-  { label: 'LMS Engagement', value: '40%' },
-  { label: 'Downtime Reduction', value: '25%' },
+  { label: 'Projects Delivered', value: '100+' },
+  { label: 'Happy Clients', value: '50+' },
+  { label: 'Students Trained', value: '200+' },
+  { label: 'Years Experience', value: '5+' },
 ]
 
 export const SKILL_SECTIONS = [
@@ -138,6 +138,24 @@ export const SERVICE_LIST = [
     price: 1000,
     technologies: ['Next.js', 'TypeScript', 'Tailwind CSS'],
   },
+  {
+    title: 'Bug Fixing & Performance',
+    description: 'Fast diagnosis and resolution of bugs, performance bottlenecks, and security issues.',
+    slug: 'bug-fixing-performance',
+    technologies: ['PHP', 'Laravel', 'React', 'Node.js', 'MySQL'],
+  },
+  {
+    title: 'Project Customization',
+    description: 'Customize any ready project for your business — branding, features, and deployment.',
+    slug: 'project-customization',
+    technologies: ['Laravel', 'Next.js', 'MySQL', 'MongoDB'],
+  },
+  {
+    title: 'Business Website Setup',
+    description: 'Professional business website with admin panel, contact forms, and hosting setup.',
+    slug: 'business-website-setup',
+    technologies: ['Next.js', 'CMS', 'SEO', 'cPanel'],
+  },
 ]
 
 export const PROJECT_LIST = [
@@ -145,30 +163,42 @@ export const PROJECT_LIST = [
     title: 'Laravel Learning Management System',
     slug: 'laravel-learning-management-system',
     description: 'A secure LMS with course management, quizzes, student dashboards and instructor workflows.',
+    shortDescription: 'Full-featured LMS platform with course management, student tracking, quizzes and instructor panel.',
+    features: ['Course & lesson management', 'Student dashboard & progress tracking', 'Quiz & certificate system'],
     technologies: ['Laravel', 'MySQL', 'Blade', 'Bootstrap'],
     featured: true,
     image: '/images/project-lms.jpg',
+    // Future admin fields: isCustomizable, demoType ('public'|'video'|'request'), businessType, enquiryEnabled
   },
   {
     title: 'PHP OOP Blog Site',
     slug: 'php-oop-blog-site',
     description: 'A blog system built with object-oriented PHP, user authentication, comments and category management.',
+    shortDescription: 'Clean blog platform with OOP architecture, user auth, comments and category management.',
+    features: ['User authentication & roles', 'Category & tag management', 'Comment moderation system'],
     technologies: ['PHP', 'OOP', 'MySQL', 'Bootstrap'],
     image: '/images/project-blog.jpg',
+    // Future admin fields: isCustomizable, demoType, businessType, enquiryEnabled
   },
   {
     title: 'Laravel Multi-Vendor eCommerce',
     slug: 'laravel-multi-vendor-ecommerce',
     description: 'A multi-vendor marketplace with seller dashboards, order tracking and secure checkout.',
+    shortDescription: 'Multi-vendor marketplace with seller dashboards, order management and secure payment checkout.',
+    features: ['Multi-vendor seller dashboard', 'Order tracking & management', 'Secure payment with Stripe'],
     technologies: ['Laravel', 'Stripe', 'MySQL', 'Vue.js'],
     image: '/images/project-ecommerce.jpg',
+    // Future admin fields: isCustomizable, demoType, businessType, enquiryEnabled
   },
   {
     title: 'Production Tracking System with QR Code',
     slug: 'production-tracking-system-with-qr-code',
     description: 'A production monitoring system with QR scanning, progress tracking, and REST APIs.',
+    shortDescription: 'Smart production tracker with QR scanning, real-time progress monitoring and REST API integration.',
+    features: ['QR code scanning workflow', 'Real-time production monitoring', 'REST API & reporting dashboard'],
     technologies: ['Django', 'TypeScript', 'Docker', 'QR Code'],
     image: '/images/project-qr.jpg',
+    // Future admin fields: isCustomizable, demoType, businessType, enquiryEnabled
   },
 ]
 
@@ -239,4 +269,112 @@ export const ANIMATION_DURATION = {
   fast: 150,
   normal: 300,
   slow: 500,
+}
+
+export const WORK_PROCESS = [
+  {
+    step: '01',
+    title: 'Requirement Discussion',
+    description: 'We discuss your project goals, features, target audience and business objectives in detail.',
+  },
+  {
+    step: '02',
+    title: 'Planning & Design',
+    description: 'I create a clear project plan with wireframes, tech stack selection and timeline estimate.',
+  },
+  {
+    step: '03',
+    title: 'Development',
+    description: 'Clean, scalable code is written following best practices with regular progress updates.',
+  },
+  {
+    step: '04',
+    title: 'Review & Testing',
+    description: 'Full testing across devices and browsers. Bugs fixed before final delivery.',
+  },
+  {
+    step: '05',
+    title: 'Delivery & Support',
+    description: 'Project delivered with documentation. Post-delivery support and customization available.',
+  },
+]
+
+export const WHY_CHOOSE_ME = [
+  {
+    icon: '🚀',
+    title: 'Practical Project Experience',
+    description: 'Built 100+ real-world projects — LMS platforms, eCommerce, dashboards and business tools.',
+  },
+  {
+    icon: '💬',
+    title: 'Bangla & English Support',
+    description: 'I communicate fluently in Bangla and English — no miscommunication for Bangladeshi clients.',
+  },
+  {
+    icon: '🎯',
+    title: 'Business-Focused Solutions',
+    description: 'Every project is built with your business goal in mind — not just code, but results.',
+  },
+  {
+    icon: '🛡️',
+    title: 'After-Delivery Support',
+    description: 'Bug fixes, updates and guidance after project delivery — I stay available for my clients.',
+  },
+  {
+    icon: '📱',
+    title: 'Mobile Responsive Design',
+    description: 'All projects are fully responsive and tested across mobile, tablet and desktop screens.',
+  },
+  {
+    icon: '⚡',
+    title: 'Fast & Clean Code',
+    description: 'Optimized, well-structured code with fast load times and easy-to-maintain architecture.',
+  },
+]
+
+export const FAQ_LIST = [
+  {
+    question: 'What is your project pricing?',
+    answer: 'I do not publish fixed prices publicly. Every project is unique. Contact me with your requirements and I will provide a custom quote based on features, complexity and timeline.',
+  },
+  {
+    question: 'Can I request a demo before buying a ready project?',
+    answer: 'Yes. You can send an enquiry for any ready project and I will arrange a live demo or share a video walkthrough based on availability.',
+  },
+  {
+    question: 'Can your ready projects be customized?',
+    answer: 'Absolutely. All ready projects can be customized to match your business needs — branding, features, integrations and deployment.',
+  },
+  {
+    question: 'What web development courses do you offer?',
+    answer: 'I offer practical courses on Next.js, MERN Stack and Laravel LMS Development. Courses are beginner to advanced with project-based learning.',
+  },
+  {
+    question: 'How does the live training program work?',
+    answer: 'Live training is conducted in online batches with real-time Q&A, project assignments and personal mentoring. Join the waitlist for the next batch.',
+  },
+  {
+    question: 'What technologies do you work with?',
+    answer: 'I work with Laravel, PHP, Next.js, React, Node.js, MongoDB, MySQL and more. Full stack web development with modern tools.',
+  },
+  {
+    question: 'Do you provide support after project delivery?',
+    answer: 'Yes. I provide post-delivery support for bug fixes, minor changes and deployment help. Long-term maintenance packages are also available.',
+  },
+  {
+    question: 'How do I get started?',
+    answer: 'Simply send an enquiry via the contact form or WhatsApp. Share your project idea and I will respond within 24 hours with a plan.',
+  },
+]
+
+export const LIVE_TRAINING_INFO = {
+  title: 'Live Web Development Training',
+  subtitle: 'Learn by building real projects with live instructor support',
+  description:
+    'Join my live online training program and learn modern web development from scratch or advance your skills. Small batches, personal mentoring, and real project assignments.',
+  batchStatus: 'Next Batch Coming Soon',
+  schedule: 'Online • Weekends • 2 hours/session',
+  topics: ['HTML, CSS & JavaScript Fundamentals', 'Laravel Full Stack Development', 'MERN Stack (React + Node.js)', 'Next.js & TypeScript', 'Database Design & REST APIs', 'Deployment & Production Setup'],
+  ctaLabel: 'Join Live Training',
+  ctaHref: '/contact',
 }

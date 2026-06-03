@@ -32,6 +32,7 @@ const ProjectSchema = new mongoose.Schema(
     features: [String],
     adminFeatures: [String],
     userFeatures: [String],
+    category: String,
     featured: {
       type: Boolean,
       default: false,

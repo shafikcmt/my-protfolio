@@ -319,6 +319,8 @@ export default function AdminCrudForm({
         <div className="grid gap-5 md:grid-cols-2">
           {fields.map((field) => {
             const wide = field.type === 'textarea' || field.type === 'array' || field.name === 'description' || field.name === 'content'
+            const isImageUrl = field.type === 'url' && /image|thumbnail/i.test(field.name)
+            const isScreenshotArray = field.type === 'array' && /screenshot/i.test(field.name)
 
             return (
               <div key={field.name} className={wide ? 'md:col-span-2' : ''}>
@@ -331,6 +333,37 @@ export default function AdminCrudForm({
                 {renderField(field)}
                 {field.helpText && (
                   <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{field.helpText}</p>
+                )}
+                {/* Live preview for thumbnail/image URL fields */}
+                {isImageUrl && formData[field.name] && (
+                  <div className="mt-2 flex items-center gap-3">
+                    <img
+                      src={formData[field.name]}
+                      alt="Preview"
+                      className="h-20 w-auto max-w-[200px] rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                    />
+                    <span className="text-xs text-gray-400 dark:text-gray-500">Image preview</span>
+                  </div>
+                )}
+                {/* Live previews for screenshot URL array fields */}
+                {isScreenshotArray && formData[field.name] && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {String(formData[field.name])
+                      .split(/[\n,]+/)
+                      .map((u) => u.trim())
+                      .filter(Boolean)
+                      .slice(0, 6)
+                      .map((url, i) => (
+                        <img
+                          key={i}
+                          src={url}
+                          alt={`Screenshot ${i + 1}`}
+                          className="h-16 w-auto rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                        />
+                      ))}
+                  </div>
                 )}
               </div>
             )

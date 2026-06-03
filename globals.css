@@ -38,11 +38,7 @@ body {
 
 @layer components {
 .container-custom {
-<<<<<<< HEAD
-  @apply mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-10 2xl:px-16;
-=======
   @apply mx-auto w-full max-w-[1680px] px-4 sm:px-6 lg:px-10 2xl:px-14;
->>>>>>> 39452b3218c264bf8748c8dfe3dc74174908cd26
 }
 
   .glass-card {

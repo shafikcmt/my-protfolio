@@ -1,10 +1,26 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, ArrowUpRight, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, CheckCircle2, ExternalLink } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
+
+interface DBProject {
+  _id: string
+  slug: string
+  title: string
+  shortDescription?: string
+  description: string
+  image?: string
+  screenshots?: string[]
+  technologies?: string[]
+  features?: string[]
+  featured?: boolean
+  status: string
+  liveDemoUrl?: string
+}
 
 interface Project {
   slug: string
@@ -15,11 +31,39 @@ interface Project {
   features?: string[]
   featured?: boolean
   image?: string
+  liveDemoUrl?: string
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ─── Map DB project to display shape ─────────────────────────────────────────
 
-const projects: Project[] = [
+function mapDBProject(p: DBProject): Project {
+  const badges: Project['badges'] = []
+  if (p.featured) badges.push({ label: '⭐ Featured', type: 'featured' })
+  badges.push({ label: 'Ready', type: 'ready' })
+  badges.push({ label: 'Customizable', type: 'customizable' })
+  if (p.liveDemoUrl) badges.push({ label: 'Demo on Request', type: 'demo' })
+
+  const desc =
+    p.shortDescription ||
+    (p.description && p.description.length > 160 ? p.description.slice(0, 160) + '…' : p.description) ||
+    ''
+
+  return {
+    slug: p.slug,
+    title: p.title,
+    description: desc,
+    tags: (p.technologies || []).slice(0, 5),
+    badges,
+    features: (p.features || []).slice(0, 3),
+    featured: p.featured,
+    image: p.screenshots?.[0] || p.image || undefined,
+    liveDemoUrl: p.liveDemoUrl || undefined,
+  }
+}
+
+// ─── Static fallback (shown when API is unavailable or DB is empty) ───────────
+
+const STATIC_FALLBACK: Project[] = [
   {
     slug: 'laravel-learning-management-system',
     title: 'Laravel Learning Management System',
@@ -105,14 +149,11 @@ function TagChip({ tag }: { tag: string }) {
 function ProjectImagePlaceholder({ tags }: { tags?: string[] }) {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-gradient-to-br from-slate-900 via-[#0d1525] to-slate-900">
-      {/* Sweeping shimmer highlight */}
       <motion.div
         animate={{ x: ['-120%', '120%'] }}
         transition={{ duration: 2.2, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
         className="pointer-events-none absolute inset-y-0 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent"
       />
-
-      {/* Browser chrome bar */}
       <div className="flex flex-shrink-0 items-center gap-2 border-b border-slate-700/50 bg-slate-800/90 px-3 py-2">
         <div className="flex gap-1.5">
           <span className="h-2 w-2 rounded-full bg-red-400/70" />
@@ -121,28 +162,19 @@ function ProjectImagePlaceholder({ tags }: { tags?: string[] }) {
         </div>
         <div className="mx-2 flex flex-1 items-center gap-1.5 rounded bg-slate-700/50 px-2 py-0.5">
           <span className="h-1.5 w-1.5 rounded-full bg-teal-500/60" />
-          <span className="text-[9px] text-slate-500">localhost:3000</span>
+          <span className="text-[9px] text-slate-500">Preview not available</span>
         </div>
       </div>
-
-      {/* Mock dashboard */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
         <div className="flex w-12 flex-col items-center gap-2.5 border-r border-slate-800/70 bg-slate-900/90 py-3">
           <div className="h-5 w-5 rounded-lg bg-gradient-to-br from-teal-500/80 to-teal-700/80" />
           <div className="mt-1 flex flex-col gap-1.5">
             {[true, false, false, false].map((active, i) => (
-              <div
-                key={i}
-                className={`h-2 w-7 rounded ${active ? 'bg-teal-700/60' : 'bg-slate-700/40'}`}
-              />
+              <div key={i} className={`h-2 w-7 rounded ${active ? 'bg-teal-700/60' : 'bg-slate-700/40'}`} />
             ))}
           </div>
         </div>
-
-        {/* Content area */}
         <div className="flex-1 overflow-hidden p-3">
-          {/* Stats row */}
           <div className="mb-2.5 grid grid-cols-3 gap-1.5">
             <div className="rounded-lg bg-teal-900/40 p-2">
               <div className="h-1.5 w-full rounded bg-teal-700/60" />
@@ -155,32 +187,21 @@ function ProjectImagePlaceholder({ tags }: { tags?: string[] }) {
               </div>
             ))}
           </div>
-
-          {/* List rows */}
           <div className="space-y-1.5">
             {[true, false, false].map((active, i) => (
               <div key={i} className="flex items-center gap-2 rounded-lg bg-slate-800/60 p-1.5">
-                <div
-                  className={`h-3.5 w-3.5 flex-shrink-0 rounded ${active ? 'bg-teal-700/70' : 'bg-slate-700/60'}`}
-                />
+                <div className={`h-3.5 w-3.5 flex-shrink-0 rounded ${active ? 'bg-teal-700/70' : 'bg-slate-700/60'}`} />
                 <div className="h-2 flex-1 rounded bg-slate-600/50" />
-                <div
-                  className={`h-3 w-6 flex-shrink-0 rounded-full ${active ? 'bg-green-800/50' : 'bg-slate-700/40'}`}
-                />
+                <div className={`h-3 w-6 flex-shrink-0 rounded-full ${active ? 'bg-green-800/50' : 'bg-slate-700/40'}`} />
               </div>
             ))}
           </div>
         </div>
       </div>
-
-      {/* Tech tag strip */}
       {tags && tags.length > 0 && (
         <div className="flex flex-wrap gap-1 border-t border-slate-800/60 px-3 py-2">
           {tags.slice(0, 3).map((t) => (
-            <span
-              key={t}
-              className="rounded-full bg-teal-900/50 px-2 py-0.5 text-[9px] font-bold text-teal-400"
-            >
+            <span key={t} className="rounded-full bg-teal-900/50 px-2 py-0.5 text-[9px] font-bold text-teal-400">
               {t}
             </span>
           ))}
@@ -190,9 +211,110 @@ function ProjectImagePlaceholder({ tags }: { tags?: string[] }) {
   )
 }
 
+// ─── Browser chrome bar ───────────────────────────────────────────────────────
+
+function BrowserBar({ label, href }: { label: string; href?: string }) {
+  return (
+    <div className="flex flex-shrink-0 items-center gap-2 border-b border-slate-700/50 bg-slate-800/80 px-3 py-1.5">
+      <div className="flex gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-red-400/70" />
+        <span className="h-2 w-2 rounded-full bg-amber-400/70" />
+        <span className="h-2 w-2 rounded-full bg-green-400/70" />
+      </div>
+      <div className="mx-2 flex flex-1 items-center gap-1.5 rounded bg-slate-700/50 px-2 py-0.5 min-w-0">
+        <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-teal-500/60" />
+        <span className="truncate text-[9px] text-slate-400">{label}</span>
+      </div>
+      {href && (
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className="flex-shrink-0 text-[9px] text-teal-400 hover:text-teal-300"
+          title="Open live preview"
+        >
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      )}
+    </div>
+  )
+}
+
+// ─── Right-panel preview (live iframe > image > placeholder) ─────────────────
+
+function PreviewPanel({
+  project,
+  onImgError,
+  imgFailed,
+}: {
+  project: Project
+  onImgError: () => void
+  imgFailed: boolean
+}) {
+  const [iframeLoaded, setIframeLoaded] = useState(false)
+  const [iframeError, setIframeError] = useState(false)
+
+  const showLive = Boolean(project.liveDemoUrl) && !iframeError
+  const showImage = !showLive && Boolean(project.image) && !imgFailed
+
+  if (showLive) {
+    return (
+      <div className="flex h-full flex-col">
+        <BrowserBar label={project.liveDemoUrl!} href={project.liveDemoUrl} />
+        <div className="relative flex-1 overflow-hidden">
+          {!iframeLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
+            </div>
+          )}
+          <iframe
+            src={project.liveDemoUrl}
+            title={`${project.title} live preview`}
+            className="h-full w-full border-0"
+            onLoad={() => setIframeLoaded(true)}
+            onError={() => setIframeError(true)}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            style={{ minHeight: '100%' }}
+          />
+          {/* Overlay "Open" button */}
+          <a
+            href={project.liveDemoUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-teal-500/90 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg backdrop-blur-sm transition hover:bg-teal-400"
+          >
+            <ExternalLink className="h-2.5 w-2.5" />
+            Open Live Preview
+          </a>
+        </div>
+      </div>
+    )
+  }
+
+  if (showImage) {
+    return (
+      <div className="flex h-full flex-col">
+        <BrowserBar label={project.title} />
+        <div className="relative flex-1 overflow-hidden">
+          <img
+            src={project.image}
+            alt={project.title}
+            className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+            onError={onImgError}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  return <ProjectImagePlaceholder tags={project.tags} />
+}
+
 // ─── Featured hero card ───────────────────────────────────────────────────────
 
 function FeaturedCard({ project }: { project: Project }) {
+  const [imgFailed, setImgFailed] = useState(false)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 32 }}
@@ -202,29 +324,24 @@ function FeaturedCard({ project }: { project: Project }) {
       whileHover={{ y: -4 }}
       className="group relative mb-6 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-[0_4px_48px_rgba(0,0,0,0.55)] backdrop-blur-sm transition-[border-color,box-shadow] duration-500 hover:border-teal-400/30 hover:shadow-[0_8px_64px_rgba(0,0,0,0.65),0_0_0_1px_rgba(0,212,170,0.12)]"
     >
-      {/* Corner glow that fades in on hover */}
       <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-teal-500/[0.07] blur-3xl opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
       <div className="pointer-events-none absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-teal-600/[0.05] blur-2xl opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
 
       <div className="grid lg:grid-cols-[1fr_0.68fr]">
         {/* ── Left: content ── */}
         <div className="relative z-10 p-8 lg:p-10">
-          {/* Badges */}
           <div className="mb-5 flex flex-wrap gap-2">
             {project.badges.map((b) => (
               <Badge key={b.label} label={b.label} type={b.type} />
             ))}
           </div>
 
-          {/* Title */}
           <h3 className="text-2xl font-black tracking-tight text-white lg:text-[1.75rem]">
             {project.title}
           </h3>
 
-          {/* Description */}
           <p className="mt-3 max-w-lg text-sm leading-7 text-slate-400">{project.description}</p>
 
-          {/* Feature list */}
           {project.features && (
             <ul className="mt-6 space-y-3">
               {project.features.map((f, i) => (
@@ -243,14 +360,12 @@ function FeaturedCard({ project }: { project: Project }) {
             </ul>
           )}
 
-          {/* Tech tags */}
           <div className="mt-6 flex flex-wrap gap-2">
             {project.tags.map((tag) => (
               <TagChip key={tag} tag={tag} />
             ))}
           </div>
 
-          {/* Action buttons */}
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href={`/projects/${project.slug}`}
@@ -273,18 +388,9 @@ function FeaturedCard({ project }: { project: Project }) {
           </div>
         </div>
 
-        {/* ── Right: image / mockup ── */}
+        {/* ── Right: preview panel ── */}
         <div className="relative min-h-[280px] overflow-hidden border-t border-white/[0.06] lg:border-l lg:border-t-0">
-          {project.image ? (
-            <img
-              src={project.image}
-              alt={project.title}
-              className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-            />
-          ) : (
-            <ProjectImagePlaceholder tags={project.tags} />
-          )}
-          {/* Blend edge with card on desktop */}
+          <PreviewPanel project={project} imgFailed={imgFailed} onImgError={() => setImgFailed(true)} />
           <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-10 bg-gradient-to-r from-[#080d1a]/20 to-transparent lg:block" />
         </div>
       </div>
@@ -295,37 +401,53 @@ function FeaturedCard({ project }: { project: Project }) {
 // ─── Grid card ────────────────────────────────────────────────────────────────
 
 function GridCard({ project, index }: { project: Project; index: number }) {
+  const [imgFailed, setImgFailed] = useState(false)
+  const [iframeError, setIframeError] = useState(false)
+
+  const showLive = Boolean(project.liveDemoUrl) && !iframeError
+  const showImage = !showLive && Boolean(project.image) && !imgFailed
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{
-        duration: 0.55,
-        delay: index * 0.1 + 0.2,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      }}
+      transition={{ duration: 0.55, delay: index * 0.1 + 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
       whileHover={{ y: -4, scale: 1.02 }}
       className="group flex flex-col overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.03] shadow-[0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-sm transition-[border-color,box-shadow] duration-300 hover:border-teal-400/20 hover:shadow-[0_8px_36px_rgba(0,0,0,0.5),0_0_0_1px_rgba(0,212,170,0.08)]"
     >
-      {/* Thumbnail */}
+      {/* Thumbnail / live preview */}
       <div className="relative h-44 overflow-hidden border-b border-white/[0.06]">
-        {project.image ? (
+        {showLive ? (
+          <div className="flex h-full flex-col">
+            <BrowserBar label={project.liveDemoUrl!} href={project.liveDemoUrl} />
+            <div className="relative flex-1 overflow-hidden">
+              <iframe
+                src={project.liveDemoUrl}
+                title={`${project.title} preview`}
+                className="h-full w-full border-0 scale-[0.6] origin-top-left"
+                style={{ width: '166%', height: '166%', transformOrigin: 'top left', transform: 'scale(0.6)' }}
+                onError={() => setIframeError(true)}
+                sandbox="allow-scripts allow-same-origin"
+                tabIndex={-1}
+              />
+            </div>
+          </div>
+        ) : showImage ? (
           <img
             src={project.image}
             alt={project.title}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+            onError={() => setImgFailed(true)}
           />
         ) : (
           <ProjectImagePlaceholder tags={project.tags} />
         )}
-        {/* Dark vignette for badge legibility */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
       </div>
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-5">
-        {/* Badges */}
         <div className="mb-3 flex flex-wrap gap-1.5">
           {project.badges.map((b) => (
             <span
@@ -337,20 +459,15 @@ function GridCard({ project, index }: { project: Project; index: number }) {
           ))}
         </div>
 
-        {/* Title */}
         <h3 className="text-base font-black tracking-tight text-white">{project.title}</h3>
-
-        {/* Description */}
         <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-slate-500">{project.description}</p>
 
-        {/* Tags */}
         <div className="mt-3 flex flex-wrap gap-1.5">
           {project.tags.map((tag) => (
             <TagChip key={tag} tag={tag} />
           ))}
         </div>
 
-        {/* Actions pinned to bottom */}
         <div className="mt-auto flex items-center gap-3 pt-5">
           <Link
             href={`/projects/${project.slug}`}
@@ -373,21 +490,31 @@ function GridCard({ project, index }: { project: Project; index: number }) {
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 export default function ProjectsSection() {
-  const featuredProject = projects.find((p) => p.featured)
-  const gridProjects = projects.filter((p) => !p.featured)
+  const [projects, setProjects] = useState<Project[]>(STATIC_FALLBACK)
+
+  useEffect(() => {
+    fetch('/api/projects')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setProjects(data.data.map(mapDBProject))
+        }
+      })
+      .catch(() => {
+        // keep static fallback
+      })
+  }, [])
+
+  const featuredProject = projects.find((p) => p.featured) ?? projects[0]
+  const gridProjects = projects.filter((p) => p !== featuredProject)
 
   return (
     <section id="ready-projects" className="relative overflow-hidden bg-[#080d1a] py-20 lg:py-28">
 
-      {/* Radial gradient mesh */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,212,170,0.08), transparent)',
-        }}
+        style={{ background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,212,170,0.08), transparent)' }}
       />
-      {/* Ambient side glows */}
       <div className="pointer-events-none absolute -left-64 top-1/3 h-[500px] w-[500px] rounded-full bg-teal-600/[0.04] blur-[120px]" />
       <div className="pointer-events-none absolute -right-64 bottom-1/4 h-[400px] w-[400px] rounded-full bg-teal-400/[0.03] blur-[100px]" />
 
@@ -429,18 +556,19 @@ export default function ProjectsSection() {
         {/* ── Featured hero card ── */}
         {featuredProject && (
           <div className="relative">
-            {/* Diffuse glow behind the featured card */}
             <div className="pointer-events-none absolute -inset-6 rounded-[3rem] bg-teal-400/[0.04] blur-3xl" />
             <FeaturedCard project={featuredProject} />
           </div>
         )}
 
         {/* ── Project grid ── */}
-        <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3">
-          {gridProjects.map((project, index) => (
-            <GridCard key={project.slug} project={project} index={index} />
-          ))}
-        </div>
+        {gridProjects.length > 0 && (
+          <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3">
+            {gridProjects.map((project, index) => (
+              <GridCard key={project.slug} project={project} index={index} />
+            ))}
+          </div>
+        )}
 
         {/* ── No-price note ── */}
         <motion.div

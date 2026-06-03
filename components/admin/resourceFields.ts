@@ -16,6 +16,16 @@ export const projectFields: AdminFieldConfig[] = [
   { name: 'userFeatures', label: 'User Features', type: 'array' },
   { name: 'clientProblem', label: 'Client Problem', type: 'textarea', rows: 4 },
   { name: 'solution', label: 'Solution', type: 'textarea', rows: 4 },
+  { name: 'category', label: 'Category', type: 'select', options: [
+    { label: 'LMS / E-Learning', value: 'LMS' },
+    { label: 'eCommerce', value: 'eCommerce' },
+    { label: 'ERP / Business', value: 'ERP' },
+    { label: 'Blog / CMS', value: 'Blog' },
+    { label: 'Dashboard / Admin', value: 'Dashboard' },
+    { label: 'SaaS', value: 'SaaS' },
+    { label: 'Portfolio', value: 'Portfolio' },
+    { label: 'Other', value: 'Other' },
+  ] },
   { name: 'status', label: 'Status', type: 'select', options: [
     { label: 'Draft', value: 'draft' },
     { label: 'Published', value: 'published' },
@@ -41,6 +51,7 @@ export const courseFields: AdminFieldConfig[] = [
   { name: 'shortDescription', label: 'Short Description', type: 'textarea', rows: 3 },
   { name: 'description', label: 'Description', type: 'textarea', required: true, rows: 6 },
   { name: 'image', label: 'Thumbnail Image URL', type: 'url' },
+  { name: 'screenshots', label: 'Screenshot URLs', type: 'array', helpText: 'One URL per line. Shown in the course details gallery.' },
   { name: 'instructor', label: 'Instructor', type: 'text', placeholder: 'Md Shafiqul Islam' },
   { name: 'category', label: 'Category', type: 'select', options: [
     { label: 'Web Design', value: 'Web Design' },

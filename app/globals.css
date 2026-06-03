@@ -52,7 +52,7 @@
   }
 
   .home-heading {
-    @apply max-w-4xl text-3xl font-black leading-[1.12] tracking-tight text-slate-950 sm:text-4xl lg:text-5xl;
+    @apply max-w-4xl text-2xl font-black leading-[1.15] tracking-tight text-slate-950 sm:text-3xl lg:text-4xl;
   }
 
   .home-subtitle {
@@ -88,7 +88,7 @@
   }
 
   .section-heading {
-    @apply max-w-4xl text-3xl font-black leading-[1.12] tracking-tight text-slate-950 sm:text-4xl lg:text-5xl;
+    @apply max-w-4xl text-2xl font-black leading-[1.15] tracking-tight text-slate-950 sm:text-3xl lg:text-4xl;
   }
 
   .section-subheading {
@@ -168,5 +168,32 @@
     to {
       transform: translateX(-50%);
     }
+  }
+
+  /* Terminal cursor blink */
+  .cursor-blink {
+    animation: cursorBlink 1.1s step-end infinite;
+  }
+
+  @keyframes cursorBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* Hide scrollbar while keeping scroll functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Subtle code-bg grid for dark sections */
+  .code-grid {
+    background-image:
+      linear-gradient(rgba(20, 184, 166, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20, 184, 166, 0.06) 1px, transparent 1px);
+    background-size: 36px 36px;
   }
 }
