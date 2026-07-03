@@ -245,13 +245,13 @@ export default function AdminCrudForm({
 
     if (field.type === 'checkbox') {
       return (
-        <label className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-dark-900 dark:text-gray-300">
+        <label className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
           <input
             id={field.name}
             type="checkbox"
             checked={Boolean(value)}
             onChange={(event) => handleChange(field.name, event.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            className="h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500"
           />
           <span>{field.placeholder || field.label}</span>
         </label>
@@ -275,12 +275,12 @@ export default function AdminCrudForm({
 
   if (loading) {
     return (
-      <div className="rounded-2xl bg-white p-8 shadow dark:bg-dark-800">
-        <div className="h-8 w-48 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+      <div className="rounded-2xl bg-white p-8 shadow-sm">
+        <div className="h-8 w-48 animate-pulse rounded bg-slate-100" />
         <div className="mt-6 space-y-4">
-          <div className="h-12 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-          <div className="h-32 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-          <div className="h-12 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+          <div className="h-12 animate-pulse rounded bg-slate-100" />
+          <div className="h-32 animate-pulse rounded bg-slate-100" />
+          <div className="h-12 animate-pulse rounded bg-slate-100" />
         </div>
       </div>
     )
@@ -290,28 +290,28 @@ export default function AdminCrudForm({
     <div className="mx-auto max-w-5xl">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium uppercase tracking-wider text-primary-600 dark:text-primary-400">
+          <p className="text-sm font-medium uppercase tracking-wider text-teal-600">
             {title}
           </p>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{pageTitle}</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{pageTitle}</h1>
         </div>
         <button
           type="button"
           onClick={() => router.push(listPath)}
-          className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-dark-700"
+          className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
         >
           Back to list
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="rounded-2xl bg-white p-6 shadow dark:bg-dark-800 sm:p-8">
+      <form onSubmit={handleSubmit} className="rounded-2xl bg-white p-6 shadow-sm sm:p-8">
         {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300">
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </div>
         )}
         {success && (
-          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900/60 dark:bg-green-950/30 dark:text-green-300">
+          <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
             {success}
           </div>
         )}
@@ -325,14 +325,14 @@ export default function AdminCrudForm({
             return (
               <div key={field.name} className={wide ? 'md:col-span-2' : ''}>
                 {field.type !== 'checkbox' && (
-                  <label htmlFor={field.name} className="mb-2 block text-sm font-semibold text-gray-800 dark:text-gray-200">
+                  <label htmlFor={field.name} className="mb-2 block text-sm font-semibold text-slate-800">
                     {field.label}
                     {field.required && <span className="text-red-500"> *</span>}
                   </label>
                 )}
                 {renderField(field)}
                 {field.helpText && (
-                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{field.helpText}</p>
+                  <p className="mt-2 text-xs text-slate-500">{field.helpText}</p>
                 )}
                 {/* Live preview for thumbnail/image URL fields */}
                 {isImageUrl && formData[field.name] && (
@@ -340,10 +340,10 @@ export default function AdminCrudForm({
                     <img
                       src={formData[field.name]}
                       alt="Preview"
-                      className="h-20 w-auto max-w-[200px] rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                      className="h-20 w-auto max-w-[200px] rounded-lg border border-slate-200 object-cover"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                     />
-                    <span className="text-xs text-gray-400 dark:text-gray-500">Image preview</span>
+                    <span className="text-xs text-slate-400">Image preview</span>
                   </div>
                 )}
                 {/* Live previews for screenshot URL array fields */}
@@ -359,7 +359,7 @@ export default function AdminCrudForm({
                           key={i}
                           src={url}
                           alt={`Screenshot ${i + 1}`}
-                          className="h-16 w-auto rounded-lg border border-gray-200 object-cover dark:border-gray-700"
+                          className="h-16 w-auto rounded-lg border border-slate-200 object-cover"
                           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                         />
                       ))}
@@ -374,7 +374,7 @@ export default function AdminCrudForm({
           <button
             type="button"
             onClick={() => router.push(listPath)}
-            className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-dark-700"
+            className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
           >
             Cancel
           </button>

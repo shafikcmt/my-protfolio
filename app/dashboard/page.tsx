@@ -18,10 +18,10 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-dark-900">
+      <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC]">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Redirecting to your dashboard...</p>
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-teal-500"></div>
+          <p className="mt-4 text-sm text-slate-500">Redirecting to your dashboard...</p>
         </div>
       </div>
     </ProtectedRoute>

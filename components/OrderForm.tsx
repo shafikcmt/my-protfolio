@@ -63,7 +63,7 @@ export default function OrderForm({ initialProject }: { initialProject?: string 
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_20px_rgba(15,23,42,0.08)] sm:p-8">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
       <h2 className="mb-1 text-xl font-bold text-slate-900">Book Your Project</h2>
       <p className="mb-6 text-sm text-slate-500">
         Share your requirements and get a detailed proposal within 24 hours.

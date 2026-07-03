@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { Video } from 'lucide-react'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/DashboardLayout'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -49,21 +50,23 @@ export default function StudentLiveClassesPage() {
         ) : classes.length ? (
           <div className="grid gap-5 lg:grid-cols-2">
             {classes.map((liveClass) => (
-              <div key={liveClass._id} className="rounded-2xl bg-white p-6 shadow dark:bg-dark-800">
+              <div key={liveClass._id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="mb-4 flex items-start justify-between gap-4">
                   <div>
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClass(liveClass.status)}`}>
                       {liveClass.status || 'scheduled'}
                     </span>
-                    <h2 className="mt-3 text-xl font-bold text-gray-900 dark:text-white">{liveClass.title}</h2>
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{liveClass.courseId?.title || 'Course live class'}</p>
+                    <h2 className="mt-3 text-xl font-bold text-slate-900">{liveClass.title}</h2>
+                    <p className="mt-1 text-sm text-slate-500">{liveClass.courseId?.title || 'Course live class'}</p>
                   </div>
-                  <span className="text-4xl">🎥</span>
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-teal-50">
+                    <Video className="h-6 w-6 text-teal-600" />
+                  </div>
                 </div>
 
-                <p className="mb-5 text-gray-600 dark:text-gray-400">{liveClass.description || 'Join this live training class from your enrolled course dashboard.'}</p>
+                <p className="mb-5 text-sm text-slate-500">{liveClass.description || 'Join this live training class from your enrolled course dashboard.'}</p>
 
-                <div className="mb-5 grid gap-3 rounded-2xl bg-gray-50 p-4 text-sm text-gray-700 dark:bg-dark-900 dark:text-gray-300">
+                <div className="mb-5 grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700">
                   <p><strong>Date:</strong> {liveClass.scheduledDate ? new Date(liveClass.scheduledDate).toLocaleString() : 'Coming soon'}</p>
                   <p><strong>Instructor:</strong> {liveClass.instructor || 'Md Shafiqul Islam'}</p>
                   <p><strong>Duration:</strong> {liveClass.duration ? `${liveClass.duration} minutes` : 'Flexible'}</p>
@@ -94,12 +97,12 @@ export default function StudentLiveClassesPage() {
 function statusClass(status?: string) {
   switch (status) {
     case 'live':
-      return 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-200'
+      return 'bg-red-100 text-red-700'
     case 'ended':
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+      return 'bg-slate-100 text-slate-600'
     case 'cancelled':
-      return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-950/40 dark:text-yellow-200'
+      return 'bg-yellow-100 text-yellow-700'
     default:
-      return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-200'
+      return 'bg-emerald-100 text-emerald-700'
   }
 }

@@ -135,7 +135,7 @@ function CourseCard({
   const progress = enrollment?.progress || course.enrollment?.progress || 0
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_16px_rgba(15,23,42,0.07)]">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* 16:9 image */}
       <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-slate-100">
         {course.image ? (
@@ -152,7 +152,7 @@ function CourseCard({
 
       <div className="flex flex-1 flex-col p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary-700">
+          <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-semibold text-teal-700">
             {course.category || 'Course'}
           </span>
           <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
@@ -173,7 +173,7 @@ function CourseCard({
             </div>
             <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
               <div
-                className="h-1.5 rounded-full bg-primary-600 transition-all"
+                className="h-1.5 rounded-full bg-teal-600 transition-all"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -189,8 +189,8 @@ function CourseCard({
 function EmptyCard({ title, description }: { title: string; description: string }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white py-12 text-center">
-      <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary-50">
-        <BookOpen className="h-6 w-6 text-primary-400" />
+      <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-teal-50">
+        <BookOpen className="h-6 w-6 text-teal-500" />
       </div>
       <p className="text-sm font-semibold text-slate-700">{title}</p>
       <p className="mt-1 max-w-xs text-xs text-slate-400">{description}</p>
