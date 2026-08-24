@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import ProjectsSection from '@/components/sections/ProjectsSection'
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import {
   PROJECT_LIST,
   SERVICE_LIST,
@@ -24,13 +24,28 @@ import {
   GraduationCap,
   Layers3,
   MessageCircle,
+  Monitor,
   Rocket,
+  ShieldCheck,
+  Smartphone,
   Star,
+  Target,
   Users,
+  Zap,
 } from 'lucide-react'
 
 // ─── WhatsApp link ────────────────────────────────────────────────────────────
 const WA = 'https://wa.me/8801234567890'
+
+// ─── Why Choose Me icon + accent map (keyed by title) ────────────────────────
+const WHY_ICON_MAP: Record<string, { icon: React.ReactNode; accent: string }> = {
+  'Practical Project Experience': { icon: <Rocket     className="h-5 w-5" />, accent: 'bg-teal-50 text-teal-600'    },
+  'Bangla & English Support':     { icon: <MessageCircle className="h-5 w-5" />, accent: 'bg-sky-50 text-sky-600'   },
+  'Business-Focused Solutions':   { icon: <Target     className="h-5 w-5" />, accent: 'bg-violet-50 text-violet-600' },
+  'After-Delivery Support':       { icon: <ShieldCheck className="h-5 w-5" />, accent: 'bg-emerald-50 text-emerald-600' },
+  'Mobile Responsive Design':     { icon: <Smartphone className="h-5 w-5" />, accent: 'bg-blue-50 text-blue-600'    },
+  'Fast & Clean Code':            { icon: <Zap        className="h-5 w-5" />, accent: 'bg-amber-50 text-amber-600'  },
+}
 
 // ─── Quick Value data ─────────────────────────────────────────────────────────
 const QUICK_VALUE = [
@@ -135,6 +150,16 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Home() {
+  // Guard against browser scroll restoration landing on the Projects section.
+  // Runs before first paint (useLayoutEffect) so there is no visible flash.
+  // Only scrolls to top when the URL has no hash; hash links like /#ready-projects
+  // are allowed to scroll to their target normally.
+  useLayoutEffect(() => {
+    if (!window.location.hash) {
+      window.scrollTo(0, 0)
+    }
+  }, [])
+
   return (
     <div className="overflow-x-hidden">
 
@@ -607,61 +632,81 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           8. WHY WORK WITH ME
       ══════════════════════════════════════════════ */}
-      <section id="why-me" className="bg-white py-20 lg:py-24">
+      <section id="why-me" className="border-y border-slate-100 bg-white py-20 lg:py-24">
         <div className="container-custom">
 
           <div className="mb-10 text-center">
-            <p className="section-kicker">Why Work With Me</p>
-            <h2 className="section-heading mx-auto">What Makes Me Different</h2>
+            <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
+              Why Work With Me
+            </span>
+            <h2 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+              What Makes Me Different
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-500">
+              Every engagement is backed by real project experience, clear communication,
+              and support that lasts beyond delivery.
+            </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {WHY_CHOOSE_ME.map((item) => (
-              <div key={item.title}
-                className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                <div className="mb-3 text-2xl">{item.icon}</div>
-                <h3 className="text-base font-black text-slate-950">{item.title}</h3>
-                <p className="mt-1.5 text-sm leading-6 text-slate-500">{item.description}</p>
-              </div>
-            ))}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {WHY_CHOOSE_ME.map((item) => {
+              const meta = WHY_ICON_MAP[item.title] ?? { icon: <Monitor className="h-5 w-5" />, accent: 'bg-teal-50 text-teal-600' }
+              return (
+                <div key={item.title}
+                  className="rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5 transition hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-md">
+                  <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${meta.accent}`}>
+                    {meta.icon}
+                  </div>
+                  <h3 className="mb-1.5 text-sm font-bold text-slate-900">{item.title}</h3>
+                  <p className="text-xs leading-relaxed text-slate-500">{item.description}</p>
+                </div>
+              )
+            })}
           </div>
 
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════
-          9. TESTIMONIALS — dark section
+          9. TESTIMONIALS
       ══════════════════════════════════════════════ */}
-      <section id="testimonials" className="bg-slate-950 py-20 lg:py-24">
+      <section id="testimonials" className="bg-[#F8FAFC] py-20 lg:py-24">
         <div className="container-custom">
 
-          <div className="mb-12">
-            <p className="mb-3 text-xs font-black uppercase tracking-[0.32em] text-teal-500">Testimonials</p>
-            <h2 className="max-w-2xl text-3xl font-black tracking-tight text-white lg:text-4xl">
+          <div className="mb-10 text-center">
+            <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
+              Testimonials
+            </span>
+            <h2 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
               Trusted by Clients &amp; Students
             </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-500">
+              Feedback from clients and students I&apos;ve worked with across freelance projects
+              and training programs.
+            </p>
           </div>
 
           <div className="grid gap-5 xl:grid-cols-2">
             {TESTIMONIALS_LIST.map((t) => (
               <div key={t.name}
-                className="rounded-[1.75rem] border border-slate-800 bg-slate-900 p-8">
-                <div className="flex gap-1">
+                className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                <div className="mb-4 flex gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className={`h-3.5 w-3.5 text-amber-400 ${i < t.rating ? 'fill-current' : ''}`} />
+                    <Star key={i} className={`h-4 w-4 text-amber-400 ${i < t.rating ? 'fill-current' : 'opacity-30'}`} />
                   ))}
                 </div>
-                <p className="mt-5 text-base leading-8 text-slate-300">&ldquo;{t.content}&rdquo;</p>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-800 text-sm font-black text-teal-400">
+                <p className="text-base leading-8 text-slate-600">&ldquo;{t.content}&rdquo;</p>
+                <div className="mt-6 flex items-center gap-3 border-t border-slate-100 pt-5">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-teal-50 text-sm font-black text-teal-700">
                     {t.image ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
                       <img src={t.image} alt={t.name} className="h-full w-full object-cover" />
                     ) : (
                       t.name.charAt(0)
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-black text-white">{t.name}</p>
+                    <p className="text-sm font-bold text-slate-900">{t.name}</p>
                     <p className="text-xs text-slate-500">{t.role} · {t.company}</p>
                   </div>
                 </div>
@@ -706,36 +751,39 @@ export default function Home() {
           11. FINAL CTA
       ══════════════════════════════════════════════ */}
       <section className="container-custom pb-20 lg:pb-24">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 shadow-[0_30px_80px_rgba(15,23,42,0.25)]">
-          {/* Decorative glow */}
-          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-10 left-10 h-48 w-48 rounded-full bg-teal-700/10 blur-2xl" />
-
-          <div className="relative z-10 flex flex-col gap-8 p-8 lg:flex-row lg:items-center lg:justify-between lg:p-14">
-            <div className="max-w-2xl">
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.35em] text-teal-500">Ready to start?</p>
-              <h2 className="text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">
-                Have a project idea<br />or want a ready solution?
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-slate-400">
-                Send an enquiry, request a demo, or message me on WhatsApp. I respond within 24 hours.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 lg:min-w-[220px]">
-              <Link href="/order-project"
-                className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-black text-slate-950 transition hover:bg-slate-100">
-                Send Project Enquiry <ArrowUpRight className="ml-2 h-4 w-4" />
-              </Link>
-              <a href={WA} target="_blank" rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-green-600 px-7 py-3.5 text-sm font-black text-white transition hover:bg-green-500">
-                <WaIcon /> WhatsApp Me
-              </a>
-              <Link href="/courses"
-                className="inline-flex items-center justify-center rounded-full border border-white/15 px-7 py-3.5 text-sm font-black text-white/80 transition hover:bg-white/8 hover:text-white">
-                <BookOpen className="mr-2 h-4 w-4" /> Join a Course
-              </Link>
-            </div>
+        <div className="rounded-2xl bg-teal-600 px-8 py-14 text-center shadow-sm">
+          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
+            Ready to Start?
+          </p>
+          <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
+            Have a project idea or want<br className="hidden sm:block" />
+            a ready solution?
+          </h2>
+          <p className="mx-auto mb-8 max-w-lg text-base text-teal-100">
+            Send an enquiry, request a demo, or message me on WhatsApp.
+            I respond within 24 hours.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href="/order-project"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-teal-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              Send Project Enquiry <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <a
+              href={WA}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-green-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-green-400"
+            >
+              <WaIcon /> WhatsApp Me
+            </a>
+            <Link
+              href="/courses"
+              className="inline-flex items-center gap-2 rounded-full border border-teal-400 px-6 py-3 text-sm font-bold text-white transition hover:bg-teal-500"
+            >
+              <BookOpen className="h-4 w-4" /> Join a Course
+            </Link>
           </div>
         </div>
       </section>

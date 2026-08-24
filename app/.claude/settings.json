@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+
+      "Read(./node_modules/**)",
+      "Read(./.next/**)",
+      "Read(./out/**)",
+      "Read(./dist/**)",
+      "Read(./build/**)",
+      "Read(./coverage/**)",
+      "Read(./.turbo/**)",
+      "Read(./.vercel/**)",
+
+      "Read(./package-lock.json)",
+      "Read(./yarn.lock)",
+      "Read(./pnpm-lock.yaml)",
+      "Read(./bun.lockb)",
+
+      "Read(./public/uploads/**)",
+      "Read(./public/storage/**)",
+      "Read(./storage/**)",
+
+      "Read(./*.zip)",
+      "Read(./*.rar)",
+      "Read(./*.7z)",
+      "Read(./*.tar)",
+      "Read(./*.gz)",
+
+      "Read(./**/*.zip)",
+      "Read(./**/*.rar)",
+      "Read(./**/*.7z)",
+      "Read(./**/*.tar)",
+      "Read(./**/*.gz)",
+
+      "Read(./**/*.png)",
+      "Read(./**/*.jpg)",
+      "Read(./**/*.jpeg)",
+      "Read(./**/*.gif)",
+      "Read(./**/*.webp)",
+      "Read(./**/*.mp4)",
+      "Read(./**/*.mov)",
+      "Read(./**/*.avi)",
+      "Read(./**/*.pdf)",
+
+      "Read(./logs/**)",
+      "Read(./tmp/**)",
+      "Read(./temp/**)",
+      "Read(./cache/**)",
+
+      "Read(./.git/**)"
+    ]
+  }
+}

@@ -1,89 +1,120 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { ArrowRight, Menu, X } from 'lucide-react'
+import { ArrowRight, LayoutDashboard, Menu, X } from 'lucide-react'
+
+const NAV_LINKS = [
+  { label: 'Home',     href: '/'         },
+  { label: 'About',    href: '/about'    },
+  { label: 'Services', href: '/services' },
+  { label: 'Projects', href: '/projects' },
+  { label: 'Courses',  href: '/courses'  },
+  { label: 'Blog',     href: '/blog'     },
+  { label: 'Contact',  href: '/contact'  },
+]
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
 
-  const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Projects', href: '/#ready-projects' },
-    { label: 'Services', href: '/#services' },
-    { label: 'Courses', href: '/courses' },
-    { label: 'Training', href: '/#training' },
-    { label: 'Contact', href: '/contact' },
-  ]
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname.startsWith(href)
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur-xl">
       <div className="container-custom">
-        <div className="flex h-20 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-500 text-lg font-black text-white shadow-[0_10px_25px_rgba(13,148,136,0.28)]">
+        <div className="flex h-16 items-center justify-between gap-4">
+
+          {/* Logo */}
+          <Link href="/" className="flex flex-shrink-0 items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-teal-500 text-sm font-black text-white shadow-sm">
               SI
             </div>
-            <div>
-              <p className="text-lg font-black tracking-tight text-slate-900">Shafiqul</p>
-              <p className="text-xs font-medium uppercase tracking-[0.25em] text-slate-500">Portfolio & LMS</p>
+            <div className="hidden sm:block">
+              <p className="text-base font-black tracking-tight text-slate-900 leading-none">Shafiqul</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mt-0.5">Portfolio &amp; LMS</p>
             </div>
           </Link>
 
-          <div className="hidden items-center gap-8 lg:flex">
-            {navLinks.map((link) => (
+          {/* Desktop nav links */}
+          <div className="hidden items-center gap-1 lg:flex">
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-semibold text-slate-600 transition hover:text-teal-600"
+                className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                  isActive(link.href)
+                    ? 'bg-teal-50 text-teal-700'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                }`}
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          <div className="hidden items-center gap-3 lg:flex">
-            <Link href="/dashboard" className="btn-secondary px-5 py-2.5">
+          {/* Desktop CTAs */}
+          <div className="hidden items-center gap-2.5 lg:flex">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900"
+            >
+              <LayoutDashboard className="h-3.5 w-3.5" />
               Dashboard
             </Link>
-            <Link href="/contact" className="btn-primary px-5 py-2.5">
-              Hire Me
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Link href="/contact" className="btn-primary px-5 py-2.5 text-sm">
+              Hire Me <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Link>
           </div>
 
+          {/* Mobile hamburger */}
           <button
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm lg:hidden"
+            onClick={() => setIsOpen((v) => !v)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 lg:hidden"
             aria-label="Toggle menu"
+            aria-expanded={isOpen}
           >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
 
+        {/* Mobile menu */}
         {isOpen && (
-          <div className="pb-5 lg:hidden">
-            <div className="surface-card overflow-hidden rounded-[1.75rem] p-3">
-              <div className="flex flex-col gap-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-teal-600"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="mt-2 grid gap-2 px-2 pb-2 sm:grid-cols-2">
-                  <Link href="/dashboard" className="btn-secondary w-full" onClick={() => setIsOpen(false)}>
-                    Dashboard
-                  </Link>
-                  <Link href="/contact" className="btn-primary w-full" onClick={() => setIsOpen(false)}>
-                    Hire Me
-                  </Link>
-                </div>
-              </div>
+          <div className="border-t border-slate-100 pb-4 pt-3 lg:hidden">
+            <div className="flex flex-col gap-0.5">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                    isActive(link.href)
+                      ? 'bg-teal-50 text-teal-700'
+                      : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
+              <Link
+                href="/dashboard"
+                onClick={() => setIsOpen(false)}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+              >
+                <LayoutDashboard className="h-3.5 w-3.5" />
+                Dashboard
+              </Link>
+              <Link
+                href="/contact"
+                onClick={() => setIsOpen(false)}
+                className="btn-primary w-full py-2.5 text-sm"
+              >
+                Hire Me
+              </Link>
             </div>
           </div>
         )}

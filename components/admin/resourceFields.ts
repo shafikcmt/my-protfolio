@@ -110,15 +110,17 @@ export const liveClassFields: AdminFieldConfig[] = [
 ]
 
 export const blogFields: AdminFieldConfig[] = [
-  { name: 'title', label: 'Blog Title', type: 'text', required: true },
-  { name: 'slug', label: 'Slug', type: 'text', required: true },
-  { name: 'excerpt', label: 'Excerpt', type: 'textarea', rows: 3 },
-  { name: 'content', label: 'Content', type: 'textarea', required: true, rows: 10 },
-  { name: 'image', label: 'Featured Image URL', type: 'url' },
+  { name: 'title', label: 'Blog Title', type: 'text', required: true, placeholder: 'How to Build a Laravel LMS from Scratch' },
+  { name: 'slug', label: 'Slug', type: 'text', required: true, helpText: 'URL-friendly identifier. Auto-fill from title if left empty.' },
+  { name: 'category', label: 'Category', type: 'text', placeholder: 'Laravel, Next.js, Tutorial, Case Study…' },
+  { name: 'excerpt', label: 'Excerpt / Summary', type: 'textarea', rows: 3, helpText: 'Short description shown on the blog listing page.' },
+  { name: 'content', label: 'Content (HTML)', type: 'textarea', required: true, rows: 14, helpText: 'Paste HTML content or write plain text.' },
+  { name: 'image', label: 'Featured Image URL', type: 'url', helpText: 'Optional. If left empty, a gradient placeholder is shown.' },
   { name: 'author', label: 'Author', type: 'text', placeholder: 'Md Shafiqul Islam' },
-  { name: 'category', label: 'Category', type: 'text' },
-  { name: 'tags', label: 'Tags', type: 'array' },
-  { name: 'published', label: 'Published', type: 'checkbox', placeholder: 'Show this blog publicly' },
+  { name: 'tags', label: 'Tags', type: 'array', helpText: 'Example: laravel, tutorial, api' },
+  { name: 'published', label: 'Published', type: 'checkbox', placeholder: 'Show this blog publicly on the website' },
+  { name: 'seoTitle', label: 'SEO Title (optional)', type: 'text', helpText: 'Overrides the page <title> tag for search engines.' },
+  { name: 'seoDescription', label: 'SEO Description (optional)', type: 'textarea', rows: 2, helpText: 'Meta description for search engine results. Keep under 160 characters.' },
 ]
 
 export const testimonialFields: AdminFieldConfig[] = [
@@ -181,16 +183,36 @@ export const certificateFields: AdminFieldConfig[] = [
 
 export const contactMessageFields: AdminFieldConfig[] = [
   { name: 'name', label: 'Name', type: 'text', required: true },
-  { name: 'email', label: 'Email', type: 'email', required: true },
-  { name: 'phone', label: 'Phone', type: 'text' },
+  { name: 'email', label: 'Email', type: 'email' },
+  { name: 'phone', label: 'Phone / WhatsApp', type: 'text' },
+  { name: 'inquiryType', label: 'Inquiry Type', type: 'select', options: [
+    { label: 'Hire Me', value: 'hire_me' },
+    { label: 'Project Inquiry', value: 'project_inquiry' },
+    { label: 'Course / Training', value: 'course_training' },
+    { label: 'Consultation', value: 'consultation' },
+    { label: 'Support', value: 'support' },
+    { label: 'Other', value: 'other' },
+  ] },
+  { name: 'serviceNeeded', label: 'Service Needed', type: 'text' },
+  { name: 'budget', label: 'Budget Range', type: 'text' },
+  { name: 'timeline', label: 'Timeline', type: 'text' },
   { name: 'subject', label: 'Subject', type: 'text', required: true },
-  { name: 'message', label: 'Message', type: 'textarea', required: true, rows: 6 },
+  { name: 'message', label: 'Message / Project Details', type: 'textarea', required: true, rows: 6 },
+  { name: 'preferredContact', label: 'Preferred Contact', type: 'select', options: [
+    { label: 'Email', value: 'email' },
+    { label: 'Phone', value: 'phone' },
+    { label: 'WhatsApp', value: 'whatsapp' },
+  ] },
   { name: 'status', label: 'Status', type: 'select', options: [
     { label: 'New', value: 'new' },
     { label: 'Read', value: 'read' },
     { label: 'Replied', value: 'replied' },
+    { label: 'In Progress', value: 'in_progress' },
+    { label: 'Converted', value: 'converted' },
+    { label: 'Closed', value: 'closed' },
     { label: 'Archived', value: 'archived' },
   ] },
+  { name: 'adminNote', label: 'Admin Note (Internal)', type: 'textarea', rows: 3, helpText: 'Visible to admins only. Not shown to the sender.' },
 ]
 
 export const enrollmentFields: AdminFieldConfig[] = [

@@ -25,6 +25,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="bg-slate-50 text-slate-900">
+        {/* Run before React hydration: disable browser scroll restoration so reloading
+            localhost:3000 does not spring back to the last saved scroll position */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }`,
+          }}
+        />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

@@ -126,9 +126,9 @@ function ScreenshotGallery({ screenshots }: { screenshots: string[] }) {
     <>
       <section className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)] sm:p-8">
         <h2 className="mb-5 flex items-center gap-2 text-lg font-bold text-slate-900">
-          <Camera className="h-5 w-5 text-primary-500" />
+          <Camera className="h-5 w-5 text-teal-500" />
           Course Screenshots
-          <span className="ml-1 rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary-600">
+          <span className="ml-1 rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-semibold text-teal-600">
             {screenshots.length}
           </span>
         </h2>
@@ -138,7 +138,7 @@ function ScreenshotGallery({ screenshots }: { screenshots: string[] }) {
             <button
               key={i}
               onClick={() => setLightboxIndex(i)}
-              className="group relative aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-100 transition hover:border-primary-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+              className="group relative aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-100 transition hover:border-teal-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-teal-400"
               aria-label={`View screenshot ${i + 1}`}
             >
               <div
@@ -271,12 +271,13 @@ export default function CourseDetailPage({ params }: { params: { slug: string } 
   ]
 
   return (
+    <div className="min-h-screen bg-[#F8FAFC]">
     <div className="container-custom py-12 lg:py-20">
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-1.5 text-sm text-slate-500">
-        <Link href="/" className="transition hover:text-primary-600">Home</Link>
+        <Link href="/" className="transition hover:text-teal-600">Home</Link>
         <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-        <Link href="/courses" className="transition hover:text-primary-600">Courses</Link>
+        <Link href="/courses" className="transition hover:text-teal-600">Courses</Link>
         <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
         <span className="max-w-[200px] truncate font-medium text-slate-700 sm:max-w-none">
           {course.title}
@@ -286,7 +287,7 @@ export default function CourseDetailPage({ params }: { params: { slug: string } 
       {/* Page header */}
       <div className="mb-10">
         {course.category && (
-          <span className="mb-3 inline-flex rounded-full bg-primary-50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-primary-600">
+          <span className="mb-3 inline-flex rounded-full bg-teal-50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-teal-700">
             {course.category}
           </span>
         )}
@@ -335,14 +336,14 @@ export default function CourseDetailPage({ params }: { params: { slug: string } 
 
             <section className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)]">
               <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-900">
-                <Layers className="h-4 w-4 text-primary-500" />
+                <Layers className="h-4 w-4 text-teal-500" />
                 Requirements
               </h3>
               <ul className="space-y-2.5">
                 {(course.requirements?.length ? course.requirements : defaultRequirements).map(
                   (item: string, i: number) => (
                     <li key={i} className="flex items-start gap-2.5">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-400" />
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
                       <span className="text-sm leading-6 text-slate-600">{item}</span>
                     </li>
                   )
@@ -354,10 +355,10 @@ export default function CourseDetailPage({ params }: { params: { slug: string } 
           {/* Curriculum */}
           <section className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)] sm:p-8">
             <h2 className="mb-5 flex items-center gap-2 text-lg font-bold text-slate-900">
-              <BookOpen className="h-5 w-5 text-primary-500" />
+              <BookOpen className="h-5 w-5 text-teal-500" />
               Course Curriculum
               {lessons.length > 0 && (
-                <span className="ml-1 rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary-600">
+                <span className="ml-1 rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-semibold text-teal-600">
                   {lessons.length} lessons
                 </span>
               )}
@@ -370,7 +371,7 @@ export default function CourseDetailPage({ params }: { params: { slug: string } 
                   return (
                     <div
                       key={lesson._id || lesson.title}
-                      className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 transition hover:border-primary-200 hover:bg-primary-50/30"
+                      className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 transition hover:border-teal-200 hover:bg-teal-50/30"
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600">
@@ -471,6 +472,7 @@ export default function CourseDetailPage({ params }: { params: { slug: string } 
         </aside>
       </div>
     </div>
+    </div>
   )
 }
 
@@ -478,7 +480,7 @@ function MetaRow({ icon, label, value }: { icon: React.ReactNode; label: string;
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-2 text-slate-500">
-        <span className="text-primary-500">{icon}</span>
+        <span className="text-teal-500">{icon}</span>
         <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
       </div>
       <span className="text-right text-sm font-semibold capitalize text-slate-700">{value}</span>

@@ -12,23 +12,41 @@ interface ExperienceTimelineProps {
 
 export default function ExperienceTimeline({ items }: ExperienceTimelineProps) {
   return (
-    <div className="space-y-6">
-      {items.map((item) => (
-        <div key={item.company} className="glass-card border-slate-700/70">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-primary-300">{item.period}</p>
-              <h3 className="text-xl font-semibold text-white mt-2">{item.role}</h3>
-              <p className="text-sm text-slate-400">{item.company}</p>
+    <div className="relative space-y-6">
+      {/* Vertical line */}
+      <div className="absolute left-5 top-0 hidden h-full w-px bg-slate-200 sm:block" />
+
+      {items.map((item, idx) => (
+        <div key={item.company} className="relative flex gap-5 sm:gap-7">
+          {/* Timeline dot */}
+          <div className="relative z-10 hidden flex-shrink-0 sm:block">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-teal-200 bg-teal-50 text-xs font-bold text-teal-700">
+              {String(idx + 1).padStart(2, '0')}
             </div>
           </div>
-          <p className="mt-4 text-slate-300 leading-7">{item.description}</p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {item.tags.map((tag) => (
-              <span key={tag} className="rounded-full bg-slate-900/80 px-3 py-1 text-sm text-slate-200">
-                {tag}
-              </span>
-            ))}
+
+          {/* Card */}
+          <div className="flex-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md">
+            <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-teal-600">
+                  {item.period}
+                </span>
+                <h3 className="mt-1 text-lg font-bold text-slate-900">{item.role}</h3>
+                <p className="text-sm font-medium text-slate-500">{item.company}</p>
+              </div>
+            </div>
+            <p className="mb-4 text-sm leading-relaxed text-slate-600">{item.description}</p>
+            <div className="flex flex-wrap gap-2">
+              {item.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       ))}

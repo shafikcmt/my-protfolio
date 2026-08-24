@@ -182,10 +182,11 @@ export const adminResourceConfigs: Record<string, AdminResourceConfig> = {
     columns: [
       { key: 'title', label: 'Title' },
       { key: 'category', label: 'Category' },
-      { key: 'published', label: 'Published', type: 'boolean' },
+      { key: 'published', label: 'Status', type: 'boolean' },
       { key: 'views', label: 'Views' },
-      { key: 'createdAt', label: 'Created', type: 'date' },
+      { key: 'createdAt', label: 'Date', type: 'date' },
     ],
+    addLabel: 'New Post',
   },
   users: {
     resource: 'users',
@@ -221,7 +222,7 @@ export const adminResourceConfigs: Record<string, AdminResourceConfig> = {
   },
   'contact-messages': {
     resource: 'contact-messages',
-    title: 'Contact Messages',
+    title: 'Contact Inquiries',
     singular: 'Contact Message',
     apiPath: buildApiPath('contact-messages'),
     listPath: buildPath('contact-messages'),
@@ -229,11 +230,14 @@ export const adminResourceConfigs: Record<string, AdminResourceConfig> = {
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'email', label: 'Email', type: 'email' },
+      { key: 'phone', label: 'Phone' },
+      { key: 'inquiryType', label: 'Type', type: 'badge' },
+      { key: 'serviceNeeded', label: 'Service' },
       { key: 'subject', label: 'Subject' },
       { key: 'status', label: 'Status', type: 'badge' },
       { key: 'createdAt', label: 'Received', type: 'date' },
     ],
-    addLabel: 'Add Message',
+    addLabel: 'Add Inquiry',
   },
 }
 

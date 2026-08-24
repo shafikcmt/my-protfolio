@@ -71,49 +71,49 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 
 function BannerPlaceholder({ tags }: { tags?: string[] }) {
   return (
-    <div className="flex h-full w-full flex-col bg-gradient-to-br from-slate-900 via-[#0d1525] to-slate-900">
-      <div className="flex items-center gap-2 border-b border-slate-700/50 bg-slate-800/90 px-4 py-2.5">
+    <div className="flex h-full w-full flex-col bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="flex items-center gap-2 border-b border-slate-200 bg-white px-4 py-2.5">
         <div className="flex gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
         </div>
-        <div className="mx-2 flex flex-1 items-center gap-1.5 rounded bg-slate-700/50 px-2 py-1">
-          <span className="h-1.5 w-1.5 rounded-full bg-teal-500/60" />
-          <span className="text-[10px] text-slate-500">localhost:3000/dashboard</span>
+        <div className="mx-2 flex flex-1 items-center gap-1.5 rounded bg-slate-100 px-2 py-1">
+          <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
+          <span className="text-[10px] text-slate-400">localhost:3000/dashboard</span>
         </div>
       </div>
       <div className="flex flex-1 gap-3 p-4">
         <div className="flex w-14 flex-col gap-2">
-          <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-teal-500/70 to-teal-700/70" />
+          <div className="h-6 w-6 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600" />
           {[true, false, false, false, false].map((a, i) => (
-            <div key={i} className={`h-2 rounded ${a ? 'bg-teal-700/50' : 'bg-slate-700/40'}`} />
+            <div key={i} className={`h-2 rounded ${a ? 'bg-teal-200' : 'bg-slate-200'}`} />
           ))}
         </div>
         <div className="flex-1 space-y-2.5">
           <div className="grid grid-cols-3 gap-2">
             {[0, 1, 2].map((i) => (
-              <div key={i} className={`rounded-xl p-2.5 ${i === 0 ? 'bg-teal-900/40' : 'bg-slate-800/70'}`}>
-                <div className="h-1.5 w-full rounded bg-slate-600/60" />
-                <div className="mt-1.5 h-4 w-2/3 rounded bg-slate-500/30" />
+              <div key={i} className={`rounded-xl p-2.5 ${i === 0 ? 'bg-teal-50 border border-teal-100' : 'bg-white border border-slate-200'}`}>
+                <div className="h-1.5 w-full rounded bg-slate-200" />
+                <div className="mt-1.5 h-4 w-2/3 rounded bg-slate-100" />
               </div>
             ))}
           </div>
           <div className="space-y-1.5">
             {[true, false, false, false].map((a, i) => (
-              <div key={i} className="flex items-center gap-2 rounded-lg bg-slate-800/60 p-2">
-                <div className={`h-3 w-3 rounded ${a ? 'bg-teal-600/70' : 'bg-slate-700/60'}`} />
-                <div className="h-2 flex-1 rounded bg-slate-600/50" />
-                <div className={`h-3 w-8 rounded-full ${a ? 'bg-green-800/50' : 'bg-slate-700/40'}`} />
+              <div key={i} className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white p-2">
+                <div className={`h-3 w-3 rounded ${a ? 'bg-teal-400' : 'bg-slate-200'}`} />
+                <div className="h-2 flex-1 rounded bg-slate-100" />
+                <div className={`h-3 w-8 rounded-full ${a ? 'bg-emerald-100' : 'bg-slate-100'}`} />
               </div>
             ))}
           </div>
         </div>
       </div>
       {tags && tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 border-t border-slate-800/60 px-4 py-2.5">
+        <div className="flex flex-wrap gap-1.5 border-t border-slate-200 bg-white/80 px-4 py-2.5">
           {tags.slice(0, 4).map((t) => (
-            <span key={t} className="rounded-full bg-teal-900/50 px-2 py-0.5 text-[10px] font-bold text-teal-400">
+            <span key={t} className="rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-700 ring-1 ring-teal-100">
               {t}
             </span>
           ))}
@@ -288,7 +288,7 @@ export default function ProjectDetailPage() {
   const demoEnquiryHref = `/order-project?project=${encodeURIComponent(project.title)}&type=demo`
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#F8FAFC]">
       <div className="container-custom py-10 lg:py-16">
 
         {/* Breadcrumb */}
@@ -315,7 +315,7 @@ export default function ProjectDetailPage() {
               </span>
             )}
             {project.category && (
-              <span className="inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700">
+              <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-700">
                 {project.category}
               </span>
             )}

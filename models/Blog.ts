@@ -28,6 +28,8 @@ const BlogSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    seoTitle: String,
+    seoDescription: String,
   },
   {
     timestamps: true,
