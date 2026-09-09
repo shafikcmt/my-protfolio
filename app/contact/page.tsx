@@ -19,6 +19,7 @@ import {
   Users,
 } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
+import { Reveal } from '@/components/motion/Reveal'
 
 // ─── Options ──────────────────────────────────────────────────────────────────
 
@@ -187,7 +188,7 @@ export default function ContactPage() {
       ═══════════════════════════════════════ */}
       <section className="border-b border-slate-100 bg-white">
         <div className="container-custom py-16 lg:py-20">
-          <div className="mx-auto max-w-3xl text-center">
+          <Reveal variant="blur-rise" className="mx-auto max-w-3xl text-center">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-teal-700">
               <BadgeCheck className="h-3.5 w-3.5" /> Contact &amp; Hire Me
             </span>
@@ -199,10 +200,10 @@ export default function ContactPage() {
               Have a project idea, need a developer, or want to explore training? Fill in the
               form below and I&apos;ll get back to you within 24 hours.
             </p>
-          </div>
+          </Reveal>
 
           {/* Trust bar */}
-          <div className="mt-2 flex flex-wrap justify-center gap-x-8 gap-y-3">
+          <Reveal variant="fade" delay={0.15} className="mt-2 flex flex-wrap justify-center gap-x-8 gap-y-3">
             {[
               { icon: <Briefcase className="h-4 w-4" />, label: '100+ Projects Delivered' },
               { icon: <Users     className="h-4 w-4" />, label: '50+ Happy Clients'        },
@@ -217,7 +218,7 @@ export default function ContactPage() {
                 {item.label}
               </span>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -228,7 +229,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
 
           {/* ── LEFT: Contact info ── */}
-          <aside className="lg:col-span-2 space-y-5">
+          <Reveal variant="slide-right" as="div" className="lg:col-span-2 space-y-5">
 
             {/* Availability card */}
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -344,10 +345,10 @@ export default function ContactPage() {
                 ))}
               </ol>
             </div>
-          </aside>
+          </Reveal>
 
           {/* ── RIGHT: Contact form ── */}
-          <div className="lg:col-span-3">
+          <Reveal variant="slide-left" as="div" className="lg:col-span-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
               <h2 className="mb-1 text-xl font-bold text-slate-900">Send Your Inquiry</h2>
               <p className="mb-6 text-sm text-slate-500">
@@ -529,7 +530,7 @@ export default function ContactPage() {
                 </p>
               </form>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -537,18 +538,20 @@ export default function ContactPage() {
           CTA
       ═══════════════════════════════════════ */}
       <section className="container-custom pb-20">
-        <div className="rounded-2xl bg-teal-600 px-8 py-14 text-center shadow-sm">
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
+        <Reveal variant="scale" duration={0.7} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 px-8 py-14 text-center glow-pulse">
+          <span className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
+          <span className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-teal-300/20 blur-3xl" />
+          <p className="relative mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
             Not Sure Where to Start?
           </p>
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h2 className="relative mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
             Book a Free Consultation
           </h2>
-          <p className="mx-auto mb-8 max-w-lg text-base text-teal-100">
+          <p className="relative mx-auto mb-8 max-w-lg text-base text-teal-100">
             Not sure what you need? Let&apos;s talk for 30 minutes — I&apos;ll help you map out
             the right approach for your project, no obligation.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="relative flex flex-wrap justify-center gap-3">
             <Link
               href="/book-consultation"
               className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-teal-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
@@ -564,7 +567,7 @@ export default function ContactPage() {
               <MessageCircle className="h-4 w-4" /> WhatsApp Me
             </a>
           </div>
-        </div>
+        </Reveal>
       </section>
 
     </div>

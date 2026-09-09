@@ -10,6 +10,9 @@ coverage/
 .next/
 out/
 
+# TypeScript build cache (auto-generated)
+tsconfig.tsbuildinfo
+
 # Production
 build/
 dist/

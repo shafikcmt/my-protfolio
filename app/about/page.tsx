@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import SkillCard from '@/components/SkillCard'
 import ExperienceTimeline from '@/components/ExperienceTimeline'
+import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import {
   ABOUT_COUNTERS,
   ABOUT_SUMMARY,
@@ -104,7 +105,7 @@ export default function AboutPage() {
           <div className="grid items-center gap-10 lg:grid-cols-2">
 
             {/* Left: text */}
-            <div>
+            <Reveal variant="slide-right" duration={0.75}>
               <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-teal-700">
                 <BadgeCheck className="h-3.5 w-3.5" /> About Me
               </span>
@@ -148,10 +149,10 @@ export default function AboutPage() {
                   &lt;24h response
                 </span>
               </div>
-            </div>
+            </Reveal>
 
             {/* Right: quick info card */}
-            <div className="rounded-2xl border border-slate-200 bg-[#F8FAFC] p-6 shadow-sm">
+            <Reveal variant="slide-left" duration={0.75} className="rounded-2xl border border-slate-200 bg-[#F8FAFC] p-6 shadow-sm">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 text-2xl font-black text-white">
                   S
@@ -187,7 +188,7 @@ export default function AboutPage() {
                   <ArrowRight className="h-3.5 w-3.5" />
                 </a>
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -197,17 +198,19 @@ export default function AboutPage() {
       ═══════════════════════════════════════════════════════════ */}
       <section className="border-b border-slate-100 bg-[#F8FAFC] py-8">
         <div className="container-custom">
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <Stagger className="grid grid-cols-2 gap-4 lg:grid-cols-4" stagger={0.08} amount={0.5}>
             {ABOUT_COUNTERS.map((item) => (
-              <div
+              <StaggerItem
                 key={item.label}
-                className="rounded-2xl border border-slate-200 bg-white px-6 py-5 text-center shadow-sm"
+                as="div"
+                variant="scale"
+                className="group rounded-2xl border border-slate-200 bg-white px-6 py-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-md"
               >
-                <p className="text-3xl font-black text-teal-600">{item.value}</p>
+                <p className="text-3xl font-black text-teal-600 transition-transform duration-300 group-hover:scale-110">{item.value}</p>
                 <p className="mt-1 text-sm text-slate-500">{item.label}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -215,18 +218,18 @@ export default function AboutPage() {
           3. WHO I AM — DETAILS
       ═══════════════════════════════════════════════════════════ */}
       <section className="container-custom py-16 lg:py-20">
-        <div className="mb-10">
+        <Reveal variant="rise" className="mb-10">
           <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
             My Story
           </span>
           <h2 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
             Who I Am &amp; What I Do
           </h2>
-        </div>
+        </Reveal>
 
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Left: bio text */}
-          <div className="space-y-5">
+          <Reveal variant="slide-right" className="space-y-5">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <h3 className="mb-3 text-base font-bold text-slate-900">My Background</h3>
               <p className="text-sm leading-relaxed text-slate-600">
@@ -260,10 +263,10 @@ export default function AboutPage() {
                 ))}
               </ul>
             </div>
-          </div>
+          </Reveal>
 
           {/* Right: education */}
-          <div className="space-y-5">
+          <Reveal variant="slide-left" className="space-y-5">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-center gap-2.5">
                 <GraduationCap className="h-5 w-5 text-teal-600" />
@@ -302,7 +305,7 @@ export default function AboutPage() {
                 Explore Training Programs <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -323,16 +326,17 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.09}>
             {SKILL_SECTIONS.map((section) => (
-              <SkillCard
-                key={section.category}
-                category={section.category}
-                items={section.items}
-                icon={SKILL_ICONS[section.category]}
-              />
+              <StaggerItem key={section.category} as="div" variant="rise">
+                <SkillCard
+                  category={section.category}
+                  items={section.items}
+                  icon={SKILL_ICONS[section.category]}
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -371,22 +375,24 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
             {ABOUT_SERVICES.map((svc) => (
-              <div
+              <StaggerItem
                 key={svc.title}
-                className="group rounded-2xl border border-slate-200 bg-[#F8FAFC] p-6 transition hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-md"
+                as="div"
+                variant="scale"
+                className="group rounded-2xl border border-slate-200 bg-[#F8FAFC] p-6 transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-teal-200 hover:shadow-md"
               >
-                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${svc.accent}`}>
+                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105 ${svc.accent}`}>
                   {svc.icon}
                 </div>
                 <h3 className="mb-2 text-base font-bold text-slate-900 group-hover:text-teal-700 transition-colors">
                   {svc.title}
                 </h3>
                 <p className="text-sm leading-relaxed text-slate-500">{svc.description}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
 
           <div className="mt-8 text-center">
             <Link
@@ -415,9 +421,9 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5" stagger={0.1}>
           {WORK_PROCESS.map((step, idx) => (
-            <div key={step.step} className="relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <StaggerItem key={step.step} as="div" variant="rise" className="group relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-md">
               {/* Connector arrow on large screens */}
               {idx < WORK_PROCESS.length - 1 && (
                 <div className="absolute -right-2 top-1/2 z-10 hidden -translate-y-1/2 xl:block">
@@ -426,12 +432,12 @@ export default function AboutPage() {
                   </div>
                 </div>
               )}
-              <span className="mb-3 block text-2xl font-black text-teal-100">{step.step}</span>
+              <span className="mb-3 block text-2xl font-black text-teal-100 transition-colors duration-300 group-hover:text-teal-300">{step.step}</span>
               <h3 className="mb-2 text-sm font-bold text-slate-900">{step.title}</h3>
               <p className="text-xs leading-relaxed text-slate-500">{step.description}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════
@@ -452,7 +458,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <Stagger className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
             {[
               {
                 icon: <Zap          className="h-5 w-5" />,
@@ -479,15 +485,15 @@ export default function AboutPage() {
                 accent: 'bg-sky-50 text-sky-600',
               },
             ].map((item) => (
-              <div key={item.title} className="rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5">
-                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${item.accent}`}>
+              <StaggerItem key={item.title} as="div" variant="rise" className="group rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-md">
+                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105 ${item.accent}`}>
                   {item.icon}
                 </div>
                 <h3 className="mb-1.5 text-sm font-bold text-slate-900">{item.title}</h3>
                 <p className="text-xs leading-relaxed text-slate-500">{item.body}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -495,19 +501,21 @@ export default function AboutPage() {
           9. CTA SECTION
       ═══════════════════════════════════════════════════════════ */}
       <section className="container-custom py-16 lg:py-20">
-        <div className="rounded-2xl bg-teal-600 px-8 py-14 text-center shadow-sm">
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
+        <Reveal variant="scale" duration={0.7} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 px-8 py-14 text-center glow-pulse">
+          <span className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
+          <span className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-teal-300/20 blur-3xl" />
+          <p className="relative mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
             Ready to Start?
           </p>
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h2 className="relative mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
             Need a clean, fast &amp; user-friendly<br className="hidden sm:block" />
             web solution?
           </h2>
-          <p className="mx-auto mb-8 max-w-xl text-base text-teal-100">
+          <p className="relative mx-auto mb-8 max-w-xl text-base text-teal-100">
             Whether you need a new project built, a ready solution customized, or a development
             course — let&apos;s connect and make it happen.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="relative flex flex-wrap justify-center gap-3">
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-teal-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
@@ -521,7 +529,7 @@ export default function AboutPage() {
               Browse Projects
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
     </div>

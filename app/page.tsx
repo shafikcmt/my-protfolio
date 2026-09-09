@@ -2,7 +2,10 @@
 
 import Link from 'next/link'
 import ProjectsSection from '@/components/sections/ProjectsSection'
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
+import { useGsap } from '@/components/motion/useGsap'
 import {
   PROJECT_LIST,
   SERVICE_LIST,
@@ -130,20 +133,37 @@ function ProjectMockup({ technologies }: { technologies?: string[] }) {
 function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div
+      className={`overflow-hidden rounded-2xl border bg-white transition-colors duration-300 ${
+        open ? 'border-teal-200 shadow-[0_10px_30px_rgba(15,118,110,0.08)]' : 'border-slate-200'
+      }`}
+    >
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left"
         aria-expanded={open}
       >
         <span className="text-sm font-bold text-slate-900">{question}</span>
-        <ChevronDown className={`h-4 w-4 flex-shrink-0 text-teal-600 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          className={`h-4 w-4 flex-shrink-0 text-teal-600 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+        />
       </button>
-      {open && (
-        <div className="border-t border-slate-100 px-6 pb-5 pt-4">
-          <p className="text-sm leading-7 text-slate-600">{answer}</p>
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="content"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-slate-100 px-6 pb-5 pt-4">
+              <p className="text-sm leading-7 text-slate-600">{answer}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -160,8 +180,84 @@ export default function Home() {
     }
   }, [])
 
+  const pageRef = useRef<HTMLDivElement>(null)
+
+  // ── Hero entrance timeline + magnetic CTA + scrubbed process connector ──
+  useGsap(pageRef, (gsap) => {
+    // 1. Hero: sequenced entrance (transform/opacity only → GPU-friendly)
+    gsap.set('[data-hero-el]', { opacity: 0, y: 26 })
+    gsap.set('[data-hero-line]', { yPercent: 110 })
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    tl.to('[data-hero-el="badge"]', { opacity: 1, y: 0, duration: 0.5 })
+      .to('[data-hero-line]', { yPercent: 0, duration: 0.85, stagger: 0.12 }, '-=0.2')
+      .to('[data-hero-el="sub"]', { opacity: 1, y: 0, duration: 0.6 }, '-=0.5')
+      .to('[data-hero-el="cta"]', { opacity: 1, y: 0, duration: 0.55 }, '-=0.4')
+      .to(
+        '[data-hero-stat]',
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 },
+        '-=0.35',
+      )
+      .to('[data-hero-el="visual"]', { opacity: 1, y: 0, duration: 0.7 }, '-=0.7')
+
+    // 2. Gentle continuous float on the hero visual
+    gsap.to('[data-hero-float]', {
+      y: -12,
+      duration: 3.4,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+    })
+
+    // 3. Magnetic pull on the primary hero CTA
+    const magnet = pageRef.current?.querySelector<HTMLElement>('[data-magnetic]')
+    if (magnet && window.matchMedia('(pointer: fine)').matches) {
+      const xTo = gsap.quickTo(magnet, 'x', { duration: 0.4, ease: 'power3.out' })
+      const yTo = gsap.quickTo(magnet, 'y', { duration: 0.4, ease: 'power3.out' })
+      const onMove = (e: MouseEvent) => {
+        const r = magnet.getBoundingClientRect()
+        xTo((e.clientX - (r.left + r.width / 2)) * 0.35)
+        yTo((e.clientY - (r.top + r.height / 2)) * 0.35)
+      }
+      const onLeave = () => {
+        xTo(0)
+        yTo(0)
+      }
+      magnet.addEventListener('mousemove', onMove)
+      magnet.addEventListener('mouseleave', onLeave)
+    }
+
+    // 4. Work-process connector line draws as the section scrolls into view
+    gsap.fromTo(
+      '[data-process-line]',
+      { scaleX: 0 },
+      {
+        scaleX: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '[data-process]',
+          start: 'top 75%',
+          end: 'top 30%',
+          scrub: true,
+        },
+      },
+    )
+    gsap.fromTo(
+      '[data-process-step]',
+      { opacity: 0, y: 24 },
+      {
+        opacity: 1,
+        y: 0,
+        stagger: 0.15,
+        duration: 0.5,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: '[data-process]', start: 'top 70%' },
+      },
+    )
+  })
+
   return (
-    <div className="overflow-x-hidden">
+    <div ref={pageRef} className="overflow-x-hidden">
 
       {/* ══════════════════════════════════════════════
           1. HERO
@@ -177,7 +273,7 @@ export default function Home() {
             {/* ── Left: content ── */}
             <div>
               {/* Badge */}
-              <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-teal-200 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
+              <div data-hero-el="badge" className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-teal-200 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-60" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-500" />
@@ -185,30 +281,38 @@ export default function Home() {
                 <span className="text-xs font-black uppercase tracking-[0.28em] text-teal-700">Available for Project Work</span>
               </div>
 
-              {/* Headline */}
+              {/* Headline — each line clip-reveals from its own overflow-hidden mask */}
               <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.5rem]">
-                Building<br />
-                Business-Ready<br />
-                <span className="bg-gradient-to-r from-teal-600 to-teal-400 bg-clip-text text-transparent">
-                  Web Solutions.
+                <span className="block overflow-hidden pb-1">
+                  <span data-hero-line className="block">Building</span>
+                </span>
+                <span className="block overflow-hidden pb-1">
+                  <span data-hero-line className="block">Business-Ready</span>
+                </span>
+                <span className="block overflow-hidden pb-1">
+                  <span data-hero-line className="block bg-gradient-to-r from-teal-600 to-teal-400 bg-clip-text text-transparent">
+                    Web Solutions.
+                  </span>
                 </span>
               </h1>
 
-              <p className="mt-5 max-w-lg text-base leading-7 text-slate-600">
+              <p data-hero-el="sub" className="mt-5 max-w-lg text-base leading-7 text-slate-600">
                 Full-stack developer & trainer. I build websites, sell ready-made projects,
                 teach courses, and run live training programs.
               </p>
 
               {/* CTAs */}
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/contact" className="btn-primary px-7 py-3.5 text-sm">
-                  Hire Me <ArrowRight className="ml-1.5 h-4 w-4" />
+              <div data-hero-el="cta" className="mt-8 flex flex-wrap gap-3">
+                <Link data-magnetic href="/contact" className="btn-primary px-7 py-3.5 text-sm">
+                  <span className="relative z-10 inline-flex items-center">
+                    Hire Me <ArrowRight className="ml-1.5 h-4 w-4" />
+                  </span>
                 </Link>
                 <Link href="#ready-projects" className="btn-secondary px-7 py-3.5 text-sm">
                   View Ready Projects
                 </Link>
                 <a href={WA} target="_blank" rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-green-600 px-7 py-3.5 text-sm font-bold text-white transition hover:bg-green-700">
+                  className="inline-flex items-center gap-2 rounded-full bg-green-600 px-7 py-3.5 text-sm font-bold text-white shadow-[0_14px_34px_rgba(22,163,74,0.28)] transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-green-700 active:translate-y-0 active:scale-[0.98]">
                   <WaIcon /> WhatsApp
                 </a>
               </div>
@@ -221,8 +325,8 @@ export default function Home() {
                   { v: '5+',   l: 'Yrs Exp.',  icon: BadgeCheck },
                   { v: '200+', l: 'Students',  icon: GraduationCap },
                 ].map(({ v, l, icon: Icon }) => (
-                  <div key={l} className="flex items-center gap-2.5 rounded-2xl border border-white/90 bg-white/80 px-4 py-3 shadow-sm backdrop-blur">
-                    <Icon className="h-4 w-4 text-teal-600" />
+                  <div key={l} data-hero-stat className="group flex items-center gap-2.5 rounded-2xl border border-white/90 bg-white/80 px-4 py-3 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-md">
+                    <Icon className="h-4 w-4 text-teal-600 transition-transform duration-300 group-hover:scale-110" />
                     <div>
                       <p className="text-lg font-black leading-none text-slate-950">{v}</p>
                       <p className="mt-0.5 text-[11px] font-semibold text-slate-500">{l}</p>
@@ -230,10 +334,21 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+
+              {/* Mobile-only tech marquee — intentional mobile visual (desktop shows the editor) */}
+              <div className="mt-8 overflow-hidden lg:hidden [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
+                <div className="flex w-max gap-2 marquee-track">
+                  {[...['Laravel', 'Next.js', 'React', 'Node.js', 'MySQL', 'MongoDB', 'TypeScript', 'Tailwind'], ...['Laravel', 'Next.js', 'React', 'Node.js', 'MySQL', 'MongoDB', 'TypeScript', 'Tailwind']].map((t, i) => (
+                    <span key={i} className="rounded-full border border-teal-200/70 bg-white/70 px-3 py-1.5 text-xs font-bold text-teal-700 backdrop-blur">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* ── Right: code editor visual (desktop only) ── */}
-            <div className="hidden space-y-4 lg:block">
+            <div data-hero-el="visual" className="hidden space-y-4 lg:block">
 
               {/* Top badge */}
               <div className="flex justify-end">
@@ -243,7 +358,7 @@ export default function Home() {
               </div>
 
               {/* Code editor card */}
-              <div className="overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-950 shadow-[0_40px_100px_rgba(0,0,0,0.4)]">
+              <div data-hero-float className="overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-950 shadow-[0_40px_100px_rgba(0,0,0,0.4)]">
                 {/* Title bar */}
                 <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/80 px-4 py-3">
                   <div className="flex items-center gap-2">
@@ -371,24 +486,29 @@ export default function Home() {
       ══════════════════════════════════════════════ */}
       <section className="border-y border-slate-200 bg-white py-8">
         <div className="container-custom">
-          <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-4">
+          <Stagger className="grid gap-px sm:grid-cols-2 lg:grid-cols-4" stagger={0.07} amount={0.4}>
             {QUICK_VALUE.map(({ icon: Icon, label, desc, href, accent }, idx) => (
-              <Link
+              <StaggerItem
                 key={label}
-                href={href}
-                className={`group flex items-center gap-4 bg-white px-6 py-6 transition hover:bg-slate-50 ${idx > 0 ? 'sm:border-l sm:border-slate-100' : ''}`}
+                as="div"
+                className={idx > 0 ? 'sm:border-l sm:border-slate-100' : ''}
               >
-                <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${accent}`}>
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-black text-slate-950">{label}</p>
-                  <p className="mt-0.5 truncate text-xs text-slate-500">{desc}</p>
-                </div>
-                <ArrowRight className="ml-auto h-4 w-4 flex-shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-teal-600" />
-              </Link>
+                <Link
+                  href={href}
+                  className="group flex h-full items-center gap-4 bg-white px-6 py-6 transition hover:bg-slate-50"
+                >
+                  <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105 ${accent}`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-slate-950">{label}</p>
+                    <p className="mt-0.5 truncate text-xs text-slate-500">{desc}</p>
+                  </div>
+                  <ArrowRight className="ml-auto h-4 w-4 flex-shrink-0 text-slate-300 transition-all duration-300 group-hover:translate-x-1 group-hover:text-teal-600" />
+                </Link>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -403,32 +523,34 @@ export default function Home() {
       <section id="services" className="py-20 lg:py-24">
         <div className="container-custom">
 
-          <div className="mb-12 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <Reveal variant="rise" className="mb-12 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="section-kicker">Services</p>
               <h2 className="section-heading">What I Build for You</h2>
             </div>
             <Link href="/contact" className="btn-primary w-fit">
-              Hire Me <ArrowRight className="ml-1.5 h-4 w-4" />
+              <span className="relative z-10 inline-flex items-center">Hire Me <ArrowRight className="ml-1.5 h-4 w-4" /></span>
             </Link>
-          </div>
+          </Reveal>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <Stagger className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" stagger={0.08}>
             {SERVICE_LIST.map((service, idx) => (
-              <div key={service.slug}
-                className="group relative overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-teal-100 hover:shadow-[0_12px_32px_rgba(15,23,42,0.1)]">
+              <StaggerItem key={service.slug} variant="scale" as="div"
+                className="group relative overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-teal-100 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)]">
+                {/* hover wash */}
+                <span className="pointer-events-none absolute inset-0 bg-gradient-to-br from-teal-50/0 to-teal-50/0 opacity-0 transition-opacity duration-300 group-hover:from-teal-50/60 group-hover:to-transparent group-hover:opacity-100" />
                 {/* Number accent */}
-                <span className="absolute right-5 top-5 text-5xl font-black text-slate-100 select-none">
+                <span className="absolute right-5 top-5 text-5xl font-black text-slate-100 transition-colors duration-300 group-hover:text-teal-100 select-none">
                   {String(idx + 1).padStart(2, '0')}
                 </span>
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-50 text-teal-700">
+                <div className="relative mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-50 text-teal-700 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105">
                   <Briefcase className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-black text-slate-950">{service.title}</h3>
-                <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-slate-500">
+                <h3 className="relative text-base font-black text-slate-950">{service.title}</h3>
+                <p className="relative mt-1.5 line-clamp-2 text-sm leading-6 text-slate-500">
                   {service.description}
                 </p>
-                <div className="mt-3 flex flex-wrap gap-1.5">
+                <div className="relative mt-3 flex flex-wrap gap-1.5">
                   {service.technologies.slice(0, 3).map((t) => (
                     <span key={t} className="rounded-full bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-500 ring-1 ring-slate-200">
                       {t}
@@ -436,12 +558,12 @@ export default function Home() {
                   ))}
                 </div>
                 <Link href="/contact"
-                  className="mt-4 inline-flex items-center gap-1 text-sm font-black text-teal-700 transition group-hover:gap-2">
+                  className="relative mt-4 inline-flex items-center gap-1 text-sm font-black text-teal-700 transition-all group-hover:gap-2">
                   Hire Me <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
 
         </div>
       </section>
@@ -452,18 +574,18 @@ export default function Home() {
       <section id="training" className="bg-[#f5f8f7] py-20 lg:py-24">
         <div className="container-custom">
 
-          <div className="mb-12 text-center">
+          <Reveal variant="rise" className="mb-12 text-center">
             <p className="section-kicker">Learning Hub</p>
             <h2 className="section-heading mx-auto">Courses &amp; Live Training</h2>
             <p className="section-subheading mx-auto mt-3">
               Practical web development education — self-paced courses and live instructor-led batches.
             </p>
-          </div>
+          </Reveal>
 
           <div className="grid gap-6 lg:grid-cols-2">
 
             {/* ── Courses ── */}
-            <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+            <Reveal variant="slide-right" duration={0.75} className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
               <div className="border-b border-slate-100 bg-gradient-to-br from-teal-50/80 to-white px-8 py-7">
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-100 text-teal-700">
                   <BookOpen className="h-5 w-5" />
@@ -494,10 +616,10 @@ export default function Home() {
                   Browse All Courses <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
-            </div>
+            </Reveal>
 
             {/* ── Live Training ── */}
-            <div className="flex flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br from-teal-700 via-teal-800 to-slate-900 shadow-sm">
+            <Reveal variant="slide-left" duration={0.75} className="flex flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br from-teal-700 via-teal-800 to-slate-900 shadow-sm">
               <div className="p-8">
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15">
                   <GraduationCap className="h-5 w-5 text-white" />
@@ -537,7 +659,7 @@ export default function Home() {
                   </a>
                 </div>
               </div>
-            </div>
+            </Reveal>
 
           </div>
         </div>
@@ -549,7 +671,7 @@ export default function Home() {
       <section id="portfolio" className="bg-white py-20 lg:py-24">
         <div className="container-custom">
 
-          <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <Reveal variant="rise" className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="section-kicker">Portfolio</p>
               <h2 className="section-heading">Completed Work &amp; Case Studies</h2>
@@ -557,39 +679,42 @@ export default function Home() {
             <Link href="/projects" className="btn-secondary w-fit">
               View All <ArrowRight className="ml-1.5 h-4 w-4" />
             </Link>
-          </div>
+          </Reveal>
 
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <Stagger className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4" stagger={0.09}>
             {PROJECT_LIST.map((project) => (
-              <Link key={project.slug} href={`/projects/${project.slug}`}
-                className="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-teal-100 hover:shadow-[0_12px_32px_rgba(15,23,42,0.1)]">
-                <div className="relative h-44 overflow-hidden bg-slate-900">
-                  {project.image ? (
-                    <img src={project.image} alt={project.title}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                  ) : (
-                    <ProjectMockup technologies={project.technologies} />
-                  )}
-                </div>
-                <div className="p-5">
-                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-teal-600">Case Study</p>
-                  <h3 className="mt-1 line-clamp-2 text-sm font-black leading-snug text-slate-950">
-                    {project.title}
-                  </h3>
-                  <div className="mt-2.5 flex flex-wrap gap-1">
-                    {project.technologies?.slice(0, 2).map((t) => (
-                      <span key={t} className="rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-500 ring-1 ring-slate-200">
-                        {t}
-                      </span>
-                    ))}
+              <StaggerItem key={project.slug} variant="clip" as="div">
+                <Link href={`/projects/${project.slug}`}
+                  className="group block h-full overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-teal-100 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)]">
+                  <div className="relative h-44 overflow-hidden bg-slate-900">
+                    {project.image ? (
+                      <img src={project.image} alt={project.title}
+                        className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-110" />
+                    ) : (
+                      <ProjectMockup technologies={project.technologies} />
+                    )}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   </div>
-                  <span className="mt-3 inline-flex items-center gap-1 text-xs font-black text-teal-700 transition group-hover:gap-2">
-                    View Details <ArrowRight className="h-3 w-3" />
-                  </span>
-                </div>
-              </Link>
+                  <div className="p-5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-teal-600">Case Study</p>
+                    <h3 className="mt-1 line-clamp-2 text-sm font-black leading-snug text-slate-950 transition-colors duration-300 group-hover:text-teal-800">
+                      {project.title}
+                    </h3>
+                    <div className="mt-2.5 flex flex-wrap gap-1">
+                      {project.technologies?.slice(0, 2).map((t) => (
+                        <span key={t} className="rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-500 ring-1 ring-slate-200">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-black text-teal-700 transition-all group-hover:gap-2">
+                      View Details <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </div>
+                </Link>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
 
         </div>
       </section>
@@ -600,17 +725,20 @@ export default function Home() {
       <section id="process" className="bg-[#f5f8f7] py-20 lg:py-24">
         <div className="container-custom">
 
-          <div className="mb-14 text-center">
+          <Reveal variant="rise" className="mb-14 text-center">
             <p className="section-kicker">How It Works</p>
             <h2 className="section-heading mx-auto">From Idea to Delivery</h2>
-          </div>
+          </Reveal>
 
-          <div className="relative">
-            <div className="absolute left-[10%] right-[10%] top-6 hidden h-px bg-gradient-to-r from-transparent via-teal-300 to-transparent lg:block" />
+          <div data-process className="relative">
+            <div
+              data-process-line
+              className="absolute left-[10%] right-[10%] top-6 hidden h-0.5 origin-left bg-gradient-to-r from-teal-400 via-teal-400 to-teal-300 lg:block"
+            />
             <div className="grid gap-8 lg:grid-cols-5">
               {WORK_PROCESS.map((item) => (
-                <div key={item.step} className="flex flex-col items-center text-center">
-                  <div className="relative z-10 mb-5 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-teal-700 text-sm font-black text-white shadow-[0_8px_24px_rgba(15,118,110,0.4)]">
+                <div key={item.step} data-process-step className="group flex flex-col items-center text-center">
+                  <div className="relative z-10 mb-5 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-teal-700 text-sm font-black text-white shadow-[0_8px_24px_rgba(15,118,110,0.4)] transition-transform duration-300 group-hover:scale-110">
                     {item.step}
                   </div>
                   <h3 className="text-sm font-black text-slate-950">{item.title}</h3>
@@ -635,7 +763,7 @@ export default function Home() {
       <section id="why-me" className="border-y border-slate-100 bg-white py-20 lg:py-24">
         <div className="container-custom">
 
-          <div className="mb-10 text-center">
+          <Reveal variant="rise" className="mb-10 text-center">
             <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
               Why Work With Me
             </span>
@@ -646,23 +774,23 @@ export default function Home() {
               Every engagement is backed by real project experience, clear communication,
               and support that lasts beyond delivery.
             </p>
-          </div>
+          </Reveal>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
             {WHY_CHOOSE_ME.map((item) => {
               const meta = WHY_ICON_MAP[item.title] ?? { icon: <Monitor className="h-5 w-5" />, accent: 'bg-teal-50 text-teal-600' }
               return (
-                <div key={item.title}
-                  className="rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5 transition hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-md">
-                  <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${meta.accent}`}>
+                <StaggerItem key={item.title} as="div" variant="rise"
+                  className="group rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5 transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-teal-200 hover:shadow-md">
+                  <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105 ${meta.accent}`}>
                     {meta.icon}
                   </div>
                   <h3 className="mb-1.5 text-sm font-bold text-slate-900">{item.title}</h3>
                   <p className="text-xs leading-relaxed text-slate-500">{item.description}</p>
-                </div>
+                </StaggerItem>
               )
             })}
-          </div>
+          </Stagger>
 
         </div>
       </section>
@@ -673,7 +801,7 @@ export default function Home() {
       <section id="testimonials" className="bg-[#F8FAFC] py-20 lg:py-24">
         <div className="container-custom">
 
-          <div className="mb-10 text-center">
+          <Reveal variant="rise" className="mb-10 text-center">
             <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
               Testimonials
             </span>
@@ -684,12 +812,12 @@ export default function Home() {
               Feedback from clients and students I&apos;ve worked with across freelance projects
               and training programs.
             </p>
-          </div>
+          </Reveal>
 
-          <div className="grid gap-5 xl:grid-cols-2">
+          <Stagger className="grid gap-5 xl:grid-cols-2" stagger={0.12}>
             {TESTIMONIALS_LIST.map((t) => (
-              <div key={t.name}
-                className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+              <StaggerItem key={t.name} as="div" variant="rise"
+                className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm transition-shadow duration-300 hover:shadow-[0_18px_44px_rgba(15,23,42,0.08)]">
                 <div className="mb-4 flex gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className={`h-4 w-4 text-amber-400 ${i < t.rating ? 'fill-current' : 'opacity-30'}`} />
@@ -710,9 +838,9 @@ export default function Home() {
                     <p className="text-xs text-slate-500">{t.role} · {t.company}</p>
                   </div>
                 </div>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
 
         </div>
       </section>
@@ -723,16 +851,18 @@ export default function Home() {
       <section id="faq" className="py-20 lg:py-24">
         <div className="container-custom">
 
-          <div className="mb-12 text-center">
+          <Reveal variant="rise" className="mb-12 text-center">
             <p className="section-kicker">FAQ</p>
             <h2 className="section-heading mx-auto">Frequently Asked Questions</h2>
-          </div>
+          </Reveal>
 
-          <div className="mx-auto max-w-3xl space-y-2">
+          <Stagger className="mx-auto max-w-3xl space-y-2" stagger={0.06}>
             {FAQ_LIST.map((item) => (
-              <FaqItem key={item.question} question={item.question} answer={item.answer} />
+              <StaggerItem key={item.question} as="div" variant="fade">
+                <FaqItem question={item.question} answer={item.answer} />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
 
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link href="/contact" className="btn-primary px-6 py-3">
@@ -751,19 +881,21 @@ export default function Home() {
           11. FINAL CTA
       ══════════════════════════════════════════════ */}
       <section className="container-custom pb-20 lg:pb-24">
-        <div className="rounded-2xl bg-teal-600 px-8 py-14 text-center shadow-sm">
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
+        <Reveal variant="scale" duration={0.7} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 px-8 py-14 text-center glow-pulse">
+          <span className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
+          <span className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-teal-300/20 blur-3xl" />
+          <p className="relative mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
             Ready to Start?
           </p>
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h2 className="relative mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
             Have a project idea or want<br className="hidden sm:block" />
             a ready solution?
           </h2>
-          <p className="mx-auto mb-8 max-w-lg text-base text-teal-100">
+          <p className="relative mx-auto mb-8 max-w-lg text-base text-teal-100">
             Send an enquiry, request a demo, or message me on WhatsApp.
             I respond within 24 hours.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="relative flex flex-wrap justify-center gap-3">
             <Link
               href="/order-project"
               className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-teal-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
@@ -785,7 +917,7 @@ export default function Home() {
               <BookOpen className="h-4 w-4" /> Join a Course
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
     </div>

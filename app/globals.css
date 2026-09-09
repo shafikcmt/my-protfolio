@@ -72,11 +72,20 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-teal-700 px-6 py-3 text-sm font-bold text-white shadow-[0_14px_34px_rgba(15,118,110,0.26)] transition duration-300 hover:-translate-y-0.5 hover:bg-teal-600;
+    @apply relative inline-flex items-center justify-center overflow-hidden rounded-full bg-teal-700 px-6 py-3 text-sm font-bold text-white shadow-[0_14px_34px_rgba(15,118,110,0.26)] transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-teal-600 hover:shadow-[0_18px_44px_rgba(15,118,110,0.34)] active:translate-y-0 active:scale-[0.98];
+  }
+
+  /* sheen that sweeps across the primary button on hover */
+  .btn-primary::after {
+    content: '';
+    @apply pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/20 transition-transform duration-700 ease-out;
+  }
+  .btn-primary:hover::after {
+    @apply translate-x-full;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-teal-200 hover:text-teal-700 hover:shadow-md;
+    @apply inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-sm transition duration-300 ease-out hover:-translate-y-0.5 hover:border-teal-200 hover:text-teal-700 hover:shadow-md active:translate-y-0 active:scale-[0.98];
   }
 
   .btn-outline {
@@ -103,6 +112,48 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Animated underline for nav links — grows from the left on hover/active */
+  .nav-underline {
+    position: relative;
+  }
+  .nav-underline::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.35rem;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #0d9488, #14b8a6);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-underline:hover::after,
+  .nav-underline[data-active='true']::after {
+    transform: scaleX(1);
+  }
+
+  /* Card lift used across grids — GPU transform only */
+  .lift {
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.32s ease;
+    will-change: transform;
+  }
+  .lift:hover {
+    transform: translateY(-6px);
+  }
+
+  /* Soft ambient glow pulse for the final CTA */
+  .glow-pulse {
+    animation: glowPulse 4.5s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 24px 70px rgba(13, 148, 136, 0.28); }
+    50% { box-shadow: 0 30px 90px rgba(13, 148, 136, 0.44); }
   }
 
   .hero-grid {
@@ -195,5 +246,24 @@
       linear-gradient(rgba(20, 184, 166, 0.06) 1px, transparent 1px),
       linear-gradient(90deg, rgba(20, 184, 166, 0.06) 1px, transparent 1px);
     background-size: 36px 36px;
+  }
+}
+
+/* Honor reduced-motion for the decorative CSS keyframe animations too.
+   (JS-driven motion is handled in the React layer via useReducedMotion.) */
+@media (prefers-reduced-motion: reduce) {
+  .float-soft,
+  .float-delay,
+  .glow-pulse,
+  .marquee-track,
+  .cursor-blink,
+  .reveal-up {
+    animation: none !important;
+  }
+  .lift:hover {
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
   }
 }

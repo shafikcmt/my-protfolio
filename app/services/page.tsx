@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import ServiceCard from '@/components/ServiceCard'
 import { SERVICE_LIST } from '@/lib/constants'
+import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 
 // ─── Map a lucide icon + accent color to each service slug ────────────────────
 
@@ -114,7 +115,7 @@ export default function ServicesPage() {
       ═══════════════════════════════════════ */}
       <section className="border-b border-slate-100 bg-white">
         <div className="container-custom py-16 lg:py-20">
-          <div className="mx-auto max-w-3xl text-center">
+          <Reveal variant="blur-rise" className="mx-auto max-w-3xl text-center">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-teal-700">
               <BadgeCheck className="h-3.5 w-3.5" /> Services
             </span>
@@ -134,10 +135,10 @@ export default function ServicesPage() {
                 View Past Work
               </Link>
             </div>
-          </div>
+          </Reveal>
 
           {/* Trust bar */}
-          <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3">
+          <Reveal variant="fade" delay={0.15} className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3">
             {TRUST_ITEMS.map((item) => (
               <span
                 key={item.label}
@@ -147,7 +148,7 @@ export default function ServicesPage() {
                 {item.label}
               </span>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -155,7 +156,7 @@ export default function ServicesPage() {
           SERVICE CARDS
       ═══════════════════════════════════════ */}
       <section className="container-custom py-16 lg:py-20">
-        <div className="mb-10">
+        <Reveal variant="rise" className="mb-10">
           <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
             What I Offer
           </span>
@@ -166,21 +167,22 @@ export default function ServicesPage() {
             From single-page websites to complex LMS platforms — I build solutions that fit your
             business goals and budget.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Stagger className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
           {SERVICE_LIST.map((service) => {
             const meta = SERVICE_META[service.slug] ?? DEFAULT_META
             return (
-              <ServiceCard
-                key={service.slug}
-                {...service}
-                icon={meta.icon}
-                accent={meta.accent}
-              />
+              <StaggerItem key={service.slug} as="div" variant="rise" className="h-full">
+                <ServiceCard
+                  {...service}
+                  icon={meta.icon}
+                  accent={meta.accent}
+                />
+              </StaggerItem>
             )
           })}
-        </div>
+        </Stagger>
       </section>
 
       {/* ═══════════════════════════════════════
@@ -188,7 +190,7 @@ export default function ServicesPage() {
       ═══════════════════════════════════════ */}
       <section className="border-y border-slate-100 bg-white py-16 lg:py-20">
         <div className="container-custom">
-          <div className="mb-10 text-center">
+          <Reveal variant="rise" className="mb-10 text-center">
             <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
               Why Work With Me
             </span>
@@ -199,24 +201,26 @@ export default function ServicesPage() {
               Every service is delivered with the same standard of quality — clean code,
               clear communication, and ongoing support.
             </p>
-          </div>
+          </Reveal>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <Stagger className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
             {WHY_ITEMS.map((item) => (
-              <div
+              <StaggerItem
                 key={item.title}
-                className="rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5"
+                as="div"
+                variant="rise"
+                className="group rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-md"
               >
                 <div
-                  className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${item.accent}`}
+                  className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105 ${item.accent}`}
                 >
                   {item.icon}
                 </div>
                 <h3 className="mb-1.5 text-sm font-bold text-slate-900">{item.title}</h3>
                 <p className="text-xs leading-relaxed text-slate-500">{item.body}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -224,16 +228,16 @@ export default function ServicesPage() {
           HOW IT WORKS
       ═══════════════════════════════════════ */}
       <section className="container-custom py-16 lg:py-20">
-        <div className="mb-10 text-center">
+        <Reveal variant="rise" className="mb-10 text-center">
           <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
             Simple Process
           </span>
           <h2 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
             How We Work Together
           </h2>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
           {[
             {
               step: '01',
@@ -260,12 +264,12 @@ export default function ServicesPage() {
               icon: <Zap className="h-5 w-5" />,
             },
           ].map((step, idx) => (
-            <div key={step.step} className="relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <StaggerItem key={step.step} as="div" variant="rise" className="group relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-md">
               <div className="mb-4 flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105">
                   {step.icon}
                 </div>
-                <span className="text-2xl font-black text-slate-100">{step.step}</span>
+                <span className="text-2xl font-black text-slate-100 transition-colors duration-300 group-hover:text-teal-100">{step.step}</span>
               </div>
               <h3 className="mb-2 text-sm font-bold text-slate-900">{step.title}</h3>
               <p className="text-xs leading-relaxed text-slate-500">{step.body}</p>
@@ -276,9 +280,9 @@ export default function ServicesPage() {
                   </div>
                 </div>
               )}
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
 
       {/* ═══════════════════════════════════════

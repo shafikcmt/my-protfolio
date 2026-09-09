@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import CourseCard from '@/components/CourseCard'
 import { COURSE_LIST } from '@/lib/constants'
+import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 
 const TRUST_ITEMS = [
   { icon: <BookOpen className="h-4 w-4" />, label: '10+ Courses Available'    },
@@ -77,7 +78,7 @@ export default function CoursesPage() {
       ═══════════════════════════════════════ */}
       <section className="border-b border-slate-100 bg-white">
         <div className="container-custom py-16 lg:py-20">
-          <div className="mx-auto max-w-3xl text-center">
+          <Reveal variant="blur-rise" className="mx-auto max-w-3xl text-center">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-teal-700">
               <BadgeCheck className="h-3.5 w-3.5" /> Online Courses
             </span>
@@ -99,10 +100,10 @@ export default function CoursesPage() {
                 Ask a Question
               </Link>
             </div>
-          </div>
+          </Reveal>
 
           {/* Trust bar */}
-          <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3">
+          <Reveal variant="fade" delay={0.15} className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3">
             {TRUST_ITEMS.map((item) => (
               <span
                 key={item.label}
@@ -112,7 +113,7 @@ export default function CoursesPage() {
                 {item.label}
               </span>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -122,7 +123,7 @@ export default function CoursesPage() {
       <section className="container-custom py-14 lg:py-16">
 
         {/* Section heading */}
-        <div className="mb-8">
+        <Reveal variant="rise" className="mb-8">
           <span className="mb-2 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
             Course Catalogue
           </span>
@@ -133,7 +134,7 @@ export default function CoursesPage() {
             Browse by category or explore the full catalogue — every course is taught with
             real project examples and covers deployment from start to finish.
           </p>
-        </div>
+        </Reveal>
 
         {/* Category tabs */}
         <div className="-mx-4 mb-8 px-4 sm:mx-0 sm:px-0">
@@ -169,24 +170,25 @@ export default function CoursesPage() {
             ))}
           </div>
         ) : filteredCourses.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger key={category} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07} amount={0.05}>
             {filteredCourses.map((course) => (
-              <CourseCard
-                key={course._id || course.slug}
-                title={course.title}
-                description={course.shortDescription || course.description}
-                instructor={course.instructor || 'Md Shafiqul Islam'}
-                category={course.category || 'Full Stack'}
-                price={course.price}
-                level={course.level}
-                duration={course.duration}
-                lessons={course.totalLessons || course.lessons}
-                slug={course.slug}
-                image={course.image}
-                isFree={course.isFree}
-              />
+              <StaggerItem key={course._id || course.slug} as="div" variant="rise" className="h-full">
+                <CourseCard
+                  title={course.title}
+                  description={course.shortDescription || course.description}
+                  instructor={course.instructor || 'Md Shafiqul Islam'}
+                  category={course.category || 'Full Stack'}
+                  price={course.price}
+                  level={course.level}
+                  duration={course.duration}
+                  lessons={course.totalLessons || course.lessons}
+                  slug={course.slug}
+                  image={course.image}
+                  isFree={course.isFree}
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         ) : (
           <div className="flex flex-col items-center gap-4 py-24 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
@@ -211,7 +213,7 @@ export default function CoursesPage() {
       ═══════════════════════════════════════ */}
       <section className="border-y border-slate-100 bg-white py-14 lg:py-16">
         <div className="container-custom">
-          <div className="mb-10 text-center">
+          <Reveal variant="rise" className="mb-10 text-center">
             <span className="mb-3 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
               Why Learn Here
             </span>
@@ -222,9 +224,9 @@ export default function CoursesPage() {
               Every course is built around shipping real code — not slides and theory.
               You finish each course with a portfolio-ready project.
             </p>
-          </div>
+          </Reveal>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <Stagger className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
             {[
               {
                 icon: <BookOpen className="h-5 w-5" />,
@@ -251,18 +253,20 @@ export default function CoursesPage() {
                 accent: 'bg-emerald-50 text-emerald-600',
               },
             ].map((item) => (
-              <div
+              <StaggerItem
                 key={item.title}
-                className="rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5"
+                as="div"
+                variant="rise"
+                className="group rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-md"
               >
-                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${item.accent}`}>
+                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105 ${item.accent}`}>
                   {item.icon}
                 </div>
                 <h3 className="mb-1.5 text-sm font-bold text-slate-900">{item.title}</h3>
                 <p className="text-xs leading-relaxed text-slate-500">{item.body}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -270,18 +274,20 @@ export default function CoursesPage() {
           CTA
       ═══════════════════════════════════════ */}
       <section className="container-custom py-16 pb-20">
-        <div className="rounded-2xl bg-teal-600 px-8 py-14 text-center shadow-sm">
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
+        <Reveal variant="scale" duration={0.7} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 px-8 py-14 text-center glow-pulse">
+          <span className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
+          <span className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-teal-300/20 blur-3xl" />
+          <p className="relative mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
             Want More Than a Course?
           </p>
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h2 className="relative mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
             Join a Live Training Batch
           </h2>
-          <p className="mx-auto mb-8 max-w-lg text-base text-teal-100">
+          <p className="relative mx-auto mb-8 max-w-lg text-base text-teal-100">
             Get real-time mentorship, project feedback, and group sessions — enroll in the
             next live batch and build faster with direct guidance.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="relative flex flex-wrap justify-center gap-3">
             <Link
               href="/book-consultation"
               className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-teal-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
@@ -295,7 +301,7 @@ export default function CoursesPage() {
               <MessageCircle className="h-4 w-4" /> Ask a Question
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
     </div>

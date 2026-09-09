@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import ProjectCard from '@/components/ProjectCard'
 import { PROJECT_LIST } from '@/lib/constants'
+import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 
 const CATEGORIES = ['All', 'LMS', 'eCommerce', 'ERP', 'Blog', 'Dashboard', 'SaaS', 'Portfolio', 'Other']
 
@@ -78,7 +79,7 @@ export default function ProjectsPage() {
       ═══════════════════════════════════════ */}
       <section className="border-b border-slate-100 bg-white">
         <div className="container-custom py-16 lg:py-20">
-          <div className="mx-auto max-w-3xl text-center">
+          <Reveal variant="blur-rise" className="mx-auto max-w-3xl text-center">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-teal-700">
               <BadgeCheck className="h-3.5 w-3.5" /> Selected Work
             </span>
@@ -98,10 +99,10 @@ export default function ProjectsPage() {
                 View Services
               </Link>
             </div>
-          </div>
+          </Reveal>
 
           {/* Trust bar */}
-          <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3">
+          <Reveal variant="fade" delay={0.15} className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3">
             {TRUST_ITEMS.map((item) => (
               <span
                 key={item.label}
@@ -111,7 +112,7 @@ export default function ProjectsPage() {
                 {item.label}
               </span>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -121,7 +122,7 @@ export default function ProjectsPage() {
       <section className="container-custom py-14 lg:py-16">
 
         {/* Section heading */}
-        <div className="mb-8">
+        <Reveal variant="rise" className="mb-8">
           <span className="mb-2 inline-block text-xs font-bold uppercase tracking-widest text-teal-600">
             My Work
           </span>
@@ -132,7 +133,7 @@ export default function ProjectsPage() {
             Browse by category or explore everything — each project is available for
             customization, demo, or purchase.
           </p>
-        </div>
+        </Reveal>
 
         {/* Category tabs */}
         <div className="no-scrollbar mb-8 overflow-x-auto">
@@ -176,23 +177,24 @@ export default function ProjectsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <Stagger key={activeCategory} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07} amount={0.05}>
             {filtered.map((project: any, i: number) => (
-              <ProjectCard
-                key={project.slug || project._id || i}
-                title={project.title}
-                description={project.description}
-                shortDescription={project.shortDescription}
-                technologies={project.technologies}
-                slug={project.slug}
-                image={project.screenshots?.[0] || project.image}
-                category={project.category}
-                featured={project.featured}
-                liveDemoUrl={project.liveDemoUrl || project.link}
-                githubUrl={project.githubUrl || project.codeLink}
-              />
+              <StaggerItem key={project.slug || project._id || i} as="div" variant="rise" className="h-full">
+                <ProjectCard
+                  title={project.title}
+                  description={project.description}
+                  shortDescription={project.shortDescription}
+                  technologies={project.technologies}
+                  slug={project.slug}
+                  image={project.screenshots?.[0] || project.image}
+                  category={project.category}
+                  featured={project.featured}
+                  liveDemoUrl={project.liveDemoUrl || project.link}
+                  githubUrl={project.githubUrl || project.codeLink}
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
       </section>
 

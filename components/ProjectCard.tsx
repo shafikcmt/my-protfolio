@@ -40,22 +40,23 @@ export default function ProjectCard({
 
   return (
     <motion.article
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_16px_rgba(15,23,42,0.06)] transition-shadow hover:shadow-[0_8px_30px_rgba(15,23,42,0.1)]"
+      whileHover={{ y: -6 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_16px_rgba(15,23,42,0.06)] transition-[box-shadow,border-color] duration-300 hover:border-teal-200 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)]"
     >
       {/* Image */}
       <div className="relative aspect-video overflow-hidden bg-slate-100">
         {image ? (
           <div
-            className="h-full w-full bg-cover bg-center transition duration-500 group-hover:scale-105"
+            className="h-full w-full bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110"
             style={{ backgroundImage: `url(${image})` }}
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200">
-            <span className="text-5xl font-black text-slate-300">{title.charAt(0)}</span>
+            <span className="text-5xl font-black text-slate-300 transition-transform duration-500 group-hover:scale-110">{title.charAt(0)}</span>
           </div>
         )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
           {featured && (
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
