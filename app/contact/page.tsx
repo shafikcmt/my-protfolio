@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 import { Reveal } from '@/components/motion/Reveal'
+import { WHATSAPP_URL } from '@/lib/constants'
 
 // ─── Options ──────────────────────────────────────────────────────────────────
 
@@ -265,7 +266,7 @@ export default function ContactPage() {
                 </a>
 
                 <a
-                  href="https://wa.me/8801234567890"
+                  href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-3 transition"
@@ -559,7 +560,7 @@ export default function ContactPage() {
               Book a Consultation <ArrowRight className="h-4 w-4" />
             </Link>
             <a
-              href="https://wa.me/8801234567890"
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-teal-400 px-6 py-3 text-sm font-bold text-white transition hover:bg-teal-500"

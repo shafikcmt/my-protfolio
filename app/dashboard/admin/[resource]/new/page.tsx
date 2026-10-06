@@ -44,6 +44,7 @@ export default function AdminResourceCreatePage() {
           apiPath={config.apiPath}
           listPath={config.listPath}
           fields={config.fields}
+          sections={config.sections}
         />
       </DashboardLayout>
     </ProtectedRoute>

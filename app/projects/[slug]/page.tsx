@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { PROJECT_LIST } from '@/lib/constants'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import { getEmbedUrl, isDirectVideo } from '@/lib/media'
 
 type ProjectData = {
   title: string
@@ -32,6 +33,10 @@ type ProjectData = {
   githubUrl?: string
   link?: string
   codeLink?: string
+  industry?: string
+  role?: string
+  duration?: string
+  results?: string[]
   clientProblem?: string
   solution?: string
   technologies?: string[]
@@ -41,6 +46,41 @@ type ProjectData = {
   featured?: boolean
   category?: string
   status?: string
+}
+
+function VideoDemo({ url, title }: { url: string; title: string }) {
+  const embed = getEmbedUrl(url)
+  const direct = isDirectVideo(url)
+
+  return (
+    <Card title="Video Demo">
+      {direct || embed ? (
+        <div className="aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-900">
+          {direct ? (
+            <video src={url} controls preload="metadata" playsInline className="h-full w-full" />
+          ) : (
+            <iframe
+              src={embed}
+              className="h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+              allowFullScreen
+              loading="lazy"
+              title={`${title} demo video`}
+            />
+          )}
+        </div>
+      ) : (
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-teal-500"
+        >
+          <ExternalLink className="h-4 w-4" /> Watch demo video
+        </a>
+      )}
+    </Card>
+  )
 }
 
 function TechChip({ tag }: { tag: string }) {
@@ -431,6 +471,9 @@ export default function ProjectDetailPage() {
               )}
             </motion.div>
 
+            {/* Video demo — shown right after the banner so visitors see it first */}
+            {project.videoUrl && <VideoDemo url={project.videoUrl} title={project.title} />}
+
             {/* About */}
             <Card title="About This Project">
               <p className="text-sm leading-7 text-slate-600">{project.description}</p>
@@ -491,6 +534,17 @@ export default function ProjectDetailPage() {
               </Card>
             )}
 
+            {/* Results / impact */}
+            {project.results && project.results.length > 0 && (
+              <Card title="Results & Impact">
+                <ul className="space-y-3">
+                  {project.results.map((r) => (
+                    <FeatureItem key={r} text={r} />
+                  ))}
+                </ul>
+              </Card>
+            )}
+
             {/* Screenshots */}
             {project.screenshots && project.screenshots.length > 0 && (
               <Card title="Screenshots">
@@ -498,20 +552,6 @@ export default function ProjectDetailPage() {
               </Card>
             )}
 
-            {/* Video demo */}
-            {project.videoUrl && (
-              <Card title="Video Demo">
-                <div className="aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
-                  <iframe
-                    src={project.videoUrl}
-                    className="h-full w-full"
-                    allow="autoplay; fullscreen"
-                    allowFullScreen
-                    title="Project demo video"
-                  />
-                </div>
-              </Card>
-            )}
           </div>
 
           {/* Sidebar */}
@@ -560,6 +600,27 @@ export default function ProjectDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Project snapshot */}
+            {(project.industry || project.role || project.duration) && (
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)]">
+                <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Project Snapshot</p>
+                <dl className="space-y-3 text-sm">
+                  {[
+                    ['Industry', project.industry],
+                    ['My Role', project.role],
+                    ['Duration', project.duration],
+                  ]
+                    .filter(([, v]) => v)
+                    .map(([k, v]) => (
+                      <div key={k} className="flex justify-between gap-4">
+                        <dt className="text-slate-400">{k}</dt>
+                        <dd className="text-right font-semibold text-slate-800">{v}</dd>
+                      </div>
+                    ))}
+                </dl>
+              </div>
+            )}
 
             {/* Tech Stack */}
             {project.technologies && project.technologies.length > 0 && (

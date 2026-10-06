@@ -1,10 +1,15 @@
 // Site configuration and constants
 
 export const SITE_NAME = 'Md Shafiqul Islam'
-export const SITE_URL = 'https://shafiqul-portfolio-lms-platform.vercel.app'
+export const SITE_URL = 'https://shafiqul.dev'
 export const SITE_DESCRIPTION = 'Premium personal portfolio, service booking, and LMS platform for Md Shafiqul Islam.'
 export const AUTHOR_NAME = 'Md Shafiqul Islam'
-export const AUTHOR_EMAIL = 'mdshafiqul@example.com'
+export const AUTHOR_EMAIL = 'mdshafiqulislam822@gmail.com'
+
+// WhatsApp number in international format, digits only (e.g. 8801XXXXXXXXX).
+// Set NEXT_PUBLIC_WHATSAPP_NUMBER in Vercel, or replace the fallback here.
+export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801234567890'
+export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`
 
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },

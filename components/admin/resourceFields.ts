@@ -1,37 +1,60 @@
-import type { AdminFieldConfig } from './AdminCrudForm'
+import type { AdminFieldConfig, AdminSectionConfig } from './AdminCrudForm'
+
+export const projectCategoryOptions = [
+  { label: 'Garments / Apparel ERP', value: 'Garments ERP' },
+  { label: 'Merchandising / Order Tracking', value: 'Merchandising' },
+  { label: 'Production / Planning', value: 'Production' },
+  { label: 'Inventory / Store', value: 'Inventory' },
+  { label: 'LMS / E-Learning', value: 'LMS' },
+  { label: 'eCommerce', value: 'eCommerce' },
+  { label: 'ERP / Business', value: 'ERP' },
+  { label: 'Blog / CMS', value: 'Blog' },
+  { label: 'Dashboard / Admin', value: 'Dashboard' },
+  { label: 'SaaS', value: 'SaaS' },
+  { label: 'Portfolio', value: 'Portfolio' },
+  { label: 'Other', value: 'Other' },
+]
+
+export const projectSections: AdminSectionConfig[] = [
+  { title: 'Basic Info', description: 'Title, URL slug and the descriptions shown on cards and the detail page.' },
+  { title: 'Media', description: 'Upload screenshots and a demo video, or paste links. The first screenshot is used as the cover.' },
+  { title: 'Case Study', description: 'What the client needed, what you built and the result — this is what recruiters and clients read.' },
+  { title: 'Features & Tech Stack', description: 'One item per line.' },
+  { title: 'Links' },
+]
 
 export const projectFields: AdminFieldConfig[] = [
-  { name: 'title', label: 'Project Title', type: 'text', required: true, placeholder: 'Laravel Learning Management System' },
-  { name: 'slug', label: 'Slug', type: 'text', required: true, helpText: 'Auto-filled from title if left empty.' },
-  { name: 'shortDescription', label: 'Short Description', type: 'textarea', rows: 3 },
-  { name: 'description', label: 'Full Description', type: 'textarea', required: true, rows: 6 },
-  { name: 'image', label: 'Thumbnail Image URL', type: 'url' },
-  { name: 'screenshots', label: 'Screenshot URLs', type: 'array', helpText: 'One URL per line, or comma separated.' },
-  { name: 'videoUrl', label: 'Video Demo URL', type: 'url' },
-  { name: 'liveDemoUrl', label: 'Live Demo URL', type: 'url' },
-  { name: 'githubUrl', label: 'GitHub URL', type: 'url' },
-  { name: 'technologies', label: 'Technologies', type: 'array', helpText: 'Example: Laravel, MySQL, Bootstrap' },
-  { name: 'features', label: 'Main Features', type: 'array' },
-  { name: 'adminFeatures', label: 'Admin Features', type: 'array' },
-  { name: 'userFeatures', label: 'User Features', type: 'array' },
-  { name: 'clientProblem', label: 'Client Problem', type: 'textarea', rows: 4 },
-  { name: 'solution', label: 'Solution', type: 'textarea', rows: 4 },
-  { name: 'category', label: 'Category', type: 'select', options: [
-    { label: 'LMS / E-Learning', value: 'LMS' },
-    { label: 'eCommerce', value: 'eCommerce' },
-    { label: 'ERP / Business', value: 'ERP' },
-    { label: 'Blog / CMS', value: 'Blog' },
-    { label: 'Dashboard / Admin', value: 'Dashboard' },
-    { label: 'SaaS', value: 'SaaS' },
-    { label: 'Portfolio', value: 'Portfolio' },
-    { label: 'Other', value: 'Other' },
-  ] },
-  { name: 'status', label: 'Status', type: 'select', options: [
+  { name: 'title', label: 'Project Title', type: 'text', required: true, placeholder: 'Garments Merchandising & Order Tracking ERP', section: 'Basic Info' },
+  { name: 'slug', label: 'Slug', type: 'text', required: true, helpText: 'Auto-filled from title if left empty.', section: 'Basic Info' },
+  { name: 'shortDescription', label: 'Short Description', type: 'textarea', rows: 2, placeholder: 'One or two lines shown on project cards.', section: 'Basic Info' },
+  { name: 'description', label: 'Full Description', type: 'textarea', required: true, rows: 6, section: 'Basic Info' },
+
+  { name: 'screenshots', label: 'Screenshots', type: 'gallery', helpText: 'Use the arrows to reorder. Tip: use 1600×900 (16:9) screenshots.', section: 'Media' },
+  { name: 'image', label: 'Thumbnail (optional)', type: 'image', helpText: 'Only needed if you want a different card image than the first screenshot.', section: 'Media' },
+  { name: 'videoUrl', label: 'Demo Video', type: 'video', helpText: 'YouTube (unlisted is fine), Vimeo, Loom, Google Drive or an uploaded MP4.', section: 'Media' },
+
+  { name: 'industry', label: 'Client Industry', type: 'text', placeholder: 'Garments & Apparel Manufacturing', section: 'Case Study' },
+  { name: 'role', label: 'My Role', type: 'text', placeholder: 'Full Stack Developer (solo)', section: 'Case Study' },
+  { name: 'duration', label: 'Duration', type: 'text', placeholder: '3 months', section: 'Case Study' },
+  { name: 'clientProblem', label: 'Client Problem', type: 'textarea', rows: 4, section: 'Case Study' },
+  { name: 'solution', label: 'Solution', type: 'textarea', rows: 4, section: 'Case Study' },
+  { name: 'results', label: 'Results / Impact', type: 'array', rows: 3, placeholder: 'Order follow-up time reduced by 60%\nReplaced 12 Excel sheets with one dashboard', section: 'Case Study' },
+
+  { name: 'technologies', label: 'Technologies', type: 'array', rows: 3, helpText: 'Example: Laravel, MySQL, Bootstrap', section: 'Features & Tech Stack' },
+  { name: 'features', label: 'Main Features', type: 'array', section: 'Features & Tech Stack' },
+  { name: 'adminFeatures', label: 'Admin Features', type: 'array', section: 'Features & Tech Stack' },
+  { name: 'userFeatures', label: 'User Features', type: 'array', section: 'Features & Tech Stack' },
+
+  { name: 'liveDemoUrl', label: 'Live Demo URL', type: 'url', section: 'Links' },
+  { name: 'githubUrl', label: 'GitHub URL', type: 'url', section: 'Links' },
+
+  { name: 'status', label: 'Status', type: 'select', side: true, options: [
     { label: 'Draft', value: 'draft' },
     { label: 'Published', value: 'published' },
     { label: 'Archived', value: 'archived' },
   ] },
-  { name: 'featured', label: 'Featured Project', type: 'checkbox', placeholder: 'Show this project as featured' },
+  { name: 'category', label: 'Category', type: 'select', side: true, options: projectCategoryOptions },
+  { name: 'featured', label: 'Featured Project', type: 'checkbox', placeholder: 'Show this project as featured', side: true },
 ]
 
 export const serviceFields: AdminFieldConfig[] = [
@@ -50,8 +73,8 @@ export const courseFields: AdminFieldConfig[] = [
   { name: 'slug', label: 'Slug', type: 'text', required: true },
   { name: 'shortDescription', label: 'Short Description', type: 'textarea', rows: 3 },
   { name: 'description', label: 'Description', type: 'textarea', required: true, rows: 6 },
-  { name: 'image', label: 'Thumbnail Image URL', type: 'url' },
-  { name: 'screenshots', label: 'Screenshot URLs', type: 'array', helpText: 'One URL per line. Shown in the course details gallery.' },
+  { name: 'image', label: 'Thumbnail Image', type: 'image' },
+  { name: 'screenshots', label: 'Screenshots', type: 'gallery', helpText: 'Shown in the course details gallery.' },
   { name: 'instructor', label: 'Instructor', type: 'text', placeholder: 'Md Shafiqul Islam' },
   { name: 'category', label: 'Category', type: 'select', options: [
     { label: 'Web Design', value: 'Web Design' },
@@ -115,7 +138,7 @@ export const blogFields: AdminFieldConfig[] = [
   { name: 'category', label: 'Category', type: 'text', placeholder: 'Laravel, Next.js, Tutorial, Case Study…' },
   { name: 'excerpt', label: 'Excerpt / Summary', type: 'textarea', rows: 3, helpText: 'Short description shown on the blog listing page.' },
   { name: 'content', label: 'Content (HTML)', type: 'textarea', required: true, rows: 14, helpText: 'Paste HTML content or write plain text.' },
-  { name: 'image', label: 'Featured Image URL', type: 'url', helpText: 'Optional. If left empty, a gradient placeholder is shown.' },
+  { name: 'image', label: 'Featured Image', type: 'image', helpText: 'Optional. If left empty, a gradient placeholder is shown.' },
   { name: 'author', label: 'Author', type: 'text', placeholder: 'Md Shafiqul Islam' },
   { name: 'tags', label: 'Tags', type: 'array', helpText: 'Example: laravel, tutorial, api' },
   { name: 'published', label: 'Published', type: 'checkbox', placeholder: 'Show this blog publicly on the website' },
@@ -127,7 +150,7 @@ export const testimonialFields: AdminFieldConfig[] = [
   { name: 'name', label: 'Name', type: 'text', required: true },
   { name: 'role', label: 'Role', type: 'text' },
   { name: 'company', label: 'Company', type: 'text' },
-  { name: 'image', label: 'Image URL', type: 'url' },
+  { name: 'image', label: 'Photo', type: 'image' },
   { name: 'content', label: 'Testimonial Content', type: 'textarea', required: true, rows: 5 },
   { name: 'rating', label: 'Rating', type: 'number' },
   { name: 'featured', label: 'Featured Testimonial', type: 'checkbox', placeholder: 'Show on homepage' },

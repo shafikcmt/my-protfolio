@@ -15,6 +15,7 @@ import {
   WHY_CHOOSE_ME,
   FAQ_LIST,
   LIVE_TRAINING_INFO,
+  WHATSAPP_URL,
 } from '@/lib/constants'
 import {
   ArrowRight,
@@ -38,7 +39,7 @@ import {
 } from 'lucide-react'
 
 // ─── WhatsApp link ────────────────────────────────────────────────────────────
-const WA = 'https://wa.me/8801234567890'
+const WA = WHATSAPP_URL
 
 // ─── Why Choose Me icon + accent map (keyed by title) ────────────────────────
 const WHY_ICON_MAP: Record<string, { icon: React.ReactNode; accent: string }> = {

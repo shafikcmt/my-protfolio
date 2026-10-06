@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Facebook, Github, Linkedin, Mail, MapPin, MessageCircle } from 'lucide-react'
+import { WHATSAPP_URL } from '@/lib/constants'
 
 const EXPLORE_LINKS = [
   { label: 'About Me',  href: '/about'    },
@@ -129,7 +130,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="https://wa.me/8801234567890"
+                href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-2.5 text-sm text-slate-600 transition hover:text-teal-600"

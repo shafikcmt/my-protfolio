@@ -19,7 +19,7 @@ import {
   Zap,
 } from 'lucide-react'
 import ServiceCard from '@/components/ServiceCard'
-import { SERVICE_LIST } from '@/lib/constants'
+import { SERVICE_LIST, WHATSAPP_URL } from '@/lib/constants'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 
 // ─── Map a lucide icon + accent color to each service slug ────────────────────
@@ -308,7 +308,7 @@ export default function ServicesPage() {
               Start a Project <ArrowRight className="h-4 w-4" />
             </Link>
             <a
-              href="https://wa.me/8801234567890"
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-green-500 bg-transparent px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:border-white"

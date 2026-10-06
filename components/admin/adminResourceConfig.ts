@@ -1,4 +1,4 @@
-import type { AdminFieldConfig } from './AdminCrudForm'
+import type { AdminFieldConfig, AdminSectionConfig } from './AdminCrudForm'
 import {
   blogFields,
   certificateFields,
@@ -8,6 +8,7 @@ import {
   lessonFields,
   liveClassFields,
   projectFields,
+  projectSections,
   serviceFields,
   skillFields,
   studentFields,
@@ -30,6 +31,7 @@ export interface AdminResourceConfig {
   apiPath: string
   listPath: string
   fields: AdminFieldConfig[]
+  sections?: AdminSectionConfig[]
   columns: AdminResourceColumn[]
   addLabel?: string
 }
@@ -45,8 +47,10 @@ export const adminResourceConfigs: Record<string, AdminResourceConfig> = {
     apiPath: buildApiPath('projects'),
     listPath: buildPath('projects'),
     fields: projectFields,
+    sections: projectSections,
     columns: [
       { key: 'title', label: 'Title' },
+      { key: 'category', label: 'Category', type: 'badge' },
       { key: 'status', label: 'Status', type: 'badge' },
       { key: 'featured', label: 'Featured', type: 'boolean' },
       { key: 'technologies', label: 'Technologies', type: 'array' },

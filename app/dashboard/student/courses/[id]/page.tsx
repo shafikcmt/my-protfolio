@@ -9,6 +9,7 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/DashboardLayout'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import EmptyState from '@/components/EmptyState'
+import { getEmbedUrl } from '@/lib/media'
 
 export default function StudentCourseLearningPage({ params }: { params: { id: string } }) {
   const [course, setCourse] = useState<any>(null)
@@ -263,26 +264,4 @@ function PlaceholderBox({ title, description, icon }: { title: string; descripti
       <p className="mt-2 text-sm text-slate-500">{description}</p>
     </div>
   )
-}
-
-function getEmbedUrl(url?: string) {
-  if (!url) return ''
-  try {
-    const parsed = new URL(url)
-    if (parsed.hostname.includes('youtube.com')) {
-      const videoId = parsed.searchParams.get('v')
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : url
-    }
-    if (parsed.hostname.includes('youtu.be')) {
-      const videoId = parsed.pathname.replace('/', '')
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : url
-    }
-    if (parsed.hostname.includes('vimeo.com')) {
-      const videoId = parsed.pathname.split('/').filter(Boolean).pop()
-      return videoId ? `https://player.vimeo.com/video/${videoId}` : url
-    }
-    return ''
-  } catch {
-    return ''
-  }
 }

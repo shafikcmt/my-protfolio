@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   keywords:
     'Md Shafiqul Islam, full stack developer, Laravel, MERN, Next.js, LMS, portfolio, services, web development',
   authors: [{ name: 'Md Shafiqul Islam' }],
-  metadataBase: new URL('https://shafiqul-portfolio-lms-platform.vercel.app'),
+  metadataBase: new URL('https://shafiqul.dev'),
 }
 
 export const viewport: Viewport = {

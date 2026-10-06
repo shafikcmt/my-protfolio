@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Wrench,
 } from 'lucide-react'
+import { WHATSAPP_URL } from '@/lib/constants'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -272,7 +273,7 @@ export default function ServiceDetailPage() {
                   Start This Project <ArrowRight className="h-4 w-4" />
                 </Link>
                 <a
-                  href="https://wa.me/8801234567890"
+                  href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700"

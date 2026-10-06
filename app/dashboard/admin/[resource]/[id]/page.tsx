@@ -45,6 +45,7 @@ export default function AdminResourceEditPage() {
           apiPath={config.apiPath}
           listPath={config.listPath}
           fields={config.fields}
+          sections={config.sections}
           id={id}
         />
       </DashboardLayout>

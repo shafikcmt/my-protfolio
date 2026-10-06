@@ -18,10 +18,10 @@ export default function CTA() {
           <div className="mb-10">
             <p className="text-sm opacity-75 mb-2">Get in touch</p>
             <a
-              href="mailto:hello@example.com"
+              href="mailto:mdshafiqulislam822@gmail.com"
               className="text-2xl md:text-3xl font-bold hover:opacity-80 transition-opacity"
             >
-              hello@example.com
+              mdshafiqulislam822@gmail.com
             </a>
           </div>
 

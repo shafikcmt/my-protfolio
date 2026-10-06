@@ -16,7 +16,6 @@ import ProjectCard from '@/components/ProjectCard'
 import { PROJECT_LIST } from '@/lib/constants'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 
-const CATEGORIES = ['All', 'LMS', 'eCommerce', 'ERP', 'Blog', 'Dashboard', 'SaaS', 'Portfolio', 'Other']
 
 const TRUST_ITEMS = [
   { icon: <Briefcase className="h-4 w-4" />,   label: '100+ Projects Delivered' },
@@ -65,6 +64,9 @@ export default function ProjectsPage() {
     }
     load()
   }, [])
+
+  // Only show category tabs that actually have projects (e.g. Garments ERP, LMS…)
+  const categories = ['All', ...Array.from(new Set(projects.map((p) => p.category).filter(Boolean)))]
 
   const filtered =
     activeCategory === 'All'
@@ -138,7 +140,7 @@ export default function ProjectsPage() {
         {/* Category tabs */}
         <div className="no-scrollbar mb-8 overflow-x-auto">
           <div className="flex gap-2 pb-1">
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
