@@ -25,7 +25,7 @@ export const SOCIAL_LINKS = [
   { label: 'GitHub', url: 'https://github.com/mdshafiqul', icon: '🐙' },
   { label: 'LinkedIn', url: 'https://linkedin.com/in/mdshafiqul', icon: '💼' },
   { label: 'Email', url: 'mailto:mdshafiqul@example.com', icon: '✉️' },
-  { label: 'WhatsApp', url: 'https://wa.me/8801234567890', icon: '💬' },
+  { label: 'WhatsApp', url: WHATSAPP_URL, icon: '💬' },
 ]
 
 export const HERO_TITLES = [
