@@ -6,6 +6,10 @@ export const SITE_DESCRIPTION = 'Premium personal portfolio, service booking, an
 export const AUTHOR_NAME = 'Md Shafiqul Islam'
 export const AUTHOR_EMAIL = 'mdshafiqulislam822@gmail.com'
 
+// CV download link for the hero "Download CV" button. Leave empty to hide the button.
+// Use '/resume.pdf' after replacing public/resume.pdf, or a Cloudinary / Google Drive PDF link.
+export const RESUME_URL = ''
+
 // WhatsApp number in international format, digits only (e.g. 8801XXXXXXXXX).
 // Set NEXT_PUBLIC_WHATSAPP_NUMBER in Vercel, or replace the fallback here.
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801768987779'

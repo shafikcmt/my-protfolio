@@ -3,11 +3,11 @@ import './globals.css'
 import ClientLayout from '@/components/ClientLayout'
 
 export const metadata: Metadata = {
-  title: 'Md Shafiqul Islam | Full Stack Developer & Technical Trainer',
+  title: 'Md Shafiqul Islam | Full Stack Developer — Garments ERP & Web Apps',
   description:
-    'Premium portfolio and LMS platform for Md Shafiqul Islam – modern web development, technical training, service booking, and course management.',
+    'Md Shafiqul Islam — Full Stack Developer (Laravel, Next.js, MERN) building Garments & Apparel ERP, merchandising, production and business web apps. Open to remote work and client projects.',
   keywords:
-    'Md Shafiqul Islam, full stack developer, Laravel, MERN, Next.js, LMS, portfolio, services, web development',
+    'Md Shafiqul Islam, full stack developer, remote developer, Laravel developer, Next.js, MERN, garments ERP, apparel software, merchandising software, Bangladesh',
   authors: [{ name: 'Md Shafiqul Islam' }],
   metadataBase: new URL('https://shafiqul.dev'),
 }

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import ProjectsSection from '@/components/sections/ProjectsSection'
+import GarmentsSolutions from '@/components/home/GarmentsSolutions'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
@@ -15,6 +16,7 @@ import {
   WHY_CHOOSE_ME,
   FAQ_LIST,
   LIVE_TRAINING_INFO,
+  RESUME_URL,
   WHATSAPP_URL,
 } from '@/lib/constants'
 import {
@@ -24,6 +26,7 @@ import {
   BookOpen,
   Briefcase,
   ChevronDown,
+  Download,
   Code2,
   GraduationCap,
   Layers3,
@@ -272,34 +275,36 @@ export default function Home() {
           <div className="grid items-center gap-14 lg:grid-cols-[1fr_0.95fr]">
 
             {/* ── Left: content ── */}
-            <div>
+            <div className="min-w-0">
               {/* Badge */}
               <div data-hero-el="badge" className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-teal-200 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-60" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-500" />
                 </span>
-                <span className="text-xs font-black uppercase tracking-[0.28em] text-teal-700">Available for Project Work</span>
+                <span className="text-[11px] font-black uppercase tracking-[0.16em] text-teal-700 sm:text-xs sm:tracking-[0.28em]">Open to Remote Work &amp; Projects</span>
               </div>
 
               {/* Headline — each line clip-reveals from its own overflow-hidden mask */}
               <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.5rem]">
                 <span className="block overflow-hidden pb-1">
-                  <span data-hero-line className="block">Building</span>
+                  <span data-hero-line className="block">Full Stack Developer</span>
                 </span>
                 <span className="block overflow-hidden pb-1">
-                  <span data-hero-line className="block">Business-Ready</span>
+                  <span data-hero-line className="block">Building ERP &amp;</span>
                 </span>
                 <span className="block overflow-hidden pb-1">
                   <span data-hero-line className="block bg-gradient-to-r from-teal-600 to-teal-400 bg-clip-text text-transparent">
-                    Web Solutions.
+                    Business Web Apps.
                   </span>
                 </span>
               </h1>
 
               <p data-hero-el="sub" className="mt-5 max-w-lg text-base leading-7 text-slate-600">
-                Full-stack developer & trainer. I build websites, sell ready-made projects,
-                teach courses, and run live training programs.
+                Laravel · Next.js · MERN developer specialised in{' '}
+                <span className="font-semibold text-slate-800">Garments &amp; Apparel ERP</span> — merchandising,
+                production and inventory systems. Available for remote roles and client projects
+                (GMT+6, flexible overlap with EU / US hours).
               </p>
 
               {/* CTAs */}
@@ -309,9 +314,15 @@ export default function Home() {
                     Hire Me <ArrowRight className="ml-1.5 h-4 w-4" />
                   </span>
                 </Link>
-                <Link href="#ready-projects" className="btn-secondary px-7 py-3.5 text-sm">
-                  View Ready Projects
-                </Link>
+                {RESUME_URL ? (
+                  <a href={RESUME_URL} target="_blank" rel="noreferrer" className="btn-secondary px-7 py-3.5 text-sm">
+                    <Download className="mr-1.5 h-4 w-4" /> Download CV
+                  </a>
+                ) : (
+                  <Link href="/projects" className="btn-secondary px-7 py-3.5 text-sm">
+                    View Projects
+                  </Link>
+                )}
                 <a href={WA} target="_blank" rel="noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-green-600 px-7 py-3.5 text-sm font-bold text-white shadow-[0_14px_34px_rgba(22,163,74,0.28)] transition duration-300 ease-out hover:-translate-y-0.5 hover:bg-green-700 active:translate-y-0 active:scale-[0.98]">
                   <WaIcon /> WhatsApp
@@ -517,6 +528,11 @@ export default function Home() {
           3. READY PROJECTS & SOLUTIONS
       ══════════════════════════════════════════════ */}
       <ProjectsSection />
+
+      {/* ══════════════════════════════════════════════
+          3b. GARMENTS & APPAREL SOLUTIONS (industry focus)
+      ══════════════════════════════════════════════ */}
+      <GarmentsSolutions />
 
       {/* ══════════════════════════════════════════════
           4. SERVICES
