@@ -42,6 +42,11 @@ export interface AdminFieldConfig {
   side?: boolean
   /** Force the field to span the full width of its section. */
   wide?: boolean
+  /**
+   * array fields only: legacy array fields folded into this one on load as
+   * "## Heading" groups, and cleared on save.
+   */
+  mergeFrom?: { name: string; heading: string }[]
 }
 
 export interface AdminSectionConfig {
@@ -99,13 +104,32 @@ function normalizeIncomingValue(field: AdminFieldConfig, value: any) {
   return value
 }
 
+/** One item per line; a single line may be comma separated ("Laravel, MySQL"). */
+function splitList(value: any) {
+  const text = String(value || '')
+  return text
+    .split(text.includes('\n') ? /\n+/ : /,+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+/** Reads a field's value from a saved item, folding in any legacy `mergeFrom` arrays. */
+function readItemValue(field: AdminFieldConfig, item: Record<string, any>) {
+  if (!field.mergeFrom?.length) return item[field.name]
+  const lines: string[] = Array.isArray(item[field.name]) ? [...item[field.name]] : []
+  field.mergeFrom.forEach(({ name, heading }) => {
+    const extra = Array.isArray(item[name]) ? item[name].filter(Boolean) : []
+    if (!extra.length) return
+    if (lines.length) lines.push('')
+    lines.push(`## ${heading}`, ...extra)
+  })
+  return lines
+}
+
 function normalizeOutgoingValue(field: AdminFieldConfig, value: any) {
   if (field.type === 'array' || field.type === 'gallery') {
     if (!value) return []
-    return String(value)
-      .split(/[\n,]+/)
-      .map((item) => item.trim())
-      .filter(Boolean)
+    return splitList(value)
   }
 
   if (field.type === 'number') {
@@ -140,7 +164,7 @@ export default function AdminCrudForm({
   const [formData, setFormData] = useState<Record<string, any>>(() => {
     const initialData: Record<string, any> = {}
     fields.forEach((field) => {
-      initialData[field.name] = normalizeIncomingValue(field, defaultValues[field.name])
+      initialData[field.name] = normalizeIncomingValue(field, readItemValue(field, defaultValues))
     })
     return initialData
   })
@@ -164,7 +188,7 @@ export default function AdminCrudForm({
         const item = data.data || {}
         const nextData: Record<string, any> = {}
         fields.forEach((field) => {
-          nextData[field.name] = normalizeIncomingValue(field, item[field.name])
+          nextData[field.name] = normalizeIncomingValue(field, readItemValue(field, item))
         })
         setFormData(nextData)
       } catch (err: any) {
@@ -200,6 +224,8 @@ export default function AdminCrudForm({
 
       fields.forEach((field) => {
         payload[field.name] = normalizeOutgoingValue(field, formData[field.name])
+        // Legacy fields were folded into this one on load, so clear them.
+        field.mergeFrom?.forEach(({ name }) => { payload[name] = [] })
       })
 
       if (!payload.slug && payload.title) {
@@ -343,7 +369,7 @@ export default function AdminCrudForm({
       field.name === 'content'
     const listItems =
       field.type === 'array'
-        ? String(formData[field.name] || '').split(/[\n,]+/).map((item) => item.trim()).filter(Boolean)
+        ? splitList(formData[field.name]).filter((item) => !item.startsWith('#'))
         : []
 
     return (

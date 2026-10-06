@@ -20,6 +20,7 @@ import {
 import { PROJECT_LIST } from '@/lib/constants'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { getEmbedUrl, isDirectVideo } from '@/lib/media'
+import { groupFeatures } from '@/lib/features'
 
 type ProjectData = {
   title: string
@@ -479,38 +480,20 @@ export default function ProjectDetailPage() {
               <p className="text-sm leading-7 text-slate-600">{project.description}</p>
             </Card>
 
-            {/* Key features */}
-            {project.features && project.features.length > 0 && (
-              <Card title="Key Features">
+            {/* Features — one card per "## Module" heading; legacy admin/user lists keep their own cards */}
+            {[
+              ...groupFeatures(project.features).map((g) => ({ ...g, heading: g.heading || 'Key Features' })),
+              ...(project.adminFeatures?.length ? [{ heading: 'Admin Features', items: project.adminFeatures }] : []),
+              ...(project.userFeatures?.length ? [{ heading: 'User / Client Features', items: project.userFeatures }] : []),
+            ].map((group, i) => (
+              <Card key={`${group.heading}-${i}`} title={group.heading}>
                 <ul className="space-y-3">
-                  {project.features.map((f) => (
+                  {group.items.map((f) => (
                     <FeatureItem key={f} text={f} />
                   ))}
                 </ul>
               </Card>
-            )}
-
-            {/* Admin features */}
-            {project.adminFeatures && project.adminFeatures.length > 0 && (
-              <Card title="Admin Features">
-                <ul className="space-y-3">
-                  {project.adminFeatures.map((f) => (
-                    <FeatureItem key={f} text={f} />
-                  ))}
-                </ul>
-              </Card>
-            )}
-
-            {/* User features */}
-            {project.userFeatures && project.userFeatures.length > 0 && (
-              <Card title="User / Client Features">
-                <ul className="space-y-3">
-                  {project.userFeatures.map((f) => (
-                    <FeatureItem key={f} text={f} />
-                  ))}
-                </ul>
-              </Card>
-            )}
+            ))}
 
             {/* Problem & Solution */}
             {(project.clientProblem || project.solution) && (

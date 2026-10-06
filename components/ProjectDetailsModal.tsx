@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { IProject } from '@/types/models'
+import { plainFeatures } from '@/lib/features'
 
 interface ProjectDetailsModalProps {
   project: IProject | null
@@ -25,7 +26,7 @@ export default function ProjectDetailsModal({ project, open, onClose }: ProjectD
   const githubUrl = project.githubUrl || project.codeLink
   const videoUrl = getYoutubeEmbedUrl(project.videoUrl)
   const featureGroups = [
-    { title: 'Main Features', items: project.features || [] },
+    { title: 'Main Features', items: plainFeatures(project.features) },
     { title: 'Admin Features', items: project.adminFeatures || [] },
     { title: 'User Features', items: project.userFeatures || [] },
   ].filter((group) => group.items.length)

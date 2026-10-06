@@ -10,6 +10,8 @@ export const AUTHOR_EMAIL = 'mdshafiqulislam822@gmail.com'
 // Set NEXT_PUBLIC_WHATSAPP_NUMBER in Vercel, or replace the fallback here.
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801768987779'
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`
+// Human-readable form, e.g. "+880 1768-987779"
+export const WHATSAPP_DISPLAY = WHATSAPP_NUMBER.replace(/^(\d{3})(\d{4})(\d+)$/, '+$1 $2-$3')
 
 export const NAV_LINKS = [
   { label: 'Home', href: '/' },

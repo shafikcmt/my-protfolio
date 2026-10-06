@@ -1,11 +1,10 @@
 'use client'
 
-import { AUTHOR_NAME } from '@/lib/constants'
+import { AUTHOR_NAME, WHATSAPP_URL } from '@/lib/constants'
 
 export default function WhatsAppButton() {
-  const phone = '+1234567890'
   const message = encodeURIComponent(`Hi ${AUTHOR_NAME}, I would like to discuss a new project opportunity.`)
-  const href = `https://wa.me/${phone.replace(/\D/g, '')}?text=${message}`
+  const href = `${WHATSAPP_URL}?text=${message}`
 
   return (
     <a

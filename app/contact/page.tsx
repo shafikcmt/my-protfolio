@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 import { Reveal } from '@/components/motion/Reveal'
-import { WHATSAPP_URL } from '@/lib/constants'
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from '@/lib/constants'
 
 // ─── Options ──────────────────────────────────────────────────────────────────
 
@@ -277,7 +277,7 @@ export default function ContactPage() {
                   <div>
                     <p className="text-xs text-slate-400">WhatsApp</p>
                     <p className="text-sm font-medium text-slate-700 group-hover:text-teal-600">
-                      +880 1234 567890
+                      {WHATSAPP_DISPLAY}
                     </p>
                   </div>
                 </a>

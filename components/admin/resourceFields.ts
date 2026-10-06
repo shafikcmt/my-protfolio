@@ -19,7 +19,7 @@ export const projectSections: AdminSectionConfig[] = [
   { title: 'Basic Info', description: 'Title, URL slug and the descriptions shown on cards and the detail page.' },
   { title: 'Media', description: 'Upload screenshots and a demo video, or paste links. The first screenshot is used as the cover.' },
   { title: 'Case Study', description: 'What the client needed, what you built and the result — this is what recruiters and clients read.' },
-  { title: 'Features & Tech Stack', description: 'One item per line.' },
+  { title: 'Features & Tech Stack', description: 'Group features by module with ## headings — each heading becomes its own card on the project page.' },
   { title: 'Links' },
 ]
 
@@ -41,9 +41,19 @@ export const projectFields: AdminFieldConfig[] = [
   { name: 'results', label: 'Results / Impact', type: 'array', rows: 3, placeholder: 'Order follow-up time reduced by 60%\nReplaced 12 Excel sheets with one dashboard', section: 'Case Study' },
 
   { name: 'technologies', label: 'Technologies', type: 'array', rows: 3, helpText: 'Example: Laravel, MySQL, Bootstrap', section: 'Features & Tech Stack' },
-  { name: 'features', label: 'Main Features', type: 'array', section: 'Features & Tech Stack' },
-  { name: 'adminFeatures', label: 'Admin Features', type: 'array', section: 'Features & Tech Stack' },
-  { name: 'userFeatures', label: 'User Features', type: 'array', section: 'Features & Tech Stack' },
+  {
+    name: 'features',
+    label: 'Features',
+    type: 'array',
+    rows: 10,
+    section: 'Features & Tech Stack',
+    placeholder: '## Merchandising\nBuyer & style management\nOrder tracking with TNA\n\n## Production\nLine-wise daily output\nCutting → Sewing → Finishing tracking',
+    helpText: 'One feature per line. Start a line with "## " to make a module heading (e.g. ## Store / Inventory).',
+    mergeFrom: [
+      { name: 'adminFeatures', heading: 'Admin Features' },
+      { name: 'userFeatures', heading: 'User Features' },
+    ],
+  },
 
   { name: 'liveDemoUrl', label: 'Live Demo URL', type: 'url', section: 'Links' },
   { name: 'githubUrl', label: 'GitHub URL', type: 'url', section: 'Links' },

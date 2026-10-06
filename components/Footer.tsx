@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Facebook, Github, Linkedin, Mail, MapPin, MessageCircle } from 'lucide-react'
-import { WHATSAPP_URL } from '@/lib/constants'
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from '@/lib/constants'
 
 const EXPLORE_LINKS = [
   { label: 'About Me',  href: '/about'    },
@@ -138,7 +138,7 @@ export default function Footer() {
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-400 transition group-hover:border-teal-200 group-hover:bg-teal-50 group-hover:text-teal-600">
                   <MessageCircle className="h-3.5 w-3.5" />
                 </div>
-                +880 1234 567890
+                {WHATSAPP_DISPLAY}
               </a>
 
               <div className="flex items-center gap-2.5 text-sm text-slate-500">

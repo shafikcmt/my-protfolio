@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight, ArrowUpRight, CheckCircle2, ExternalLink } from 'lucide-react'
+import { plainFeatures } from '@/lib/features'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -54,7 +55,7 @@ function mapDBProject(p: DBProject): Project {
     description: desc,
     tags: (p.technologies || []).slice(0, 5),
     badges,
-    features: (p.features || []).slice(0, 3),
+    features: plainFeatures(p.features).slice(0, 3),
     featured: p.featured,
     image: p.screenshots?.[0] || p.image || undefined,
     liveDemoUrl: p.liveDemoUrl || undefined,
