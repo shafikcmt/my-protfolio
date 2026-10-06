@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   ScrollText,
+  SearchCheck,
   Settings,
   ShoppingBag,
   Star,
@@ -73,6 +74,7 @@ const roleSections: Record<UserRole, SidebarSection[]> = {
         { label: 'Orders',   href: '/dashboard/admin/orders',          icon: ShoppingBag },
         { label: 'Bookings', href: '/dashboard/admin/bookings',        icon: CalendarDays },
         { label: 'Messages', href: '/dashboard/admin/contact-messages', icon: MessageSquare },
+        { label: 'Job Finder', href: '/dashboard/admin/jobs',          icon: SearchCheck },
       ],
     },
     {
