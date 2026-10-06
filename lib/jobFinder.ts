@@ -6,6 +6,7 @@
  * Edit SKILLS / BLOCKERS below to tune what gets matched.
  */
 import Job from '@/models/Job'
+import { escapeHtml, sendTelegram } from '@/lib/telegram'
 
 export interface RawJob {
   source: string
@@ -239,34 +240,58 @@ export interface JobRunResult {
   matched: number
   inserted: number
   alerted: number
+  reminders: number
   errors: string[]
 }
 
-async function sendTelegram(jobs: any[]) {
-  const token = process.env.TELEGRAM_BOT_TOKEN
-  const chatId = process.env.TELEGRAM_CHAT_ID
-  if (!token || !chatId || !jobs.length) return 0
-
+function jobAlertMessage(jobs: any[]) {
   const lines = jobs
     .slice(0, 10)
     .map((j) => `⭐ ${j.score} · <b>${escapeHtml(j.title)}</b>${j.company ? ` — ${escapeHtml(j.company)}` : ''}\n${escapeHtml(j.location || 'Remote')} · ${j.source}\n${j.url}`)
-  const text = `🔎 <b>${jobs.length} new matching remote job${jobs.length > 1 ? 's' : ''}</b>\n\n${lines.join('\n\n')}\n\nAll jobs: https://shafiqul.dev/dashboard/admin/jobs`
-
-  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', disable_web_page_preview: true }),
-  })
-  return res.ok ? Math.min(jobs.length, 10) : 0
+  return `🔎 <b>${jobs.length} new matching remote job${jobs.length > 1 ? 's' : ''}</b>\n\n${lines.join('\n\n')}\n\nAll jobs: https://shafiqul.dev/dashboard/admin/jobs`
 }
 
-function escapeHtml(value: string) {
-  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+/** Follow-up and interview reminders for jobs in my pipeline. Returns number of reminders sent. */
+async function sendPipelineReminders() {
+  const now = new Date()
+  const tomorrow = new Date(now.getTime() + 36 * 60 * 60 * 1000)
+  const [followUps, interviews] = await Promise.all([
+    Job.find({ status: 'applied', followUpAt: { $lte: now } }).limit(10).lean(),
+    Job.find({ status: 'interview', interviewAt: { $gte: now, $lte: tomorrow }, interviewReminded: { $ne: true } }).limit(10).lean(),
+  ])
+  if (!followUps.length && !interviews.length) return 0
+
+  const parts: string[] = []
+  if (interviews.length) {
+    parts.push(
+      '🎤 <b>Upcoming interviews</b>\n' +
+        interviews
+          .map((j: any) => `• ${escapeHtml(j.title)}${j.company ? ` — ${escapeHtml(j.company)}` : ''}: ${new Date(j.interviewAt).toLocaleString('en-GB', { timeZone: 'Asia/Dhaka', dateStyle: 'medium', timeStyle: 'short' })} (BD time)`)
+          .join('\n') +
+        '\nTip: use "Interview Prep" on the Job Finder page.'
+    )
+  }
+  if (followUps.length) {
+    parts.push(
+      '📬 <b>Time to follow up</b> (no reply yet)\n' +
+        followUps.map((j: any) => `• ${escapeHtml(j.title)}${j.company ? ` — ${escapeHtml(j.company)}` : ''}`).join('\n') +
+        '\nSend a short, polite follow-up message.'
+    )
+  }
+
+  const sent = await sendTelegram(`${parts.join('\n\n')}\n\nhttps://shafiqul.dev/dashboard/admin/jobs`)
+  if (sent) {
+    await Promise.all([
+      Job.updateMany({ _id: { $in: followUps.map((j: any) => j._id) } }, { $unset: { followUpAt: 1 } }),
+      Job.updateMany({ _id: { $in: interviews.map((j: any) => j._id) } }, { $set: { interviewReminded: true } }),
+    ])
+  }
+  return sent ? followUps.length + interviews.length : 0
 }
 
 /** Fetch all sources, score, upsert into MongoDB and alert. Assumes connectDB() was called. */
 export async function runJobFinder(): Promise<JobRunResult> {
-  const result: JobRunResult = { fetched: 0, matched: 0, inserted: 0, alerted: 0, errors: [] }
+  const result: JobRunResult = { fetched: 0, matched: 0, inserted: 0, alerted: 0, reminders: 0, errors: [] }
 
   const settled = await Promise.allSettled(SOURCES.map((s) => s.load()))
   const raw: RawJob[] = []
@@ -300,6 +325,7 @@ export async function runJobFinder(): Promise<JobRunResult> {
             salary: job.salary,
             tags: job.tags.slice(0, 12),
             excerpt: job.description.slice(0, 600),
+            description: job.description.slice(0, 5000),
             publishedAt: job.publishedAt,
             score,
             matchedSkills,
@@ -315,13 +341,15 @@ export async function runJobFinder(): Promise<JobRunResult> {
   }
 
   const toAlert = await Job.find({ notified: false, score: { $gte: ALERT_SCORE } }).sort({ score: -1 }).limit(10).lean()
-  try {
-    result.alerted = await sendTelegram(toAlert)
-  } catch (error: any) {
-    result.errors.push(`Telegram: ${error?.message || error}`)
-  }
+  if (toAlert.length && (await sendTelegram(jobAlertMessage(toAlert)))) result.alerted = Math.min(toAlert.length, 10)
   // Mark everything pending as handled so a failed/unconfigured alert doesn't resend old jobs forever
   await Job.updateMany({ notified: false }, { $set: { notified: true } })
+
+  try {
+    result.reminders = await sendPipelineReminders()
+  } catch (error: any) {
+    result.errors.push(`Reminders: ${error?.message || error}`)
+  }
 
   return result
 }

@@ -6,6 +6,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import VisitTracker from '@/components/VisitTracker'
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
@@ -35,6 +36,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
   return (
     <AuthProvider>
+      <VisitTracker />
       {showLayout && <Navbar />}
       <main className="min-h-screen relative">
         {maintenance && (

@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
 
-/** Remote job collected by the job finder (lib/jobFinder.ts). */
+export const JOB_STATUSES = ['new', 'saved', 'applied', 'interview', 'offer', 'hired', 'rejected'] as const
+
+/** Remote job collected by the job finder (lib/jobFinder.ts) or added manually. */
 const JobSchema = new mongoose.Schema(
   {
     source: { type: String, required: true },
@@ -12,15 +14,25 @@ const JobSchema = new mongoose.Schema(
     salary: String,
     tags: [String],
     excerpt: String,
+    description: String,
     publishedAt: Date,
     score: { type: Number, default: 0 },
     matchedSkills: [String],
-    status: {
-      type: String,
-      enum: ['new', 'saved', 'applied', 'rejected'],
-      default: 'new',
-    },
+    status: { type: String, enum: JOB_STATUSES, default: 'new' },
     notified: { type: Boolean, default: false },
+
+    // Application pipeline
+    notes: String,
+    appliedAt: Date,
+    followUpAt: Date,
+    interviewAt: Date,
+    interviewReminded: { type: Boolean, default: false },
+
+    // Portfolio tracking link: https://shafiqul.dev/?ref=<refCode>
+    refCode: { type: String, index: { unique: true, sparse: true } },
+    visitCount: { type: Number, default: 0 },
+    lastVisitAt: Date,
+    visits: [{ at: Date, path: String, _id: false }],
   },
   { timestamps: true }
 )
