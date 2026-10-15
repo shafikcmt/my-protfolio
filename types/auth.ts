@@ -8,6 +8,8 @@ export interface IUser {
   password?: string
   role: UserRole
   isActive?: boolean
+  resetPasswordToken?: string
+  resetPasswordExpires?: Date
   createdAt?: string | Date
   updatedAt?: string | Date
   matchPassword?: (enteredPassword: string) => Promise<boolean>
