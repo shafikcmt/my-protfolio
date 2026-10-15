@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { UserRole } from '@/types/auth'
+import PasswordInput from '@/components/PasswordInput'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -131,9 +132,8 @@ export default function RegisterPage() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password
               </label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -147,9 +147,8 @@ export default function RegisterPage() {
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Confirm Password
               </label>
-              <input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}

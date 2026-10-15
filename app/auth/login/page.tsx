@@ -4,6 +4,7 @@ import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
+import PasswordInput from '@/components/PasswordInput'
 
 function LoginForm() {
   const router = useRouter()
@@ -69,9 +70,8 @@ function LoginForm() {
               <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-slate-700">
                 Password
               </label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}

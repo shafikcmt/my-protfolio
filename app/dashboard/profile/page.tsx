@@ -5,6 +5,7 @@ import axios from 'axios'
 import { useAuth } from '@/contexts/AuthContext'
 import DashboardLayout from '@/components/DashboardLayout'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import PasswordInput from '@/components/PasswordInput'
 
 export default function ProfileEditPage() {
   const { user } = useAuth()
@@ -146,8 +147,7 @@ export default function ProfileEditPage() {
                       <label htmlFor="currentPassword" className="mb-2 block text-sm font-semibold text-slate-700">
                         Current Password
                       </label>
-                      <input
-                        type="password"
+                      <PasswordInput
                         name="currentPassword"
                         id="currentPassword"
                         value={formData.currentPassword}
@@ -161,8 +161,7 @@ export default function ProfileEditPage() {
                       <label htmlFor="newPassword" className="mb-2 block text-sm font-semibold text-slate-700">
                         New Password
                       </label>
-                      <input
-                        type="password"
+                      <PasswordInput
                         name="newPassword"
                         id="newPassword"
                         value={formData.newPassword}
@@ -176,8 +175,7 @@ export default function ProfileEditPage() {
                       <label htmlFor="confirmPassword" className="mb-2 block text-sm font-semibold text-slate-700">
                         Confirm New Password
                       </label>
-                      <input
-                        type="password"
+                      <PasswordInput
                         name="confirmPassword"
                         id="confirmPassword"
                         value={formData.confirmPassword}
