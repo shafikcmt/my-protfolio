@@ -266,10 +266,11 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           1. HERO
       ══════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-[linear-gradient(140deg,#edf8f7_0%,#f4faf9_45%,#d5eeec_100%)]">
+      <section className="relative overflow-hidden bg-slate-950">
         {/* ambient blobs */}
-        <div className="pointer-events-none absolute -left-32 -top-12 h-[500px] w-[500px] rounded-full bg-teal-300/20 blur-3xl" />
-        <div className="pointer-events-none absolute -right-32 bottom-0 h-[600px] w-[600px] rounded-full bg-cyan-300/15 blur-3xl" />
+        <div className="pointer-events-none absolute -left-32 -top-12 h-[500px] w-[500px] rounded-full bg-teal-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-32 bottom-0 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
         <div className="container-custom relative z-10 py-16 lg:py-20">
           <div className="grid items-center gap-14 lg:grid-cols-[1fr_0.95fr]">
@@ -277,16 +278,16 @@ export default function Home() {
             {/* ── Left: content ── */}
             <div className="min-w-0">
               {/* Badge */}
-              <div data-hero-el="badge" className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-teal-200 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
+              <div data-hero-el="badge" className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-teal-400/30 bg-white/5 px-4 py-2 backdrop-blur">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-60" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-500" />
                 </span>
-                <span className="text-[11px] font-black uppercase tracking-[0.16em] text-teal-700 sm:text-xs sm:tracking-[0.28em]">Open to Remote Work &amp; Projects</span>
+                <span className="text-[11px] font-black uppercase tracking-[0.16em] text-teal-300 sm:text-xs sm:tracking-[0.28em]">Open to Remote Work &amp; Projects</span>
               </div>
 
               {/* Headline — each line clip-reveals from its own overflow-hidden mask */}
-              <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.5rem]">
+              <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.5rem]">
                 <span className="block overflow-hidden pb-1">
                   <span data-hero-line className="block">Full Stack Developer</span>
                 </span>
@@ -294,32 +295,32 @@ export default function Home() {
                   <span data-hero-line className="block">Building ERP &amp;</span>
                 </span>
                 <span className="block overflow-hidden pb-1">
-                  <span data-hero-line className="block bg-gradient-to-r from-teal-600 to-teal-400 bg-clip-text text-transparent">
+                  <span data-hero-line className="block bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent">
                     Business Web Apps.
                   </span>
                 </span>
               </h1>
 
-              <p data-hero-el="sub" className="mt-5 max-w-lg text-base leading-7 text-slate-600">
+              <p data-hero-el="sub" className="mt-5 max-w-lg text-base leading-7 text-slate-300">
                 Laravel · Next.js · MERN developer specialised in{' '}
-                <span className="font-semibold text-slate-800">Garments &amp; Apparel ERP</span> — merchandising,
+                <span className="font-semibold text-white">Garments &amp; Apparel ERP</span> — merchandising,
                 production and inventory systems. Available for remote roles and client projects
                 (GMT+6, flexible overlap with EU / US hours).
               </p>
 
               {/* CTAs */}
               <div data-hero-el="cta" className="mt-8 flex flex-wrap gap-3">
-                <Link data-magnetic href="/contact" className="btn-primary px-7 py-3.5 text-sm">
+                <Link data-magnetic href="/hire" className="btn-primary px-7 py-3.5 text-sm">
                   <span className="relative z-10 inline-flex items-center">
                     Hire Me <ArrowRight className="ml-1.5 h-4 w-4" />
                   </span>
                 </Link>
                 {RESUME_URL ? (
-                  <a href={RESUME_URL} target="_blank" rel="noreferrer" className="btn-secondary px-7 py-3.5 text-sm">
+                  <a href={RESUME_URL} target="_blank" rel="noreferrer" className="inline-flex items-center rounded-full border border-white/25 px-7 py-3.5 text-sm font-bold text-white transition hover:border-teal-300 hover:text-teal-200">
                     <Download className="mr-1.5 h-4 w-4" /> Download CV
                   </a>
                 ) : (
-                  <Link href="/projects" className="btn-secondary px-7 py-3.5 text-sm">
+                  <Link href="/projects" className="inline-flex items-center rounded-full border border-white/25 px-7 py-3.5 text-sm font-bold text-white transition hover:border-teal-300 hover:text-teal-200">
                     View Projects
                   </Link>
                 )}
@@ -337,11 +338,11 @@ export default function Home() {
                   { v: '5+',   l: 'Yrs Exp.',  icon: BadgeCheck },
                   { v: '200+', l: 'Students',  icon: GraduationCap },
                 ].map(({ v, l, icon: Icon }) => (
-                  <div key={l} data-hero-stat className="group flex items-center gap-2.5 rounded-2xl border border-white/90 bg-white/80 px-4 py-3 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-md">
-                    <Icon className="h-4 w-4 text-teal-600 transition-transform duration-300 group-hover:scale-110" />
+                  <div key={l} data-hero-stat className="group flex items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-teal-400/40">
+                    <Icon className="h-4 w-4 text-teal-300 transition-transform duration-300 group-hover:scale-110" />
                     <div>
-                      <p className="text-lg font-black leading-none text-slate-950">{v}</p>
-                      <p className="mt-0.5 text-[11px] font-semibold text-slate-500">{l}</p>
+                      <p className="text-lg font-black leading-none text-white">{v}</p>
+                      <p className="mt-0.5 text-[11px] font-semibold text-slate-400">{l}</p>
                     </div>
                   </div>
                 ))}
@@ -351,7 +352,7 @@ export default function Home() {
               <div className="mt-8 overflow-hidden lg:hidden [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
                 <div className="flex w-max gap-2 marquee-track">
                   {[...['Laravel', 'Next.js', 'React', 'Node.js', 'MySQL', 'MongoDB', 'TypeScript', 'Tailwind'], ...['Laravel', 'Next.js', 'React', 'Node.js', 'MySQL', 'MongoDB', 'TypeScript', 'Tailwind']].map((t, i) => (
-                    <span key={i} className="rounded-full border border-teal-200/70 bg-white/70 px-3 py-1.5 text-xs font-bold text-teal-700 backdrop-blur">
+                    <span key={i} className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-bold text-teal-300 backdrop-blur">
                       {t}
                     </span>
                   ))}
@@ -359,132 +360,60 @@ export default function Home() {
               </div>
             </div>
 
-            {/* ── Right: code editor visual (desktop only) ── */}
-            <div data-hero-el="visual" className="hidden space-y-4 lg:block">
+            {/* ── Right: availability profile card (desktop only) ── */}
+            <div data-hero-el="visual" className="hidden lg:block">
+              <div data-hero-float className="relative">
+                <div className="absolute -inset-px rounded-[28px] bg-gradient-to-br from-teal-400/40 via-transparent to-cyan-400/30 blur-sm" />
+                <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/80 p-7 shadow-[0_40px_100px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-400 text-lg font-black text-slate-950">
+                      SI
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-lg font-black text-white">Md Shafiqul Islam</p>
+                      <p className="text-sm text-slate-400">Full Stack Developer · Garments ERP</p>
+                    </div>
+                    <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-emerald-400/10 px-3 py-1 text-[11px] font-bold text-emerald-300 ring-1 ring-emerald-400/30">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Available
+                    </span>
+                  </div>
 
-              {/* Top badge */}
-              <div className="flex justify-end">
-                <div className="rounded-full border border-teal-700/40 bg-teal-950/80 px-4 py-2 shadow-lg">
-                  <p className="text-xs font-black text-teal-400">⚡ Available · Freelance &amp; Training</p>
-                </div>
-              </div>
+                  <dl className="mt-6 grid grid-cols-2 gap-3 text-sm">
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                      <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Timezone</dt>
+                      <dd className="mt-1 font-semibold text-white">GMT+6 · EU/US overlap</dd>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                      <dt className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Reply</dt>
+                      <dd className="mt-1 font-semibold text-white">Within 24 hours</dd>
+                    </div>
+                  </dl>
 
-              {/* Code editor card */}
-              <div data-hero-float className="overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-950 shadow-[0_40px_100px_rgba(0,0,0,0.4)]">
-                {/* Title bar */}
-                <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/80 px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-3 rounded-full bg-red-400" />
-                    <span className="h-3 w-3 rounded-full bg-amber-400" />
-                    <span className="h-3 w-3 rounded-full bg-green-400" />
+                  <div className="mt-5">
+                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Open to</p>
+                    <div className="flex flex-wrap gap-2">
+                      {['Full-time remote', 'Contract', 'Fixed-price projects'].map((t) => (
+                        <span key={t} className="rounded-full bg-teal-400/10 px-3 py-1 text-xs font-bold text-teal-300 ring-1 ring-teal-400/30">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <span className="text-[11px] font-medium text-slate-500">solution.config.ts</span>
-                  <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] text-slate-500">TypeScript</span>
-                </div>
 
-                {/* Code body */}
-                <div className="flex p-5 font-mono text-[12.5px] leading-[1.85]">
-                  {/* Line numbers */}
-                  <div className="mr-5 select-none text-right text-slate-700">
-                    {Array.from({ length: 10 }, (_, i) => (
-                      <div key={i}>{i + 1}</div>
-                    ))}
-                  </div>
-                  {/* Syntax-highlighted code */}
-                  <div className="min-w-0">
-                    <div><span className="text-slate-600">{'// Professional web solution builder'}</span></div>
-                    <div>
-                      <span className="text-purple-400">const</span>{' '}
-                      <span className="text-sky-300">solution</span>{' '}
-                      <span className="text-slate-300">=</span>{' '}
-                      <span className="text-yellow-300">buildProject</span>
-                      <span className="text-slate-300">{'({'}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-600">{'  '}</span>
-                      <span className="text-sky-300">stack</span>
-                      <span className="text-slate-400">{': ['}</span>
-                      <span className="text-green-400">&apos;Laravel&apos;</span>
-                      <span className="text-slate-400">, </span>
-                      <span className="text-green-400">&apos;Next.js&apos;</span>
-                      <span className="text-slate-400">, </span>
-                      <span className="text-green-400">&apos;React&apos;</span>
-                      <span className="text-slate-400">{'],'}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-600">{'  '}</span>
-                      <span className="text-sky-300">type</span>
-                      <span className="text-slate-400">{': '}</span>
-                      <span className="text-green-400">&apos;Business Ready&apos;</span>
-                      <span className="text-slate-400">,</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-600">{'  '}</span>
-                      <span className="text-sky-300">delivery</span>
-                      <span className="text-slate-400">{': '}</span>
-                      <span className="text-amber-400">7</span>
-                      <span className="text-slate-600">{',  // days'}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-600">{'  '}</span>
-                      <span className="text-sky-300">support</span>
-                      <span className="text-slate-400">{': '}</span>
-                      <span className="text-green-400">&apos;after-delivery&apos;</span>
-                      <span className="text-slate-400">,</span>
-                    </div>
-                    <div><span className="text-slate-300">{'}'}</span><span className="text-slate-300">{')'}</span></div>
-                    <div>&nbsp;</div>
-                    <div><span className="text-slate-600">{'// ✓ Returns: production-ready solution'}</span></div>
-                    <div>
-                      <span className="text-purple-400">export</span>{' '}
-                      <span className="text-purple-400">default</span>{' '}
-                      <span className="text-sky-300">solution</span>
+                  <div className="mt-5">
+                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Core stack</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['Laravel', 'Next.js', 'React', 'Node.js', 'Django', 'PostgreSQL', 'MySQL', 'MongoDB', 'Docker'].map((t) => (
+                        <span key={t} className="rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-200 ring-1 ring-white/10">
+                          {t}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                </div>
 
-                {/* Status bar */}
-                <div className="flex items-center gap-4 border-t border-slate-700/60 bg-slate-900/60 px-5 py-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-teal-400" />
-                    <span className="text-[11px] text-teal-400">Ready</span>
-                  </div>
-                  <span className="text-[11px] text-slate-600">TypeScript 5</span>
-                  <span className="ml-auto text-[11px] text-slate-600">UTF-8</span>
-                </div>
-              </div>
-
-              {/* Bottom row: terminal + tech stack */}
-              <div className="grid grid-cols-2 gap-4">
-                {/* Mini terminal */}
-                <div className="overflow-hidden rounded-xl border border-slate-700 bg-slate-950 shadow-lg">
-                  <div className="flex items-center gap-2 border-b border-slate-800 bg-slate-900 px-3 py-2">
-                    <span className="h-2 w-2 rounded-full bg-red-400" />
-                    <span className="h-2 w-2 rounded-full bg-amber-400" />
-                    <span className="h-2 w-2 rounded-full bg-green-400" />
-                    <span className="ml-1 text-[10px] text-slate-600">bash</span>
-                  </div>
-                  <div className="p-3 font-mono text-[11px] leading-[1.8]">
-                    <div className="text-slate-500">$ npm run deploy</div>
-                    <div className="text-green-400">✓ Build success</div>
-                    <div className="text-green-400">✓ Tests passed</div>
-                    <div className="flex items-center gap-1 text-teal-400">
-                      <span className="text-slate-600">$</span>
-                      <span className="cursor-blink">▌</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tech stack mini card */}
-                <div className="rounded-xl border border-slate-700 bg-slate-950 p-4 shadow-lg">
-                  <p className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Tech Stack</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {['Laravel', 'Next.js', 'React', 'Node.js', 'MySQL', 'MongoDB'].map((t) => (
-                      <span key={t} className="rounded-full bg-teal-900/60 px-2.5 py-1 text-[10px] font-bold text-teal-400">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
+                  <Link href="/hire" className="mt-6 flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-teal-50">
+                    View hiring details <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
               </div>
             </div>
