@@ -79,17 +79,20 @@ export default function ProjectsPage() {
       {/* ═══════════════════════════════════════
           HERO
       ═══════════════════════════════════════ */}
-      <section className="border-b border-slate-100 bg-white">
-        <div className="container-custom py-16 lg:py-20">
+      <section className="relative overflow-hidden bg-slate-950">
+        <div className="pointer-events-none absolute -left-24 -top-24 h-[420px] w-[420px] rounded-full bg-teal-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-24 bottom-0 h-[380px] w-[380px] rounded-full bg-cyan-500/15 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
+        <div className="container-custom relative z-10 py-16 lg:py-24">
           <Reveal variant="blur-rise" className="mx-auto max-w-3xl text-center">
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-teal-700">
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-400/40 bg-teal-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-teal-300">
               <BadgeCheck className="h-3.5 w-3.5" /> Selected Work
             </span>
-            <h1 className="mb-5 text-4xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl">
+            <h1 className="mb-5 text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl">
               Projects &amp;{' '}
-              <span className="text-teal-600">Case Studies</span>
+              <span className="bg-gradient-to-r from-teal-300 to-cyan-300 bg-clip-text text-transparent">Case Studies</span>
             </h1>
-            <p className="mb-8 text-base leading-relaxed text-slate-500 sm:text-lg">
+            <p className="mb-8 text-base leading-relaxed text-slate-300 sm:text-lg">
               A collection of real-world web applications — LMS platforms, eCommerce systems,
               enterprise dashboards, and more — built with clean, production-ready code.
             </p>
@@ -97,7 +100,7 @@ export default function ProjectsPage() {
               <Link href="/contact" className="btn-primary gap-2">
                 Discuss a Project <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/services" className="btn-secondary gap-2">
+              <Link href="/services" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm font-bold text-white transition hover:border-teal-300 hover:text-teal-200">
                 View Services
               </Link>
             </div>
@@ -108,9 +111,9 @@ export default function ProjectsPage() {
             {TRUST_ITEMS.map((item) => (
               <span
                 key={item.label}
-                className="flex items-center gap-2 text-sm font-medium text-slate-500"
+                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 backdrop-blur"
               >
-                <span className="text-teal-500">{item.icon}</span>
+                <span className="text-teal-300">{item.icon}</span>
                 {item.label}
               </span>
             ))}
