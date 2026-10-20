@@ -705,7 +705,7 @@ export default function Home() {
                   className="group block h-full overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-teal-100 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)]">
                   <div className="relative h-44 overflow-hidden bg-slate-900">
                     {project.image ? (
-                      <img src={project.image} alt={project.title}
+                      <img loading="lazy" decoding="async" src={project.image} alt={project.title}
                         className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-110" />
                     ) : (
                       <ProjectMockup technologies={project.technologies} />
@@ -845,7 +845,7 @@ export default function Home() {
                   <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-teal-50 text-sm font-black text-teal-700">
                     {t.image ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
-                      <img src={t.image} alt={t.name} className="h-full w-full object-cover" />
+                      <img loading="lazy" decoding="async" src={t.image} alt={t.name} className="h-full w-full object-cover" />
                     ) : (
                       t.name.charAt(0)
                     )}

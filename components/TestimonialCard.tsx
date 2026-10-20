@@ -15,7 +15,7 @@ export default function TestimonialCard({ name, role, company, rating, content, 
       <div className="mb-5 flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-[1.25rem] bg-gradient-to-br from-teal-100 to-cyan-100 text-lg font-black text-teal-700">
-            {image ? <img src={image} alt={name} className="h-14 w-14 object-cover" /> : name.charAt(0)}
+            {image ? <img loading="lazy" decoding="async" src={image} alt={name} className="h-14 w-14 object-cover" /> : name.charAt(0)}
           </div>
           <div>
             <p className="text-lg font-black text-slate-900">{name}</p>

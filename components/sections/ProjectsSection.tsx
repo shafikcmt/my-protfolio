@@ -297,7 +297,7 @@ function PreviewPanel({
       <div className="flex h-full flex-col">
         <BrowserBar label={project.title} />
         <div className="relative flex-1 overflow-hidden">
-          <img
+          <img loading="lazy" decoding="async"
             src={project.image}
             alt={project.title}
             className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
@@ -435,7 +435,7 @@ function GridCard({ project, index }: { project: Project; index: number }) {
             </div>
           </div>
         ) : showImage ? (
-          <img
+          <img loading="lazy" decoding="async"
             src={project.image}
             alt={project.title}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
