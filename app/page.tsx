@@ -669,12 +669,15 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           7. WORK PROCESS
       ══════════════════════════════════════════════ */}
-      <section id="process" className="bg-[#f5f8f7] py-20 lg:py-24">
-        <div className="container-custom">
+      <section id="process" className="relative overflow-hidden bg-slate-950 py-20 lg:py-24">
+        <div className="pointer-events-none absolute -left-24 top-0 h-[360px] w-[360px] rounded-full bg-teal-500/15 blur-3xl" />
+        <div className="pointer-events-none absolute -right-24 bottom-0 h-[320px] w-[320px] rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
+        <div className="container-custom relative z-10">
 
           <Reveal variant="rise" className="mb-14 text-center">
-            <p className="section-kicker">How It Works</p>
-            <h2 className="section-heading mx-auto">From Idea to Delivery</h2>
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.28em] text-teal-300">How It Works</p>
+            <h2 className="mx-auto text-3xl font-black tracking-tight text-white sm:text-4xl">From Idea to Delivery</h2>
           </Reveal>
 
           <div data-process className="relative">
@@ -685,11 +688,11 @@ export default function Home() {
             <div className="grid gap-8 lg:grid-cols-5">
               {WORK_PROCESS.map((item) => (
                 <div key={item.step} data-process-step className="group flex flex-col items-center text-center">
-                  <div className="relative z-10 mb-5 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-teal-700 text-sm font-black text-white shadow-[0_8px_24px_rgba(15,118,110,0.4)] transition-transform duration-300 group-hover:scale-110">
+                  <div className="relative z-10 mb-5 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-400 to-teal-600 text-sm font-black text-slate-950 shadow-[0_8px_30px_rgba(20,184,166,0.45)] ring-4 ring-slate-950 transition-transform duration-300 group-hover:scale-110">
                     {item.step}
                   </div>
-                  <h3 className="text-sm font-black text-slate-950">{item.title}</h3>
-                  <p className="mt-2 text-xs leading-6 text-slate-500">{item.description}</p>
+                  <h3 className="text-sm font-black text-white">{item.title}</h3>
+                  <p className="mt-2 text-xs leading-6 text-slate-400">{item.description}</p>
                 </div>
               ))}
             </div>
@@ -827,44 +830,44 @@ export default function Home() {
       {/* ══════════════════════════════════════════════
           11. FINAL CTA
       ══════════════════════════════════════════════ */}
-      <section className="container-custom pb-20 lg:pb-24">
-        <Reveal variant="scale" duration={0.7} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 px-8 py-14 text-center glow-pulse">
-          <span className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
-          <span className="pointer-events-none absolute -bottom-20 -right-10 h-64 w-64 rounded-full bg-teal-300/20 blur-3xl" />
-          <p className="relative mb-3 text-sm font-bold uppercase tracking-widest text-teal-200">
-            Ready to Start?
-          </p>
-          <h2 className="relative mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl">
-            Have a project idea or want<br className="hidden sm:block" />
-            a ready solution?
-          </h2>
-          <p className="relative mx-auto mb-8 max-w-lg text-base text-teal-100">
-            Send an enquiry, request a demo, or message me on WhatsApp.
-            I respond within 24 hours.
-          </p>
-          <div className="relative flex flex-wrap justify-center gap-3">
-            <Link
-              href="/order-project"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-teal-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              Send Project Enquiry <ArrowUpRight className="h-4 w-4" />
-            </Link>
-            <a
-              href={WA}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-green-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-green-400"
-            >
-              <WaIcon /> WhatsApp Me
-            </a>
-            <Link
-              href="/courses"
-              className="inline-flex items-center gap-2 rounded-full border border-teal-400 px-6 py-3 text-sm font-bold text-white transition hover:bg-teal-500"
-            >
-              <BookOpen className="h-4 w-4" /> Join a Course
-            </Link>
-          </div>
-        </Reveal>
+      <section className="relative overflow-hidden bg-slate-950 py-20 lg:py-24">
+        <div className="pointer-events-none absolute -left-24 -top-24 h-[380px] w-[380px] rounded-full bg-teal-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 h-[380px] w-[380px] rounded-full bg-cyan-500/15 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
+        <div className="container-custom relative z-10">
+          <Reveal variant="scale" duration={0.7} className="mx-auto max-w-3xl text-center">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.28em] text-teal-300">Ready to Start?</p>
+            <h2 className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Hiring a developer or have <br className="hidden sm:block" />
+              a project idea?
+            </h2>
+            <p className="mx-auto mb-8 max-w-lg text-base text-slate-300">
+              Remote role, contract or a custom ERP / web app. Send a short brief and I respond within 24 hours.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link
+                href="/hire"
+                className="inline-flex items-center gap-2 rounded-full bg-teal-500 px-6 py-3 text-sm font-bold text-slate-950 shadow-[0_10px_30px_rgba(20,184,166,0.35)] transition hover:-translate-y-0.5 hover:bg-teal-400"
+              >
+                Hire Me <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/order-project"
+                className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm font-bold text-white transition hover:border-teal-300 hover:text-teal-200"
+              >
+                Send Project Enquiry <ArrowUpRight className="h-4 w-4" />
+              </Link>
+              <a
+                href={WA}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-green-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-green-400"
+              >
+                <WaIcon /> WhatsApp Me
+              </a>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
     </div>
