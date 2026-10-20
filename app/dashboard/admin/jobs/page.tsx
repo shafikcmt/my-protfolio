@@ -218,7 +218,7 @@ export default function AdminJobsPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-teal-600">Remote Jobs</p>
               <h1 className="text-2xl font-bold text-slate-900">Job Finder</h1>
               <p className="mt-1 text-sm text-slate-500">
-                Collected daily from Remotive, RemoteOK, Arbeitnow, Jobicy and We Work Remotely, scored against your skills.
+                Collected daily from Remotive, RemoteOK, Arbeitnow, Jobicy, Himalayas and We Work Remotely, scored against your skills.
                 {lastFoundAt && <> Last new job found {timeAgo(lastFoundAt)}.</>}
               </p>
             </div>
