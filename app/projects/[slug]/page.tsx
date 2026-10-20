@@ -4,15 +4,21 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import axios from 'axios'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
 import {
   ArrowLeft,
   ArrowUpRight,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Briefcase,
+  Building2,
+  Clock,
   Code2,
   ExternalLink,
+  Lightbulb,
+  Target,
+  TrendingUp,
   Star,
   X,
   ZoomIn,
@@ -21,6 +27,7 @@ import { PROJECT_LIST } from '@/lib/constants'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { getEmbedUrl, isDirectVideo } from '@/lib/media'
 import { groupFeatures } from '@/lib/features'
+import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 
 type ProjectData = {
   title: string
@@ -103,9 +110,74 @@ function FeatureItem({ text }: { text: string }) {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)]">
-      <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-teal-600">{title}</h3>
-      {children}
+    <Reveal>
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)] transition duration-300 hover:shadow-[0_12px_36px_rgba(15,23,42,0.10)]">
+        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-teal-600">
+          <span className="h-px w-6 bg-teal-500" />
+          {title}
+        </h3>
+        {children}
+      </div>
+    </Reveal>
+  )
+}
+
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 24, restDelta: 0.001 })
+  return (
+    <motion.div
+      style={{ scaleX }}
+      className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left bg-gradient-to-r from-teal-500 via-cyan-400 to-emerald-400"
+    />
+  )
+}
+
+function CaseStudy({ problem, solution, results }: { problem?: string; solution?: string; results?: string[] }) {
+  const steps = [
+    problem && { icon: Target, label: 'The Problem', tone: 'bg-rose-50 text-rose-600 ring-rose-100', body: <p className="text-sm leading-7 text-slate-600">{problem}</p> },
+    solution && { icon: Lightbulb, label: 'The Solution', tone: 'bg-teal-50 text-teal-600 ring-teal-100', body: <p className="text-sm leading-7 text-slate-600">{solution}</p> },
+    results && results.length > 0 && {
+      icon: TrendingUp,
+      label: 'The Result',
+      tone: 'bg-emerald-50 text-emerald-600 ring-emerald-100',
+      body: (
+        <ul className="space-y-2.5">
+          {results.map((r) => (
+            <FeatureItem key={r} text={r} />
+          ))}
+        </ul>
+      ),
+    },
+  ].filter(Boolean) as { icon: typeof Target; label: string; tone: string; body: React.ReactNode }[]
+
+  if (steps.length === 0) return null
+
+  return (
+    <div>
+      <Reveal>
+        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-teal-600">
+          <span className="h-px w-6 bg-teal-500" />
+          Case Study
+        </h3>
+      </Reveal>
+      <Stagger className="space-y-4" stagger={0.12}>
+        {steps.map((step, i) => (
+          <StaggerItem key={step.label}>
+            <div className="relative flex gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_36px_rgba(15,23,42,0.10)]">
+              <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl ring-1 ${step.tone}`}>
+                <step.icon className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="mb-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  <span className="text-slate-300">0{i + 1}</span> · {step.label}
+                </p>
+                {step.body}
+              </div>
+            </div>
+          </StaggerItem>
+        ))}
+      </Stagger>
     </div>
   )
 }
@@ -199,9 +271,14 @@ function ScreenshotGallery({
           <motion.button
             key={i}
             onClick={() => setLightboxIndex(i)}
-            className="group relative aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-100"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.15 }}
+            className={`group relative overflow-hidden rounded-xl border border-slate-200 bg-slate-100 ${
+              i === 0 && screenshots.length > 2 ? 'col-span-2 row-span-2 aspect-video sm:aspect-auto sm:min-h-[260px]' : 'aspect-video'
+            }`}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.45, delay: Math.min(i, 5) * 0.06 }}
+            whileHover={{ y: -3 }}
           >
             <div
               className="h-full w-full bg-cover bg-center transition duration-300 group-hover:scale-105"
@@ -329,16 +406,21 @@ export default function ProjectDetailPage() {
   const demoEnquiryHref = `/order-project?project=${encodeURIComponent(project.title)}&type=demo`
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      <div className="container-custom py-10 lg:py-16">
+    <div className="min-h-screen bg-[#F8FAFC] pb-24 lg:pb-0">
+      <ScrollProgress />
+      <section className="relative overflow-hidden bg-slate-950">
+        <div className="pointer-events-none absolute -left-24 -top-24 h-[420px] w-[420px] rounded-full bg-teal-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-24 bottom-0 h-[380px] w-[380px] rounded-full bg-cyan-500/15 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
+        <div className="container-custom relative z-10 py-10 lg:py-16">
 
         {/* Breadcrumb */}
         <nav className="mb-8 flex items-center gap-2 text-sm text-slate-400">
-          <Link href="/" className="transition hover:text-teal-600">Home</Link>
+          <Link href="/" className="transition hover:text-teal-300">Home</Link>
           <span>/</span>
-          <Link href="/projects" className="transition hover:text-teal-600">Projects</Link>
+          <Link href="/projects" className="transition hover:text-teal-300">Projects</Link>
           <span>/</span>
-          <span className="max-w-[240px] truncate text-slate-700">{project.title}</span>
+          <span className="max-w-[240px] truncate text-slate-200">{project.title}</span>
         </nav>
 
         {/* Hero */}
@@ -346,30 +428,29 @@ export default function ProjectDetailPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-10"
         >
           <div className="mb-4 flex flex-wrap gap-2">
             {project.featured && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-300">
                 <Star className="h-3 w-3" />
                 Featured
               </span>
             )}
             {project.category && (
-              <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-700">
+              <span className="inline-flex items-center rounded-full border border-teal-400/40 bg-teal-400/10 px-3 py-1 text-xs font-bold text-teal-300">
                 {project.category}
               </span>
             )}
-            <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+            <span className="inline-flex items-center rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">
               Available
             </span>
           </div>
 
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 lg:text-4xl xl:text-[2.75rem]">
+          <h1 className="bg-gradient-to-r from-white via-white to-teal-200 bg-clip-text text-3xl font-black tracking-tight text-transparent lg:text-4xl xl:text-[2.75rem]">
             {project.title}
           </h1>
 
-          <p className="mt-4 max-w-2xl text-base leading-7 text-slate-500">
+          <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
             {project.shortDescription ||
               (project.description.length > 200
                 ? project.description.slice(0, 200) + '…'
@@ -379,7 +460,9 @@ export default function ProjectDetailPage() {
           {project.technologies && project.technologies.length > 0 && (
             <div className="mt-5 flex flex-wrap gap-2">
               {project.technologies.map((t) => (
-                <TechChip key={t} tag={t} />
+                <span key={t} className="rounded-full bg-white/5 px-2.5 py-1 text-xs font-semibold text-slate-200 ring-1 ring-white/15 backdrop-blur">
+                  {t}
+                </span>
               ))}
             </div>
           )}
@@ -387,13 +470,13 @@ export default function ProjectDetailPage() {
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <Link
               href={enquiryHref}
-              className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-teal-500"
+              className="inline-flex items-center gap-2 rounded-full bg-teal-500 px-6 py-2.5 text-sm font-bold text-slate-950 shadow-[0_10px_30px_rgba(20,184,166,0.35)] transition hover:-translate-y-0.5 hover:bg-teal-400"
             >
               Send Enquiry
             </Link>
             <Link
               href={demoEnquiryHref}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-6 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-400 hover:text-teal-700"
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-2.5 text-sm font-bold text-white transition hover:border-teal-300 hover:text-teal-200"
             >
               Request Demo <ArrowUpRight className="h-4 w-4" />
             </Link>
@@ -402,15 +485,40 @@ export default function ProjectDetailPage() {
                 href={demoUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 transition hover:text-teal-600"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-300 transition hover:text-teal-300"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Live Demo
               </a>
             )}
           </div>
-        </motion.div>
 
+          {(project.industry || project.role || project.duration) && (
+            <Stagger className="mt-9 grid max-w-3xl gap-3 sm:grid-cols-3" stagger={0.1} delayChildren={0.2}>
+              {[
+                { icon: Building2, k: 'Industry', v: project.industry },
+                { icon: Briefcase, k: 'My Role', v: project.role },
+                { icon: Clock, k: 'Duration', v: project.duration },
+              ]
+                .filter((i) => i.v)
+                .map(({ icon: Icon, k, v }) => (
+                  <StaggerItem key={k}>
+                    <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur">
+                      <Icon className="h-4 w-4 flex-shrink-0 text-teal-300" />
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">{k}</p>
+                        <p className="truncate text-sm font-semibold text-white">{v}</p>
+                      </div>
+                    </div>
+                  </StaggerItem>
+                ))}
+            </Stagger>
+          )}
+        </motion.div>
+        </div>
+      </section>
+
+      <div className="container-custom py-10 lg:py-14">
         {/* Content grid */}
         <div className="grid gap-6 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]">
 
@@ -422,7 +530,7 @@ export default function ProjectDetailPage() {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="overflow-hidden rounded-2xl border border-slate-200"
+              className="overflow-hidden rounded-2xl border border-slate-200 shadow-[0_18px_50px_rgba(15,23,42,0.12)]"
               style={{ minHeight: '260px' }}
             >
               {hasLiveDemo ? (
@@ -462,7 +570,7 @@ export default function ProjectDetailPage() {
                 <img
                   src={bannerImage}
                   alt={project.title}
-                  className="h-64 w-full object-cover lg:h-80"
+                  className="aspect-video w-full object-cover transition duration-700 hover:scale-[1.03]"
                   onError={() => setImgError(true)}
                 />
               ) : (
@@ -487,7 +595,7 @@ export default function ProjectDetailPage() {
               ...(project.userFeatures?.length ? [{ heading: 'User / Client Features', items: project.userFeatures }] : []),
             ].map((group, i) => (
               <Card key={`${group.heading}-${i}`} title={group.heading}>
-                <ul className="space-y-3">
+                <ul className="grid gap-3 sm:grid-cols-2">
                   {group.items.map((f) => (
                     <FeatureItem key={f} text={f} />
                   ))}
@@ -495,38 +603,8 @@ export default function ProjectDetailPage() {
               </Card>
             ))}
 
-            {/* Problem & Solution */}
-            {(project.clientProblem || project.solution) && (
-              <Card title="Problem & Solution">
-                {project.clientProblem && (
-                  <div className="mb-5">
-                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">
-                      Problem
-                    </p>
-                    <p className="text-sm leading-7 text-slate-600">{project.clientProblem}</p>
-                  </div>
-                )}
-                {project.solution && (
-                  <div>
-                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-teal-600">
-                      Solution
-                    </p>
-                    <p className="text-sm leading-7 text-slate-600">{project.solution}</p>
-                  </div>
-                )}
-              </Card>
-            )}
-
-            {/* Results / impact */}
-            {project.results && project.results.length > 0 && (
-              <Card title="Results & Impact">
-                <ul className="space-y-3">
-                  {project.results.map((r) => (
-                    <FeatureItem key={r} text={r} />
-                  ))}
-                </ul>
-              </Card>
-            )}
+            {/* Case study: problem -> solution -> result */}
+            <CaseStudy problem={project.clientProblem} solution={project.solution} results={project.results} />
 
             {/* Screenshots */}
             {project.screenshots && project.screenshots.length > 0 && (
@@ -636,6 +714,18 @@ export default function ProjectDetailPage() {
               All Projects
             </Link>
           </aside>
+        </div>
+      </div>
+
+      {/* Mobile sticky CTA */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/90 p-3 backdrop-blur lg:hidden">
+        <div className="mx-auto flex max-w-md gap-2 pr-16">
+          <Link href={enquiryHref} className="flex flex-1 items-center justify-center rounded-full bg-teal-600 px-4 py-2.5 text-sm font-bold text-white">
+            Send Enquiry
+          </Link>
+          <Link href={demoEnquiryHref} className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700">
+            Request Demo <ArrowUpRight className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </div>
