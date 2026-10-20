@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     // Instant alert so inquiries are answered fast (no-op if Telegram isn't configured)
     await sendTelegram(
       [
-        `📩 <b>New inquiry</b> (${escapeHtml(inquiryType)})`,
+        `${/hire|job|remote|full[- ]?time|contract/i.test(`${inquiryType} ${subject}`) ? '🔥 HIGH PRIORITY' : '📩'} <b>New inquiry</b> (${escapeHtml(inquiryType)})`,
         `<b>${escapeHtml(name.trim())}</b> — ${escapeHtml(email?.trim() || phone?.trim() || '')}`,
         budget ? `Budget: ${escapeHtml(String(budget))}` : '',
         `Subject: ${escapeHtml(subject.trim())}`,

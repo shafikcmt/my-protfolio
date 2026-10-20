@@ -142,3 +142,7 @@ For support, email hello@example.com or open an issue in the repository.
 ---
 
 **Happy coding! 🚀**
+
+## More docs
+
+See the `docs/` folder: ARCHITECTURE, BACKEND_SETUP, QUICKSTART and DEVELOPER_CHECKLIST. Copy `.env.example` to `.env.local` to configure.

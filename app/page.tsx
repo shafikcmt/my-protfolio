@@ -703,9 +703,10 @@ export default function Home() {
               <StaggerItem key={project.slug} variant="clip" as="div">
                 <Link href={`/projects/${project.slug}`}
                   className="group block h-full overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-teal-100 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)]">
-                  <div className="relative h-44 overflow-hidden bg-slate-900">
+                  <div className="relative h-44 overflow-hidden bg-gradient-to-br from-slate-900 to-teal-900">
                     {project.image ? (
                       <img loading="lazy" decoding="async" src={project.image} alt={project.title}
+                        onError={(e) => { e.currentTarget.style.display = 'none' }}
                         className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-110" />
                     ) : (
                       <ProjectMockup technologies={project.technologies} />
