@@ -1,7 +1,7 @@
 // Site configuration and constants
 
 export const SITE_NAME = 'Md Shafiqul Islam'
-export const SITE_URL = 'https://shafiqul.dev'
+export const SITE_URL = 'https://www.shafiqul.dev'
 export const SITE_DESCRIPTION = 'Premium personal portfolio, service booking, and LMS platform for Md Shafiqul Islam.'
 export const AUTHOR_NAME = 'Md Shafiqul Islam'
 export const AUTHOR_EMAIL = 'mdshafiqulislam822@gmail.com'

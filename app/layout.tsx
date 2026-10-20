@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import ClientLayout from '@/components/ClientLayout'
+import { SITE_URL } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Md Shafiqul Islam | Full Stack Developer — Garments ERP & Web Apps',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   keywords:
     'Md Shafiqul Islam, full stack developer, remote developer, Laravel developer, Next.js, MERN, garments ERP, apparel software, merchandising software, Bangladesh',
   authors: [{ name: 'Md Shafiqul Islam' }],
-  metadataBase: new URL('https://shafiqul.dev'),
+  metadataBase: new URL(SITE_URL),
 }
 
 export const viewport: Viewport = {

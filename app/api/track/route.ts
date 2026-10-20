@@ -12,7 +12,7 @@ const ALERT_GAP_MS = 30 * 60 * 1000 // one Telegram alert per visit session
 
 /**
  * Records a portfolio visit that arrived through a job's tracking link
- * (https://shafiqul.dev/?ref=<code>) and alerts me on Telegram.
+ * (https://www.shafiqul.dev/?ref=<code>) and alerts me on Telegram.
  * Always answers 204 so the public site never shows errors.
  */
 export async function POST(request: NextRequest) {
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       await sendTelegram(
         `👀 <b>${escapeHtml(job.company || 'A recruiter')}</b> just opened your portfolio!\n` +
           `Job: ${escapeHtml(job.title)}\nPage: ${escapeHtml(path)}\nLink: ${trackedPortfolioUrl(job.refCode)}\n\n` +
-          `Good moment to follow up 🙂\nhttps://shafiqul.dev/dashboard/admin/jobs`
+          `Good moment to follow up 🙂\nhttps://www.shafiqul.dev/dashboard/admin/jobs`
       )
     }
   } catch (error) {

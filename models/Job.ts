@@ -28,7 +28,7 @@ const JobSchema = new mongoose.Schema(
     interviewAt: Date,
     interviewReminded: { type: Boolean, default: false },
 
-    // Portfolio tracking link: https://shafiqul.dev/?ref=<refCode>
+    // Portfolio tracking link: https://www.shafiqul.dev/?ref=<refCode>
     refCode: { type: String, index: { unique: true, sparse: true } },
     visitCount: { type: Number, default: 0 },
     lastVisitAt: Date,

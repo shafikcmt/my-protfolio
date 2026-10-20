@@ -55,7 +55,7 @@ export const MIN_SCORE = 5
 export const ALERT_SCORE = 9
 
 const FETCH_TIMEOUT_MS = 12000
-const UA = 'Mozilla/5.0 (compatible; ShafiqulPortfolioJobFinder/1.0; +https://shafiqul.dev)'
+const UA = 'Mozilla/5.0 (compatible; ShafiqulPortfolioJobFinder/1.0; +https://www.shafiqul.dev)'
 
 function stripHtml(html = '') {
   return html
@@ -248,7 +248,7 @@ function jobAlertMessage(jobs: any[]) {
   const lines = jobs
     .slice(0, 10)
     .map((j) => `⭐ ${j.score} · <b>${escapeHtml(j.title)}</b>${j.company ? ` — ${escapeHtml(j.company)}` : ''}\n${escapeHtml(j.location || 'Remote')} · ${j.source}\n${j.url}`)
-  return `🔎 <b>${jobs.length} new matching remote job${jobs.length > 1 ? 's' : ''}</b>\n\n${lines.join('\n\n')}\n\nAll jobs: https://shafiqul.dev/dashboard/admin/jobs`
+  return `🔎 <b>${jobs.length} new matching remote job${jobs.length > 1 ? 's' : ''}</b>\n\n${lines.join('\n\n')}\n\nAll jobs: https://www.shafiqul.dev/dashboard/admin/jobs`
 }
 
 /** Follow-up and interview reminders for jobs in my pipeline. Returns number of reminders sent. */
@@ -279,7 +279,7 @@ async function sendPipelineReminders() {
     )
   }
 
-  const sent = await sendTelegram(`${parts.join('\n\n')}\n\nhttps://shafiqul.dev/dashboard/admin/jobs`)
+  const sent = await sendTelegram(`${parts.join('\n\n')}\n\nhttps://www.shafiqul.dev/dashboard/admin/jobs`)
   if (sent) {
     await Promise.all([
       Job.updateMany({ _id: { $in: followUps.map((j: any) => j._id) } }, { $unset: { followUpAt: 1 } }),
