@@ -271,6 +271,7 @@ function ScreenshotGallery({
           <motion.button
             key={i}
             onClick={() => setLightboxIndex(i)}
+            aria-label={`Open ${title} screenshot ${i + 1}`}
             className={`group relative overflow-hidden rounded-xl border border-slate-200 bg-slate-100 ${
               i === 0 && screenshots.length > 2 ? 'col-span-2 row-span-2 aspect-video sm:aspect-auto sm:min-h-[260px]' : 'aspect-video'
             }`}
@@ -315,6 +316,7 @@ function ScreenshotGallery({
               />
               <button
                 onClick={() => setLightboxIndex(null)}
+                aria-label="Close image"
                 className="absolute -right-4 -top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-white/20"
               >
                 <X className="h-4 w-4" />
@@ -323,12 +325,14 @@ function ScreenshotGallery({
                 <>
                   <button
                     onClick={prev}
+                    aria-label="Previous image"
                     className="absolute left-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-white/20"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={next}
+                    aria-label="Next image"
                     className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-white/20"
                   >
                     <ChevronRight className="h-5 w-5" />
