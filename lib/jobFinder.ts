@@ -168,6 +168,21 @@ export function parseJobicy(data: any): RawJob[] {
   }))
 }
 
+export function parseHimalayas(data: any): RawJob[] {
+  return (data?.jobs || []).map((j: any) => ({
+    source: 'Himalayas',
+    externalId: String(j.guid || j.applicationLink || j.title),
+    title: j.title,
+    company: j.companyName,
+    url: j.applicationLink || j.guid,
+    location: [].concat(j.locationRestrictions || []).join(', ') || undefined,
+    salary: money(j.minSalary, j.maxSalary, j.currency || 'USD'),
+    tags: [...[].concat(j.categories || []), ...[].concat(j.seniority || [])].map((t: any) => String(t)),
+    description: stripHtml(j.description || j.excerpt),
+    publishedAt: toDate(j.pubDate),
+  }))
+}
+
 export function parseWeWorkRemotely(xml: string): RawJob[] {
   const tag = (block: string, name: string) => {
     const m = block.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`))
@@ -196,6 +211,7 @@ const SOURCES: { name: string; load: () => Promise<RawJob[]> }[] = [
   { name: 'RemoteOK', load: async () => parseRemoteOk(await getJson('https://remoteok.com/api')) },
   { name: 'Arbeitnow', load: async () => parseArbeitnow(await getJson('https://www.arbeitnow.com/api/job-board-api')) },
   { name: 'Jobicy', load: async () => parseJobicy(await getJson('https://jobicy.com/api/v2/remote-jobs?count=100&industry=dev')) },
+  { name: 'Himalayas', load: async () => parseHimalayas(await getJson('https://himalayas.app/jobs/api?limit=100')) },
   {
     name: 'WeWorkRemotely',
     load: async () => parseWeWorkRemotely(await getText('https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss')),

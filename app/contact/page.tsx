@@ -64,6 +64,7 @@ const INITIAL_FORM = {
   subject: '',
   message: '',
   preferredContact: '',
+  website: '', // honeypot
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -357,6 +358,17 @@ export default function ContactPage() {
               </p>
 
               <form onSubmit={handleSubmit} noValidate className="space-y-5">
+                {/* Honeypot: hidden from users, bots fill it */}
+                <input
+                  type="text"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="absolute left-[-9999px] h-0 w-0 opacity-0"
+                />
 
                 {/* Full Name */}
                 <div>

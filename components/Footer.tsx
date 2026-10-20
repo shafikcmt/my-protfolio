@@ -7,6 +7,7 @@ const EXPLORE_LINKS = [
   { label: 'Services',  href: '/services' },
   { label: 'Projects',  href: '/projects' },
   { label: 'Blog',      href: '/blog'     },
+  { label: 'Hire Me',   href: '/hire'     },
 ]
 
 const PLATFORM_LINKS = [

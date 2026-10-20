@@ -6,13 +6,13 @@ import { PROJECT_LIST, SITE_URL } from '@/lib/constants'
 
 export const revalidate = 3600
 
-const STATIC_PATHS = ['', '/about', '/projects', '/services', '/courses', '/blog', '/contact', '/book-consultation']
+const STATIC_PATHS = ['', '/about', '/projects', '/services', '/courses', '/blog', '/hire', '/contact', '/book-consultation']
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = STATIC_PATHS.map((path) => ({
     url: `${SITE_URL}${path}`,
     changeFrequency: 'weekly',
-    priority: path === '' ? 1 : path === '/projects' ? 0.9 : 0.7,
+    priority: path === '' ? 1 : path === '/projects' || path === '/hire' ? 0.9 : 0.7,
   }))
 
   let projects: { slug: string; updatedAt?: Date }[] = []

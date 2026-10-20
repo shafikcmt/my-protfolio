@@ -81,7 +81,7 @@ export default function Navbar() {
               <LayoutDashboard className="h-3.5 w-3.5" />
               Dashboard
             </Link>
-            <Link href="/contact" className="btn-primary px-5 py-2.5 text-sm">
+            <Link href="/hire" className="btn-primary px-5 py-2.5 text-sm">
               <span className="relative z-10 inline-flex items-center">
                 Hire Me <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </span>

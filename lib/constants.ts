@@ -8,7 +8,7 @@ export const AUTHOR_EMAIL = 'mdshafiqulislam822@gmail.com'
 
 // CV download link for the hero "Download CV" button. Leave empty to hide the button.
 // Use '/resume.pdf' after replacing public/resume.pdf, or a Cloudinary / Google Drive PDF link.
-export const RESUME_URL = ''
+export const RESUME_URL = '/resume.pdf'
 
 // WhatsApp number in international format, digits only (e.g. 8801XXXXXXXXX).
 // Set NEXT_PUBLIC_WHATSAPP_NUMBER in Vercel, or replace the fallback here.
@@ -24,13 +24,14 @@ export const NAV_LINKS = [
   { label: 'Projects', href: '/projects' },
   { label: 'Courses', href: '/courses' },
   { label: 'Blog', href: '/blog' },
+  { label: 'Hire Me', href: '/hire' },
   { label: 'Contact', href: '/contact' },
 ]
 
 export const SOCIAL_LINKS = [
-  { label: 'GitHub', url: 'https://github.com/mdshafiqul', icon: '🐙' },
-  { label: 'LinkedIn', url: 'https://linkedin.com/in/mdshafiqul', icon: '💼' },
-  { label: 'Email', url: 'mailto:mdshafiqul@example.com', icon: '✉️' },
+  { label: 'GitHub', url: 'https://github.com/shafikcmt', icon: '🐙' },
+  { label: 'LinkedIn', url: 'https://linkedin.com/in/shafikcmt', icon: '💼' },
+  { label: 'Email', url: 'mailto:mdshafiqulislam822@gmail.com', icon: '✉️' },
   { label: 'WhatsApp', url: WHATSAPP_URL, icon: '💬' },
 ]
 
@@ -388,4 +389,12 @@ export const LIVE_TRAINING_INFO = {
   topics: ['HTML, CSS & JavaScript Fundamentals', 'Laravel Full Stack Development', 'MERN Stack (React + Node.js)', 'Next.js & TypeScript', 'Database Design & REST APIs', 'Deployment & Production Setup'],
   ctaLabel: 'Join Live Training',
   ctaHref: '/contact',
+}
+
+// Availability shown on /hire, in the hero and in JSON-LD. Update as your situation changes.
+export const AVAILABILITY = {
+  status: 'Available for remote full-time roles, contracts and client projects',
+  timezone: 'GMT+6 (Bangladesh) — flexible overlap with EU / US hours',
+  responseTime: 'I reply within 24 hours',
+  engagements: ['Full-time remote', 'Contract / freelance', 'Fixed-price projects'],
 }

@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/db'
 import ContactMessage from '@/models/ContactMessage'
+import { escapeHtml, sendTelegram } from '@/lib/telegram'
+
+// Best-effort per-IP throttle (per serverless instance): 5 submissions / 10 minutes.
+const hits = new Map<string, number[]>()
+function tooMany(ip: string) {
+  const now = Date.now()
+  const recent = (hits.get(ip) || []).filter((t) => now - t < 10 * 60 * 1000)
+  recent.push(now)
+  hits.set(ip, recent)
+  return recent.length > 5
+}
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown'
+    if (tooMany(ip)) {
+      return NextResponse.json({ success: false, message: 'Too many requests. Please try again later.' }, { status: 429 })
+    }
+
     await connectDB()
 
     const body = await request.json()
@@ -18,7 +34,12 @@ export async function POST(request: NextRequest) {
       subject,
       message,
       preferredContact,
+      website, // honeypot: real users never fill this
     } = body
+
+    if (website) {
+      return NextResponse.json({ success: true, message: 'Thank you! Your inquiry has been submitted.' }, { status: 201 })
+    }
 
     if (!name?.trim()) {
       return NextResponse.json({ success: false, message: 'Full name is required' }, { status: 400 })
@@ -66,8 +87,18 @@ export async function POST(request: NextRequest) {
 
     await contactMessage.save()
 
-    // TODO: Send notification email to admin
-    // await sendAdminNotification(contactMessage)
+    // Instant alert so inquiries are answered fast (no-op if Telegram isn't configured)
+    await sendTelegram(
+      [
+        `📩 <b>New inquiry</b> (${escapeHtml(inquiryType)})`,
+        `<b>${escapeHtml(name.trim())}</b> — ${escapeHtml(email?.trim() || phone?.trim() || '')}`,
+        budget ? `Budget: ${escapeHtml(String(budget))}` : '',
+        `Subject: ${escapeHtml(subject.trim())}`,
+        escapeHtml(message.trim().slice(0, 400)),
+      ]
+        .filter(Boolean)
+        .join('\n')
+    )
 
     return NextResponse.json(
       {
