@@ -792,14 +792,14 @@ export default function ProjectDetailPage() {
           </div>
 
           {/* Sidebar */}
-          <aside className="space-y-5 lg:sticky lg:top-24 lg:h-fit">
+          <aside className={`space-y-5 lg:sticky lg:top-24 lg:h-fit ${profile ? 'lg:max-h-[calc(100vh-11rem)] lg:overflow-y-auto' : ''}`}>
 
             {/* Enquiry CTA */}
             <div className="rounded-2xl border border-teal-100 bg-gradient-to-br from-teal-50 to-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)]">
               <p className="mb-1 text-sm font-bold text-slate-900">{profile ? 'Interested in ProTrac?' : 'Interested in this project?'}</p>
               <p className="mb-5 text-xs leading-5 text-slate-500">
                 {profile
-                  ? 'Configured to your factory. Request a demo or a custom quotation and get a response within 24 hours.'
+                  ? 'Configured to your factory. Request a demo or a custom quotation and I will reply after reviewing your requirements.'
                   : 'No fixed price — send an enquiry with your requirements and get a response within 24 hours.'}
               </p>
               <div className="space-y-3">
@@ -925,7 +925,7 @@ export default function ProjectDetailPage() {
 
       {/* Mobile sticky CTA */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/90 p-3 backdrop-blur lg:hidden">
-        <div className="mx-auto flex max-w-md gap-2 pr-16">
+        <div className="mx-auto flex max-w-md gap-2 pr-20">
           {profile ? (
             <>
               <EnquiryLink interest="demo" className="flex flex-1 items-center justify-center rounded-full bg-teal-600 px-4 py-2.5 text-sm font-bold text-white">

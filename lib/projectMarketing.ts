@@ -222,7 +222,7 @@ const PROTRAC: ProjectMarketingProfile = {
     },
     {
       question: 'How can we request a demonstration?',
-      answer: 'Use the enquiry form on this page and choose "Live demo". You will get a reply within 24 hours to arrange a walkthrough.',
+      answer: 'Use the enquiry form on this page and choose "Live demo". Each enquiry is reviewed personally, and I will reply to arrange a walkthrough.',
     },
     {
       question: 'How is implementation and support handled?',

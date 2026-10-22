@@ -455,7 +455,7 @@ export function EnquiryForm({ projectTitle }: { projectTitle: string }) {
         website: form.website,
       })
       if (data?.success) {
-        setResult({ type: 'success', message: "Thank you! Your enquiry has been received. I'll reply within 24 hours." })
+        setResult({ type: 'success', message: "Thank you! Your enquiry has been received. I will review it and get back to you." })
         setForm(EMPTY)
       } else {
         setResult({ type: 'error', message: data?.message || 'Something went wrong. Please try again.' })
