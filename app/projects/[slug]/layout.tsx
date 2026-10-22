@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { connectDB } from '@/lib/db'
 import Project from '@/models/Project'
-import { PROJECT_LIST, SITE_NAME } from '@/lib/constants'
+import { PROJECT_LIST, SITE_NAME, SITE_URL } from '@/lib/constants'
+import { getMarketingProfile } from '@/lib/projectMarketing'
 
 // The page itself is a client component; this server layout gives each project
 // its own <title>, description and social share image for Google / LinkedIn / WhatsApp.
@@ -23,15 +24,16 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const project = await findProject(params.slug)
   if (!project) return { title: `Project not found | ${SITE_NAME}` }
 
-  const title = `${project.title} | ${SITE_NAME}`
-  const description = String(project.shortDescription || project.description || '').slice(0, 160)
+  const profile = getMarketingProfile(params.slug)
+  const title = profile?.seoTitle || `${project.title} | ${SITE_NAME}`
+  const description = profile?.seoDescription || String(project.shortDescription || project.description || '').slice(0, 160)
   const image = project.screenshots?.[0] || project.image
   const url = `/projects/${params.slug}`
 
   return {
     title,
     description,
-    keywords: [...(project.technologies || []), project.category].filter(Boolean),
+    keywords: profile ? profile.seoKeywords : [...(project.technologies || []), project.category].filter(Boolean),
     alternates: { canonical: url },
     openGraph: {
       title,
@@ -49,6 +51,58 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default function ProjectDetailLayout({ children }: { children: React.ReactNode }) {
-  return children
+export default async function ProjectDetailLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode
+  params: { slug: string }
+}) {
+  const profile = getMarketingProfile(params.slug)
+  if (!profile) return children
+
+  const pageUrl = `${SITE_URL}/projects/${params.slug}`
+  const project = await findProject(params.slug)
+  const image = project?.screenshots?.[0] || project?.image
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'SoftwareApplication',
+        '@id': `${pageUrl}#software`,
+        name: 'ProTrac',
+        url: pageUrl,
+        description: profile.seoDescription,
+        applicationCategory: 'BusinessApplication',
+        applicationSubCategory: 'Garment production tracking',
+        operatingSystem: 'Web',
+        ...(image ? { image: image.startsWith('http') ? image : `${SITE_URL}${image}` } : {}),
+        author: { '@id': `${SITE_URL}/#person` },
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: profile.faq.map((f) => ({
+          '@type': 'Question',
+          name: f.question,
+          acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Projects', item: `${SITE_URL}/projects` },
+          { '@type': 'ListItem', position: 3, name: 'ProTrac', item: pageUrl },
+        ],
+      },
+    ],
+  }
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {children}
+    </>
+  )
 }

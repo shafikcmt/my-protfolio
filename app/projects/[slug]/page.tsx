@@ -17,6 +17,7 @@ import {
   Code2,
   ExternalLink,
   Lightbulb,
+  Play,
   Target,
   TrendingUp,
   Star,
@@ -28,6 +29,20 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import { getEmbedUrl, isDirectVideo } from '@/lib/media'
 import { groupFeatures } from '@/lib/features'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
+import { getMarketingProfile } from '@/lib/projectMarketing'
+import {
+  AboutBusiness,
+  Benefits,
+  ConceptualNotice,
+  EnquiryForm,
+  EnquiryLink,
+  FaqAccordion,
+  FeatureGrid,
+  HeroHighlights,
+  ImplementationNote,
+  PricingCta,
+  TechnicalArchitecture,
+} from '@/components/projects/MarketingSections'
 
 type ProjectData = {
   title: string
@@ -56,37 +71,102 @@ type ProjectData = {
   status?: string
 }
 
-function VideoDemo({ url, title }: { url: string; title: string }) {
+function youTubeId(embedUrl: string) {
+  const m = embedUrl.match(/youtube\.com\/embed\/([\w-]{6,})/)
+  return m ? m[1] : ''
+}
+
+function VideoPlayer({ url, title, poster }: { url: string; title: string; poster?: string }) {
   const embed = getEmbedUrl(url)
   const direct = isDirectVideo(url)
+  const ytId = embed ? youTubeId(embed) : ''
+  const [playing, setPlaying] = useState(false)
+
+  if (!direct && !embed) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-teal-500"
+      >
+        <ExternalLink className="h-4 w-4" /> Watch demo video
+      </a>
+    )
+  }
 
   return (
-    <Card title="Video Demo">
-      {direct || embed ? (
-        <div className="aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-900">
-          {direct ? (
-            <video src={url} controls preload="metadata" playsInline className="h-full w-full" />
-          ) : (
-            <iframe
-              src={embed}
-              className="h-full w-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-              allowFullScreen
-              loading="lazy"
-              title={`${title} demo video`}
-            />
-          )}
-        </div>
-      ) : (
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-teal-500"
+    <div className="aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-900">
+      {direct ? (
+        <video src={url} controls preload="none" poster={poster} playsInline className="h-full w-full" aria-label={`${title} video`} />
+      ) : ytId && !playing ? (
+        <button
+          type="button"
+          onClick={() => setPlaying(true)}
+          aria-label={`Play video: ${title}`}
+          className="group relative block h-full w-full"
         >
-          <ExternalLink className="h-4 w-4" /> Watch demo video
-        </a>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={poster || `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-[1.02]"
+          />
+          <span className="absolute inset-0 flex items-center justify-center bg-slate-950/30">
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-500 text-slate-950 shadow-[0_10px_40px_rgba(20,184,166,0.5)] transition group-hover:scale-110">
+              <Play className="ml-1 h-6 w-6 fill-current" />
+            </span>
+          </span>
+        </button>
+      ) : (
+        <iframe
+          src={ytId && playing ? `${embed}?autoplay=1` : embed}
+          className="h-full w-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+          loading="lazy"
+          title={`${title} video`}
+        />
       )}
+    </div>
+  )
+}
+
+function VideoDemo({
+  url,
+  title,
+  heading,
+  caption,
+  poster,
+  id,
+}: {
+  url: string
+  title: string
+  heading?: string
+  caption?: string
+  poster?: string
+  id?: string
+}) {
+  if (heading) {
+    return (
+      <section id={id} className="scroll-mt-28">
+        <Reveal>
+          <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-teal-600">
+            <span className="h-px w-6 bg-teal-500" />
+            Video
+          </p>
+          <h2 className="mb-4 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">{heading}</h2>
+          <VideoPlayer url={url} title={title} poster={poster} />
+          {caption && <p className="mt-3 text-xs leading-5 text-slate-500">{caption}</p>}
+        </Reveal>
+      </section>
+    )
+  }
+  return (
+    <Card title="Video Demo">
+      <VideoPlayer url={url} title={title} poster={poster} />
     </Card>
   )
 }
@@ -239,9 +319,11 @@ function BannerPlaceholder({ tags }: { tags?: string[] }) {
 function ScreenshotGallery({
   screenshots,
   title,
+  conceptual = false,
 }: {
   screenshots: string[]
   title: string
+  conceptual?: boolean
 }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
@@ -281,10 +363,19 @@ function ScreenshotGallery({
             transition={{ duration: 0.45, delay: Math.min(i, 5) * 0.06 }}
             whileHover={{ y: -3 }}
           >
-            <div
-              className="h-full w-full bg-cover bg-center transition duration-300 group-hover:scale-105"
-              style={{ backgroundImage: `url(${src})` }}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt={`${title} ${conceptual ? 'conceptual illustration' : 'screenshot'} ${i + 1}`}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             />
+            {conceptual && (
+              <span className="absolute left-2 top-2 rounded-full bg-slate-950/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
+                Concept
+              </span>
+            )}
             <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition group-hover:bg-black/20">
               <ZoomIn className="h-5 w-5 text-white opacity-0 transition group-hover:opacity-100" />
             </div>
@@ -311,7 +402,7 @@ function ScreenshotGallery({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={screenshots[lightboxIndex]}
-                alt={`${title} screenshot ${lightboxIndex + 1}`}
+                alt={`${title} ${conceptual ? 'conceptual illustration' : 'screenshot'} ${lightboxIndex + 1}`}
                 className="max-h-[85vh] rounded-xl object-contain shadow-2xl"
               />
               <button
@@ -339,6 +430,7 @@ function ScreenshotGallery({
                   </button>
                   <p className="mt-2 text-center text-xs text-white/60">
                     {lightboxIndex + 1} / {screenshots.length}
+                    {conceptual ? ' · Conceptual illustration' : ''}
                   </p>
                 </>
               )}
@@ -401,6 +493,25 @@ export default function ProjectDetailPage() {
     )
   }
 
+  const profile = getMarketingProfile(project.slug || slug)
+  const dbFeatureCards = (
+    <>
+      {[
+    ...groupFeatures(project.features).map((g) => ({ ...g, heading: g.heading || 'Key Features' })),
+    ...(project.adminFeatures?.length ? [{ heading: 'Admin Features', items: project.adminFeatures }] : []),
+    ...(project.userFeatures?.length ? [{ heading: 'User / Client Features', items: project.userFeatures }] : []),
+  ].map((group, i) => (
+    <Card key={`${group.heading}-${i}`} title={group.heading}>
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {group.items.map((f) => (
+          <FeatureItem key={f} text={f} />
+        ))}
+      </ul>
+    </Card>
+  ))}
+    </>
+  )
+
   const demoUrl = project.liveDemoUrl || project.link
   const repoUrl = project.githubUrl || project.codeLink
   const bannerImage = project.screenshots?.[0] || project.image
@@ -410,7 +521,7 @@ export default function ProjectDetailPage() {
   const demoEnquiryHref = `/order-project?project=${encodeURIComponent(project.title)}&type=demo`
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-24 lg:pb-0">
+    <div className="min-h-screen bg-[#F8FAFC] pb-24 lg:pb-20">
       <ScrollProgress />
       <section className="relative overflow-hidden bg-slate-950">
         <div className="pointer-events-none absolute -left-24 -top-24 h-[420px] w-[420px] rounded-full bg-teal-500/20 blur-3xl" />
@@ -450,12 +561,13 @@ export default function ProjectDetailPage() {
             </span>
           </div>
 
-          <h1 className="bg-gradient-to-r from-white via-white to-teal-200 bg-clip-text text-3xl font-black tracking-tight text-transparent lg:text-4xl xl:text-[2.75rem]">
-            {project.title}
+          <h1 className="bg-gradient-to-r from-white via-white to-teal-200 bg-clip-text pb-1 text-3xl font-black leading-[1.15] tracking-tight text-transparent lg:text-4xl xl:text-[2.75rem]">
+            {profile?.heroTitle || project.title}
           </h1>
 
           <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
-            {project.shortDescription ||
+            {profile?.heroSubtitle ||
+              project.shortDescription ||
               (project.description.length > 200
                 ? project.description.slice(0, 200) + '…'
                 : project.description)}
@@ -472,18 +584,45 @@ export default function ProjectDetailPage() {
           )}
 
           <div className="mt-7 flex flex-wrap items-center gap-3">
-            <Link
-              href={enquiryHref}
-              className="inline-flex items-center gap-2 rounded-full bg-teal-500 px-6 py-2.5 text-sm font-bold text-slate-950 shadow-[0_10px_30px_rgba(20,184,166,0.35)] transition hover:-translate-y-0.5 hover:bg-teal-400"
-            >
-              Send Enquiry
-            </Link>
-            <Link
-              href={demoEnquiryHref}
-              className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-2.5 text-sm font-bold text-white transition hover:border-teal-300 hover:text-teal-200"
-            >
-              Request Demo <ArrowUpRight className="h-4 w-4" />
-            </Link>
+            {profile ? (
+              <>
+                <EnquiryLink
+                  interest="demo"
+                  className="inline-flex items-center gap-2 rounded-full bg-teal-500 px-6 py-2.5 text-sm font-bold text-slate-950 shadow-[0_10px_30px_rgba(20,184,166,0.35)] transition hover:-translate-y-0.5 hover:bg-teal-400"
+                >
+                  Request a Live Demo
+                </EnquiryLink>
+                {(project.videoUrl || profile.walkthroughUrl) && (
+                  <a
+                    href={profile.walkthroughUrl ? '#walkthrough' : '#video'}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-2.5 text-sm font-bold text-white transition hover:border-teal-300 hover:text-teal-200"
+                  >
+                    <Play className="h-4 w-4" /> Watch ProTrac in Action
+                  </a>
+                )}
+                <EnquiryLink
+                  interest="requirements"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-300 transition hover:text-teal-300"
+                >
+                  Discuss Your Factory Requirements <ArrowUpRight className="h-3.5 w-3.5" />
+                </EnquiryLink>
+              </>
+            ) : (
+              <>
+                <Link
+                  href={enquiryHref}
+                  className="inline-flex items-center gap-2 rounded-full bg-teal-500 px-6 py-2.5 text-sm font-bold text-slate-950 shadow-[0_10px_30px_rgba(20,184,166,0.35)] transition hover:-translate-y-0.5 hover:bg-teal-400"
+                >
+                  Send Enquiry
+                </Link>
+                <Link
+                  href={demoEnquiryHref}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/25 px-6 py-2.5 text-sm font-bold text-white transition hover:border-teal-300 hover:text-teal-200"
+                >
+                  Request Demo <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </>
+            )}
             {demoUrl && (
               <a
                 href={demoUrl}
@@ -496,6 +635,8 @@ export default function ProjectDetailPage() {
               </a>
             )}
           </div>
+
+          {profile && <HeroHighlights items={profile.highlights} />}
 
           {(project.industry || project.role || project.duration) && (
             <Stagger className="mt-9 grid max-w-3xl gap-3 sm:grid-cols-3" stagger={0.1} delayChildren={0.2}>
@@ -534,7 +675,7 @@ export default function ProjectDetailPage() {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="overflow-hidden rounded-2xl border border-slate-200 shadow-[0_18px_50px_rgba(15,23,42,0.12)]"
+              className="relative overflow-hidden rounded-2xl border border-slate-200 shadow-[0_18px_50px_rgba(15,23,42,0.12)]"
               style={{ minHeight: '260px' }}
             >
               {hasLiveDemo ? (
@@ -582,39 +723,70 @@ export default function ProjectDetailPage() {
                   <BannerPlaceholder tags={project.technologies} />
                 </div>
               )}
+              {profile && hasImage && !hasLiveDemo && (
+                <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-slate-950/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
+                  Conceptual illustration
+                </span>
+              )}
             </motion.div>
 
             {/* Video demo — shown right after the banner so visitors see it first */}
-            {project.videoUrl && <VideoDemo url={project.videoUrl} title={project.title} />}
+            {profile?.walkthroughUrl && (
+              <VideoDemo
+                id="walkthrough"
+                url={profile.walkthroughUrl}
+                title={`${project.title} software walkthrough`}
+                heading="ProTrac Software Walkthrough"
+                caption="A walkthrough of the actual ProTrac interface."
+              />
+            )}
+            {project.videoUrl && (
+              <VideoDemo
+                url={project.videoUrl}
+                title={project.title}
+                {...(profile
+                  ? { id: 'video', heading: profile.videoHeading, caption: profile.videoCaption, poster: bannerImage }
+                  : {})}
+              />
+            )}
 
             {/* About */}
-            <Card title="About This Project">
-              <p className="text-sm leading-7 text-slate-600">{project.description}</p>
-            </Card>
-
-            {/* Features — one card per "## Module" heading; legacy admin/user lists keep their own cards */}
-            {[
-              ...groupFeatures(project.features).map((g) => ({ ...g, heading: g.heading || 'Key Features' })),
-              ...(project.adminFeatures?.length ? [{ heading: 'Admin Features', items: project.adminFeatures }] : []),
-              ...(project.userFeatures?.length ? [{ heading: 'User / Client Features', items: project.userFeatures }] : []),
-            ].map((group, i) => (
-              <Card key={`${group.heading}-${i}`} title={group.heading}>
-                <ul className="grid gap-3 sm:grid-cols-2">
-                  {group.items.map((f) => (
-                    <FeatureItem key={f} text={f} />
-                  ))}
-                </ul>
+            {profile ? (
+              <>
+                <AboutBusiness paragraphs={profile.aboutParagraphs} />
+                <FeatureGrid features={profile.features} />
+                <Benefits heading={profile.benefitsHeading} items={profile.benefits} />
+              </>
+            ) : (
+              <Card title="About This Project">
+                <p className="text-sm leading-7 text-slate-600">{project.description}</p>
               </Card>
-            ))}
+            )}
+
+            {!profile && dbFeatureCards}
 
             {/* Case study: problem -> solution -> result */}
+            {profile && (project.clientProblem || project.solution || (project.results && project.results.length > 0)) && (
+              <ImplementationNote example={profile.exampleImplementation} flexibility={profile.productFlexibility} />
+            )}
             <CaseStudy problem={project.clientProblem} solution={project.solution} results={project.results} />
 
             {/* Screenshots */}
             {project.screenshots && project.screenshots.length > 0 && (
-              <Card title="Screenshots">
-                <ScreenshotGallery screenshots={project.screenshots} title={project.title} />
+              <Card title={profile ? 'Gallery · Conceptual Illustrations' : 'Screenshots'}>
+                {profile && <ConceptualNotice text={profile.galleryNotice} />}
+                <ScreenshotGallery screenshots={project.screenshots} title={project.title} conceptual={Boolean(profile)} />
               </Card>
+            )}
+
+            {profile && (
+              <>
+                {dbFeatureCards}
+                <TechnicalArchitecture technical={profile.technical} description={project.description} />
+                <PricingCta pricing={profile.pricing} />
+                <FaqAccordion items={profile.faq} />
+                <EnquiryForm projectTitle={project.title} />
+              </>
             )}
 
           </div>
@@ -624,23 +796,53 @@ export default function ProjectDetailPage() {
 
             {/* Enquiry CTA */}
             <div className="rounded-2xl border border-teal-100 bg-gradient-to-br from-teal-50 to-white p-6 shadow-[0_2px_16px_rgba(15,23,42,0.07)]">
-              <p className="mb-1 text-sm font-bold text-slate-900">Interested in this project?</p>
+              <p className="mb-1 text-sm font-bold text-slate-900">{profile ? 'Interested in ProTrac?' : 'Interested in this project?'}</p>
               <p className="mb-5 text-xs leading-5 text-slate-500">
-                No fixed price — send an enquiry with your requirements and get a response within 24 hours.
+                {profile
+                  ? 'Configured to your factory. Request a demo or a custom quotation and get a response within 24 hours.'
+                  : 'No fixed price — send an enquiry with your requirements and get a response within 24 hours.'}
               </p>
               <div className="space-y-3">
+                {profile && (
+                  <>
+                    <EnquiryLink
+                      interest="demo"
+                      className="flex w-full items-center justify-center rounded-full bg-teal-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-teal-500"
+                    >
+                      Request a Live Demo
+                    </EnquiryLink>
+                    <EnquiryLink
+                      interest="quotation"
+                      className="flex w-full items-center justify-center rounded-full border border-teal-300 px-5 py-2.5 text-sm font-bold text-teal-700 transition hover:bg-teal-50"
+                    >
+                      Request a Custom Quotation
+                    </EnquiryLink>
+                    <EnquiryLink
+                      interest="requirements"
+                      className="flex w-full items-center justify-center rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-400 hover:text-teal-700"
+                    >
+                      Discuss Your Factory Requirements
+                    </EnquiryLink>
+                  </>
+                )}
                 <Link
                   href={enquiryHref}
-                  className="flex w-full items-center justify-center rounded-full bg-teal-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-teal-500"
+                  className={
+                    profile
+                      ? 'flex w-full items-center justify-center rounded-full border border-slate-200 px-5 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-50'
+                      : 'flex w-full items-center justify-center rounded-full bg-teal-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-teal-500'
+                  }
                 >
                   Send Enquiry
                 </Link>
-                <Link
-                  href={demoEnquiryHref}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-400 hover:text-teal-700"
-                >
-                  Request Demo <ArrowUpRight className="h-4 w-4" />
-                </Link>
+                {!profile && (
+                  <Link
+                    href={demoEnquiryHref}
+                    className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-400 hover:text-teal-700"
+                  >
+                    Request Demo <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+                )}
                 {demoUrl && (
                   <a
                     href={demoUrl}
@@ -652,7 +854,7 @@ export default function ProjectDetailPage() {
                     Live Demo
                   </a>
                 )}
-                {repoUrl && (
+                {repoUrl && !profile && (
                   <a
                     href={repoUrl}
                     target="_blank"
@@ -724,12 +926,25 @@ export default function ProjectDetailPage() {
       {/* Mobile sticky CTA */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/90 p-3 backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-md gap-2 pr-16">
-          <Link href={enquiryHref} className="flex flex-1 items-center justify-center rounded-full bg-teal-600 px-4 py-2.5 text-sm font-bold text-white">
-            Send Enquiry
-          </Link>
-          <Link href={demoEnquiryHref} className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700">
-            Request Demo <ArrowUpRight className="h-4 w-4" />
-          </Link>
+          {profile ? (
+            <>
+              <EnquiryLink interest="demo" className="flex flex-1 items-center justify-center rounded-full bg-teal-600 px-4 py-2.5 text-sm font-bold text-white">
+                Request a Demo
+              </EnquiryLink>
+              <EnquiryLink interest="quotation" className="flex flex-1 items-center justify-center rounded-full border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700">
+                Get Quotation
+              </EnquiryLink>
+            </>
+          ) : (
+            <>
+              <Link href={enquiryHref} className="flex flex-1 items-center justify-center rounded-full bg-teal-600 px-4 py-2.5 text-sm font-bold text-white">
+                Send Enquiry
+              </Link>
+              <Link href={demoEnquiryHref} className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700">
+                Request Demo <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>
