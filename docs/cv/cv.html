@@ -1,9 +1,10 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Md Shafiqul Islam — CV</title>
 <style>
-  @page { size: A4; margin: 0; }
+  @page { size: A4; margin: 30px 0 22px; }
+  @page :first { margin-top: 0; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: Inter, 'Liberation Sans', sans-serif; color: #1f2430; font-size: 9.6pt; line-height: 1.45; }
+  body { margin: 0; font-family: Inter, 'Liberation Sans', sans-serif; color: #1f2430; font-size: 9.4pt; line-height: 1.42; }
   a { color: inherit; text-decoration: none; }
   .header { background: #2b2f3a; color: #fff; padding: 26px 40px 22px; display: flex; gap: 26px; align-items: center; }
   .header .info { flex: 1; }
@@ -13,7 +14,7 @@
   .contact b { color: #9fe3d9; font-weight: 600; }
   .photo { width: 118px; height: 118px; border-radius: 50%; border: 4px solid #fff; object-fit: cover; object-position: center 18%; flex-shrink: 0; }
   .page { padding: 4px 40px 0; }
-  h2 { display: flex; align-items: center; gap: 12px; margin: 16px 0 8px; font-size: 12pt; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: #1f2430; }
+  h2 { display: flex; align-items: center; gap: 12px; margin: 14px 0 7px; font-size: 12pt; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: #1f2430; }
   h2::after { content: ''; flex: 1; height: 1.2px; background: #2b2f3a; }
   p { margin: 0; }
   .summary { text-align: justify; }
@@ -34,13 +35,15 @@
   .edu { display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
   .edu .when { text-align: right; }
   .langs { display: flex; gap: 26px; }
-  .page2 { break-before: page; padding-top: 30px; }
+  .page2 { padding-top: 0; }
+  h2 { break-after: avoid; }
+  .skills dt, .skills dd { break-inside: avoid; }
 </style></head>
 <body>
 <header class="header">
   <div class="info">
     <h1>MD SHAFIQUL ISLAM</h1>
-    <p class="tagline">Full Stack Developer &nbsp;|&nbsp; Garments &amp; Apparel ERP &nbsp;|&nbsp; Laravel · Next.js · MERN · Django</p>
+    <p class="tagline">Full Stack Developer &nbsp;|&nbsp; ERP, SaaS &amp; AI Automation &nbsp;|&nbsp; Laravel · Next.js · MERN</p>
     <div class="contact">
       <span><b>Location:</b> Dhaka, Bangladesh · Open to remote (GMT+6)</span>
       <span><b>Phone / WhatsApp:</b> +880 1768-987779</span>
@@ -57,7 +60,8 @@
   <h2>Profile Summary</h2>
   <p class="summary">Full Stack Developer with 5+ years of experience building and teaching web applications. Currently developing
   ERP and production software for Humana Apparels (a joint venture of Ha-Meem Group and Busana Apparel Group), including a
-  QR-based production tracking system running live on the factory floor. I build business systems end to end — database
+  QR-based production tracking system running live on the factory floor. I also build multi-tenant SaaS products and
+  AI-powered automation with the Claude API. I build business systems end to end — database
   design, REST APIs, dashboards and Docker-based deployment — with Laravel, Next.js, the MERN stack and Django. I turn real
   business workflows into simple, reliable software and explain technical work clearly to non-technical teams. Open to
   remote roles and freelance projects.</p>
@@ -105,12 +109,11 @@
   <h2>Technical Skills</h2>
   <dl class="skills">
     <dt>Backend</dt><dd>PHP (Laravel), Node.js, Express.js, Python (Django, Django REST Framework), Next.js, REST APIs, JWT authentication</dd>
-    <dt>Frontend</dt><dd>React, Next.js, TypeScript, JavaScript, Vue.js, Angular, Tailwind CSS, Bootstrap, HTML5, CSS3</dd>
+    <dt>Frontend</dt><dd>React, Next.js, TypeScript, JavaScript, Vue.js, Angular, Tailwind CSS, Bootstrap, HTML5, CSS3, WordPress; responsive, SEO-friendly UI</dd>
     <dt>Databases</dt><dd>MySQL, PostgreSQL, MongoDB, SQL</dd>
     <dt>DevOps &amp; Tools</dt><dd>Docker, Nginx, GitHub Actions, AWS EC2, cPanel hosting, server maintenance, Git/GitHub, Postman, VS Code</dd>
-    <dt>AI &amp; Automation</dt><dd>Claude, ChatGPT, Gemini, prompt engineering, workflow automation</dd>
-    <dt>Domains</dt><dd>Garments &amp; apparel (production tracking, BOM, QC, ERP), LMS, eCommerce, business dashboards</dd>
-    <dt>Other</dt><dd>Responsive UI/UX, SEO-friendly development, WordPress</dd>
+    <dt>AI &amp; Automation</dt><dd>Claude API (Anthropic SDK), ChatGPT, Gemini, prompt engineering, workflow automation, Meta Graph API</dd>
+    <dt>Domains</dt><dd>Garments &amp; apparel (production tracking, BOM, QC, ERP), recruitment &amp; visa processing, LMS, eCommerce, social media automation</dd>
   </dl>
 </main>
 
@@ -124,9 +127,34 @@
     </div>
     <div class="stack">Django REST Framework · PostgreSQL · Next.js · TypeScript · Docker · Nginx · GitHub Actions</div>
     <ul>
-      <li>QR scanning at each production stage for bundle and garment traceability, with live WIP by line.</li>
-      <li>TV dashboards per line, quality control and Excel/PDF reports; JWT accounts for each scan point and display.</li>
-      <li>Containerised, OpenAPI-documented API with automated deployment and rollback.</li>
+      <li>QR scanning at each production stage for bundle and garment traceability, live WIP by line, TV dashboards, QC and Excel/PDF reports.</li>
+      <li>Containerised, OpenAPI-documented API with JWT accounts per scan point and automated deployment with rollback.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="proj-head">
+      <span class="proj-title">VisaDeskPro — Multi-Tenant SaaS for Saudi Recruitment Agencies</span>
+      <a class="link" href="https://github.com/shafikcmt/ksa-embassy-app">github.com/shafikcmt/ksa-embassy-app</a>
+    </div>
+    <div class="stack">Laravel 12 · PHP 8.2 · MySQL · Bootstrap 5 · Spatie Permission · mPDF</div>
+    <ul>
+      <li>Agencies manage candidate (HR) files, passports, visas and embassy submission lists, with Super Admin, Agency Admin and Agency User roles.</li>
+      <li>ERP modules for the full visa process — medical, MOFA, BMET, visa stamping and delivery — plus agent ledgers, invoices, payment vouchers, expenses and profit &amp; loss reports.</li>
+      <li>Print-ready PDF documents and embassy lists; subscription plans with scheduled expiry, licence and passport-expiry alerts and daily database backups.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="proj-head">
+      <span class="proj-title">Facebook Page Manager — AI Content &amp; Messenger Automation</span>
+      <a class="link" href="https://github.com/shafikcmt/facebook-page-manager">github.com/shafikcmt/facebook-page-manager</a>
+    </div>
+    <div class="stack">Node.js · Express · MySQL (Sequelize) · Claude API · Meta Graph API · Docker</div>
+    <ul>
+      <li>Multi-tenant tool that generates Bangla Facebook post drafts with the Claude API from a content calendar; drafts are approved before publishing to Pages via the Meta Graph API.</li>
+      <li>Messenger auto-reply that detects retail vs. wholesale customers and answers with live product prices from the shop's API, using signature-verified webhooks.</li>
+      <li>Admin panel (EJS, Bootstrap) and CLI, Docker production deployment; page access tokens are never exposed in responses or logs.</li>
     </ul>
   </div>
 
@@ -148,8 +176,7 @@
     </div>
     <div class="stack">Laravel · MySQL · Bootstrap</div>
     <ul>
-      <li>Admin and student dashboards for course, batch and quiz management; responsive and secure.</li>
-      <li>Basis of the university LMS (+40% student engagement, −25% downtime).</li>
+      <li>Admin and student dashboards for course, batch and quiz management; basis of the university LMS (+40% student engagement, −25% downtime).</li>
     </ul>
   </div>
 
