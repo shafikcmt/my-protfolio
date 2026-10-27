@@ -60,8 +60,8 @@
   <h2>Profile Summary</h2>
   <p class="summary">Full Stack Developer with 5+ years of experience building and teaching web applications. Currently developing
   ERP and production software for Humana Apparels (a joint venture of Ha-Meem Group and Busana Apparel Group), including a
-  QR-based production tracking system running live on the factory floor. I also build multi-tenant SaaS products and
-  AI-powered automation with the Claude API. I build business systems end to end — database
+  QR-based production tracking system running live on the factory floor. I also build multi-tenant SaaS products, mobile
+  apps with React Native and AI-powered automation with the Claude API. I build business systems end to end — database
   design, REST APIs, dashboards and Docker-based deployment — with Laravel, Next.js, the MERN stack and Django. I turn real
   business workflows into simple, reliable software and explain technical work clearly to non-technical teams. Open to
   remote roles and freelance projects.</p>
@@ -109,11 +109,11 @@
   <h2>Technical Skills</h2>
   <dl class="skills">
     <dt>Backend</dt><dd>PHP (Laravel), Node.js, Express.js, Python (Django, Django REST Framework), Next.js, REST APIs, JWT authentication</dd>
-    <dt>Frontend</dt><dd>React, Next.js, TypeScript, JavaScript, Vue.js, Angular, Tailwind CSS, Bootstrap, HTML5, CSS3, WordPress; responsive, SEO-friendly UI</dd>
+    <dt>Frontend &amp; Mobile</dt><dd>React, Next.js, React Native (Expo), TypeScript, JavaScript, Vue.js, Angular, Tailwind CSS, Bootstrap, HTML5, CSS3, WordPress; responsive, SEO-friendly UI</dd>
     <dt>Databases</dt><dd>MySQL, PostgreSQL, MongoDB, SQL</dd>
-    <dt>DevOps &amp; Tools</dt><dd>Docker, Nginx, GitHub Actions, AWS EC2, cPanel hosting, server maintenance, Git/GitHub, Postman, VS Code</dd>
+    <dt>DevOps &amp; Tools</dt><dd>Docker, Nginx, GitHub Actions CI, Redis, Celery, AWS EC2, cPanel hosting, server maintenance, Git/GitHub, Postman, VS Code</dd>
     <dt>AI &amp; Automation</dt><dd>Claude API (Anthropic SDK), ChatGPT, Gemini, prompt engineering, workflow automation, Meta Graph API</dd>
-    <dt>Domains</dt><dd>Garments &amp; apparel (production tracking, BOM, QC, ERP), recruitment &amp; visa processing, LMS, eCommerce, social media automation</dd>
+    <dt>Domains</dt><dd>Garments &amp; apparel (production tracking, BOM, QC, ERP), recruitment &amp; visa processing, online exams, LMS, eCommerce, social media automation</dd>
   </dl>
 </main>
 
@@ -129,6 +129,20 @@
     <ul>
       <li>QR scanning at each production stage for bundle and garment traceability, live WIP by line, TV dashboards, QC and Excel/PDF reports.</li>
       <li>Containerised, OpenAPI-documented API with JWT accounts per scan point and automated deployment with rollback.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="proj-head">
+      <span class="proj-title">Live Model Test — Online MCQ Examination Platform</span>
+      <a class="link" href="https://github.com/shafikcmt/online-mcq-platform/tree/develop">github.com/shafikcmt/online-mcq-platform</a>
+    </div>
+    <div class="stack">Django 5 · DRF · PostgreSQL · Redis · Celery · Next.js · React Native (Expo) · TypeScript · Docker — in active development</div>
+    <ul>
+      <li>Android app where students take timed exams, a bilingual (Bangla/English) public website and an admin panel, all on one Django REST API.</li>
+      <li>Server-side exam engine (autosave, resume, automatic finalisation), scoring, answer review, merit lists and leaderboards; question bank and exam builder.</li>
+      <li>Mobile-number login with OTP and JWT; packages and subscriptions with server-verified SSLCommerz payments, reconciliation jobs and an audit log.</li>
+      <li>1,200+ automated backend tests, GitHub Actions CI for all four apps, Docker Compose staging deployment.</li>
     </ul>
   </div>
 
