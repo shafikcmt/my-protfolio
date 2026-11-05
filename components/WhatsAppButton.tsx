@@ -11,7 +11,7 @@ export default function WhatsAppButton() {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-full bg-green-600 px-4 py-3 text-white shadow-xl shadow-green-500/20 hover:bg-green-700 transition-colors"
+      className="no-print fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-full bg-green-600 px-4 py-3 text-white shadow-xl shadow-green-500/20 hover:bg-green-700 transition-colors"
       aria-label="Contact via WhatsApp"
     >
       <span className="text-xl">💬</span>

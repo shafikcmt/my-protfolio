@@ -21,9 +21,41 @@ export const SALES_CONFIG = {
   ],
   /** Small jobs (bug fixes, small changes) below the project minimum. */
   smallJobs: 'Bug fixes and small changes can be quoted per task after Shafiqul reviews them.',
-  /** Upfront payment before work starts. */
+  /** Upfront payment before work starts (first step of paymentSchedule). */
   advancePercent: 40,
   bookingUrl: '/book-consultation',
+
+  /** Name the project assistant introduces itself with. */
+  assistantName: 'Sadika',
+
+  // ── Proposals (/proposal/<link>) ──
+  proposalValidDays: 14,
+  /** Must add up to 100. */
+  paymentSchedule: [
+    { label: 'Advance to start the project', percent: 40 },
+    { label: 'After the main features are demonstrated', percent: 30 },
+    { label: 'On final delivery and handover', percent: 30 },
+  ],
+  /** Free bug-fix support after delivery, in days. */
+  supportDays: 30,
+  /**
+   * How clients pay the advance. Fill in your real details — methods with an
+   * empty `details` are hidden. Bangladeshi clients pay the BDT equivalent.
+   */
+  paymentMethods: [
+    { name: 'bKash (Personal)', details: '' },
+    { name: 'Nagad', details: '' },
+    { name: 'Bank transfer', details: '' },
+    { name: 'Payoneer / Wise (international)', details: '' },
+  ],
+  /** Shown on every proposal. Review these and adjust to your own terms. */
+  proposalTerms: [
+    'Work starts after the advance payment is received.',
+    'Timelines are estimates and start from the advance payment; they depend on timely feedback and content from the client.',
+    'Changes or new features outside this scope are quoted separately before work on them begins.',
+    'Includes free bug-fix support after delivery for the period stated above.',
+    'Source code and full ownership are handed over after the final payment.',
+  ],
 } as const
 
 export function pricingRulesText() {

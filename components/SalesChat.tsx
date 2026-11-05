@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Bot, Loader2, Send, Sparkles, X } from 'lucide-react'
+import { Loader2, Send, Sparkles, X } from 'lucide-react'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -10,7 +10,7 @@ interface ChatMessage {
 
 const GREETING: ChatMessage = {
   role: 'assistant',
-  text: "Hi! 👋 I'm Shafiqul's AI assistant. Tell me about your project and I'll help you plan it and prepare a proposal — Shafiqul personally reviews every proposal. বাংলায়ও লিখতে পারেন।",
+  text: "Hi! 👋 I'm Sadika, Shafiqul's project assistant. Tell me about your project and I'll help you plan it and prepare a proposal — Shafiqul personally reviews every proposal. বাংলায়ও লিখতে পারেন।",
 }
 
 const QUICK_STARTS = ['I need a website', 'Web app, SaaS or ERP', 'Mobile app', 'Automation or AI chatbot', 'Fix or improve my existing software', 'How much will my project cost?']
@@ -113,8 +113,8 @@ export default function SalesChat() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-24 right-6 z-50 flex items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-slate-800"
-          aria-label="Chat with Shafiqul's AI assistant"
+          className="no-print fixed bottom-24 right-6 z-50 flex items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-slate-800"
+          aria-label="Chat with Sadika, Shafiqul's project assistant"
         >
           <Sparkles className="h-4 w-4 text-teal-300" />
           <span className="hidden sm:inline">Get a project estimate</span>
@@ -125,16 +125,14 @@ export default function SalesChat() {
       {open && (
         <div
           role="dialog"
-          aria-label="AI project assistant"
-          className="fixed inset-x-3 bottom-3 z-[60] flex h-[min(620px,calc(100dvh-24px))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[380px]"
+          aria-label="Project assistant chat"
+          className="no-print fixed inset-x-3 bottom-3 z-[60] flex h-[min(620px,calc(100dvh-24px))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[380px]"
         >
           <header className="flex items-center gap-3 bg-slate-900 px-4 py-3 text-white">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-500/20 text-teal-300">
-              <Bot className="h-5 w-5" />
-            </span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-500/20 text-sm font-black text-teal-300">S</span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold">Project Assistant</p>
-              <p className="truncate text-[11px] text-slate-300">AI assistant · Shafiqul reviews every proposal</p>
+              <p className="text-sm font-bold">Sadika · Project Assistant</p>
+              <p className="truncate text-[11px] text-slate-300">Usually replies instantly · Shafiqul reviews every proposal</p>
             </div>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close chat" className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10 hover:text-white">
               <X className="h-5 w-5" />

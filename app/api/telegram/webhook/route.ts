@@ -4,6 +4,8 @@ import { connectDB } from '@/lib/db'
 import { ownerDecisionMessages, runSalesAgent, type LeadDoc } from '@/lib/salesAgent'
 import { escapeHtml, telegramApi, type InlineButton } from '@/lib/telegram'
 import Lead from '@/models/Lead'
+import Proposal from '@/models/Proposal'
+import { createProposal, formatUsd } from '@/lib/proposals'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -24,12 +26,12 @@ function formatTiers(lead: any) {
     .join('\n')
 }
 
-const DECISIONS: Record<string, { status: string; label: string; text: (lead: any) => string }> = {
+const DECISIONS: Record<string, { status: string; label: string; text: (lead: any, proposalUrl?: string) => string }> = {
   approve: {
     status: 'approved',
     label: '✅ Approved',
-    text: (lead) =>
-      `Approved exactly as proposed. Present these packages to the client as the confirmed proposal, recommend the one that fits their budget, and explain how to start (advance payment, then milestones):\n${formatTiers(lead)}`,
+    text: (lead, proposalUrl) =>
+      `Approved exactly as proposed. The proposal page is ready: ${proposalUrl}\nShare this link, briefly present the packages, recommend the one that fits their budget, and explain that they can accept it on that page and pay the advance to start:\n${formatTiers(lead)}`,
   },
   call: {
     status: 'call_requested',
@@ -70,6 +72,46 @@ async function applyDecision(lead: any, decision: string, status: string, label:
   })
 }
 
+/** Buttons on proposal messages: withdraw, and confirming a reported payment. */
+async function handleProposalAction(callback: any, ownerChat: string) {
+  const [, action, id] = String(callback.data).split(':')
+  const proposal = mongoose.Types.ObjectId.isValid(id) ? await Proposal.findById(id) : null
+  if (!proposal) {
+    await telegramApi('answerCallbackQuery', { callback_query_id: callback.id, text: 'Proposal not found' })
+    return
+  }
+  const lead = proposal.leadId ? await Lead.findById(proposal.leadId) : null
+  const tellClient = (text: string) => lead?.transcript.push({ role: 'assistant', text, at: new Date() })
+
+  let label = ''
+  if (action === 'withdraw') {
+    proposal.status = 'withdrawn'
+    label = '↩️ Withdrawn'
+  } else if (action === 'paid') {
+    proposal.status = 'paid'
+    proposal.set('payment.confirmedAt', new Date())
+    if (lead) lead.status = 'won'
+    tellClient(`✅ Payment received — thank you! Shafiqul will contact you shortly to kick off "${proposal.title}".`)
+    label = `💰 Paid · ${formatUsd(proposal.accepted?.priceUsd || 0)} project won 🎉`
+  } else if (action === 'unpaid') {
+    proposal.status = 'accepted'
+    tellClient("We couldn't find your payment yet. Please check the transaction ID on the proposal page and submit it again, or message Shafiqul on WhatsApp.")
+    label = '❌ Payment not found — client asked to re-check'
+  } else {
+    await telegramApi('answerCallbackQuery', { callback_query_id: callback.id })
+    return
+  }
+
+  await proposal.save()
+  if (lead) await lead.save()
+  await telegramApi('answerCallbackQuery', { callback_query_id: callback.id, text: label })
+  await telegramApi('editMessageReplyMarkup', {
+    chat_id: ownerChat,
+    message_id: callback.message.message_id,
+    reply_markup: { inline_keyboard: [[{ text: label, callback_data: 'noop' }]] },
+  })
+}
+
 export async function POST(request: NextRequest) {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET
   if (!secret || request.headers.get('x-telegram-bot-api-secret-token') !== secret) {
@@ -93,6 +135,10 @@ export async function POST(request: NextRequest) {
 
     // Button tap on a lead card
     const callback = update.callback_query
+    if (callback && String(callback.data || '').startsWith('proposal:')) {
+      await handleProposalAction(callback, ownerChat)
+      return ok()
+    }
     if (callback && !String(callback.data || '').startsWith('lead:')) {
       await telegramApi('answerCallbackQuery', { callback_query_id: callback.id })
       return ok()
@@ -111,7 +157,17 @@ export async function POST(request: NextRequest) {
         message_id: callback.message.message_id,
         reply_markup: { inline_keyboard: [[{ text: rule.label, callback_data: 'noop' }]] },
       })
-      await applyDecision(lead, rule.text(lead), rule.status, rule.label)
+      let proposalLink: string | undefined
+      if (action === 'approve') {
+        // The proposal page uses exactly the packages I approved, not a rewrite by the assistant
+        const { url } = await createProposal(lead, {
+          title: lead.projectType ? `${lead.projectType}${lead.company ? ` for ${lead.company}` : ''}` : 'Project proposal',
+          summary: lead.summary,
+          packages: (lead.proposedTiers || []).map((t: any) => ({ name: t.name, priceUsd: t.priceUsd, timeline: t.timeline, includes: t.includes })),
+        })
+        proposalLink = url
+      }
+      await applyDecision(lead, rule.text(lead, proposalLink), rule.status, rule.label)
       return ok()
     }
 

@@ -26,6 +26,7 @@ const LeadSchema = new mongoose.Schema(
     proposedTiers: [{ name: String, priceUsd: Number, timeline: String, includes: [String], _id: false }],
     ownerNotes: [{ at: Date, text: String, _id: false }],
     telegramMessageId: Number,
+    proposalToken: String,
 
     // Conversation: what the visitor sees, and the exact API history (append-only)
     transcript: [{ role: { type: String, enum: ['user', 'assistant', 'note'] }, text: String, at: Date, _id: false }],
