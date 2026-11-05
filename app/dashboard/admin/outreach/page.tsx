@@ -69,6 +69,7 @@ export default function OutreachPage() {
   const [items, setItems] = useState<ProspectItem[]>([])
   const [stats, setStats] = useState<Record<string, number>>({})
   const [sending, setSending] = useState<{ configured: boolean; sentToday: number; dailyLimit: number } | null>(null)
+  const [ai, setAi] = useState<'anthropic' | 'gemini' | null | undefined>(undefined)
   const [loading, setLoading] = useState(true)
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
@@ -85,6 +86,7 @@ export default function OutreachPage() {
       setItems(data.data || [])
       setStats(data.stats || {})
       setSending(data.sending || null)
+      setAi(data.ai ?? null)
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Failed to load')
     } finally {
@@ -133,18 +135,35 @@ export default function OutreachPage() {
                 The AI finds companies, reads their websites and drafts personal emails. Nothing is sent until you approve it here or in Telegram.
               </p>
             </div>
+            <div className="flex flex-shrink-0 flex-wrap gap-2">
+            {ai !== undefined && (
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${ai ? 'bg-slate-100 text-slate-700' : 'bg-amber-50 text-amber-800'}`}>
+                <Sparkles className="h-3.5 w-3.5" />
+                {ai === 'anthropic' ? 'AI: Claude' : ai === 'gemini' ? 'AI: Gemini (free)' : 'AI not set up'}
+              </span>
+            )}
             {sending && (
               <span className={`inline-flex flex-shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${sending.configured ? 'bg-teal-50 text-teal-800' : 'bg-amber-50 text-amber-800'}`}>
                 <Mail className="h-3.5 w-3.5" />
                 {sending.configured ? `Sent today: ${sending.sentToday} / ${sending.dailyLimit}` : 'Email sending not set up'}
               </span>
             )}
+            </div>
           </div>
 
           {sending && !sending.configured && (
             <div className="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
               <span>Add <b>RESEND_API_KEY</b> and <b>OUTREACH_FROM_EMAIL</b> in Vercel (see docs/OUTREACH.md). You can still find companies and prepare drafts now.</span>
+            </div>
+          )}
+          {ai === null && (
+            <div className="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+              <span>
+                No AI key yet — add companies yourself and use <b>Write email myself</b>. For AI search and drafts, add a free <b>GEMINI_API_KEY</b>{' '}
+                (aistudio.google.com) or <b>ANTHROPIC_API_KEY</b> in Vercel.
+              </span>
             </div>
           )}
           {notice && <div className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-800">{notice}</div>}
@@ -171,7 +190,7 @@ export default function OutreachPage() {
               <button
                 type="button"
                 onClick={discover}
-                disabled={discovering || target.trim().length < 5}
+                disabled={discovering || !ai || target.trim().length < 5}
                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-teal-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-600 disabled:opacity-50"
               >
                 {discovering ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />} {discovering ? 'Searching the web…' : 'Find'}
@@ -209,7 +228,7 @@ export default function OutreachPage() {
           ) : (
             <div className="space-y-3">
               {items.map((p) => (
-                <ProspectCard key={p._id} prospect={p} onUpdated={replace} onRemoved={remove} onNotice={setNotice} onError={setError} />
+                <ProspectCard key={p._id} prospect={p} aiReady={Boolean(ai)} onUpdated={replace} onRemoved={remove} onNotice={setNotice} onError={setError} />
               ))}
             </div>
           )}
@@ -263,12 +282,14 @@ function AddProspects({ onAdded, onError }: { onAdded: (msg: string) => void; on
 
 function ProspectCard({
   prospect: p,
+  aiReady,
   onUpdated,
   onRemoved,
   onNotice,
   onError,
 }: {
   prospect: ProspectItem
+  aiReady: boolean
   onUpdated: (p: ProspectItem) => void
   onRemoved: (id: string) => void
   onNotice: (msg: string) => void
@@ -294,7 +315,7 @@ function ProspectCard({
       if (email !== (p.email || '')) payload.email = email
       const { data } = await axios.patch('/api/admin/prospects', payload)
       onNotice(`${p.company}: ${data.message}`)
-      if (['send', 'skip', 'replied', 'stop', 'reopen'].includes(action)) onRemoved(p._id)
+      if (['send', 'skip', 'replied', 'stop', 'reopen', 'manual'].includes(action)) onRemoved(p._id)
       else onUpdated(data.data)
     } catch (err: any) {
       onError(err?.response?.data?.message || 'Action failed')
@@ -377,9 +398,14 @@ function ProspectCard({
 
       <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
         {['new', 'failed'].includes(p.status) && (
-          <button type="button" onClick={research} disabled={!!busy} className="inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-600 disabled:opacity-50">
-            {busy === 'research' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Research & draft email
-          </button>
+          <>
+            <button type="button" onClick={research} disabled={!!busy || !aiReady} title={aiReady ? '' : 'Add an AI key to use this'} className="inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-600 disabled:opacity-50">
+              {busy === 'research' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Research & draft email
+            </button>
+            <button type="button" onClick={() => act('manual')} disabled={!!busy} className={btn}>
+              ✍️ Write email myself
+            </button>
+          </>
         )}
         {editable && (
           <>

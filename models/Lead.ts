@@ -27,6 +27,7 @@ const LeadSchema = new mongoose.Schema(
     ownerNotes: [{ at: Date, text: String, _id: false }],
     telegramMessageId: Number,
     proposalToken: String,
+    ownerTag: String, // marks my decisions in Gemini chats
 
     // Conversation: what the visitor sees, and the exact API history (append-only)
     transcript: [{ role: { type: String, enum: ['user', 'assistant', 'note'] }, text: String, at: Date, _id: false }],

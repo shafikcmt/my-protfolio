@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/db'
 import { withAdminAuth } from '@/lib/crud'
 import { runJobFinder } from '@/lib/jobFinder'
 import { runDailyOutreach } from '@/lib/outreach'
+import { aiAvailable } from '@/lib/ai/provider'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300
@@ -23,7 +24,7 @@ async function handle(request: NextRequest) {
     const result = await runJobFinder()
     // Daily client outreach (follow-ups, queued emails, new drafts) rides on the same daily cron
     let outreach: unknown = null
-    if (fromCron && process.env.ANTHROPIC_API_KEY) {
+    if (fromCron && aiAvailable()) {
       try {
         outreach = await runDailyOutreach()
       } catch (error: any) {

@@ -24,7 +24,8 @@ with the client. It never confirms a price, deadline or agreement on its own.
 
 | Variable | Value |
 |---|---|
-| `ANTHROPIC_API_KEY` | From console.anthropic.com → API Keys (set a monthly spend limit there) |
+| `ANTHROPIC_API_KEY` | Claude (best quality, paid credits) — console.anthropic.com → API Keys (set a monthly spend limit there) |
+| `GEMINI_API_KEY` | **Free alternative** — aistudio.google.com → Get API key. Used when there is no Claude key (or set `AI_PROVIDER=gemini`). Optional `GEMINI_MODEL` (default `gemini-flash-latest`). |
 | `TELEGRAM_BOT_TOKEN` | Already set for alerts |
 | `TELEGRAM_CHAT_ID` | Already set for alerts |
 | `TELEGRAM_WEBHOOK_SECRET` | Any long random text (letters, numbers, `_` or `-`) |
@@ -32,7 +33,9 @@ with the client. It never confirms a price, deadline or agreement on its own.
 
 Then: Admin → Settings → **Connect Telegram**.
 
-The chat button only appears when `ANTHROPIC_API_KEY` is set.
+The chat button only appears when one AI key is set. With both keys, Claude is used.
+
+Gemini free tier: low daily limits, and Google may use free-tier prompts to improve its products — fine to start, switch to Claude once clients use the chat regularly.
 
 ## How you use it
 

@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     let reply: string
     try {
-      reply = await runSalesAgent(lead as LeadDoc, [{ role: 'user', content: text }])
+      reply = await runSalesAgent(lead as LeadDoc, { client: text })
     } catch (error: any) {
       console.error('Sales agent error:', error?.status, error?.message)
       reply = 'Sorry, I had a problem answering just now. Please try again in a moment, or message Shafiqul on WhatsApp.'

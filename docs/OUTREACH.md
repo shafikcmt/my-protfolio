@@ -35,9 +35,11 @@ Settings: `lib/outreachConfig.ts` (daily limit, follow-up days, drafts per day, 
 | `RESEND_API_KEY` | from Resend |
 | `OUTREACH_FROM_EMAIL` | e.g. `hello@shafiqul.dev` (must be on the verified domain) |
 | `OUTREACH_REPLY_TO` | optional — where replies go (default: your Gmail) |
-| `ANTHROPIC_API_KEY` | already set for Sadika |
+| `ANTHROPIC_API_KEY` or `GEMINI_API_KEY` | AI for Find clients / drafts (Gemini = free, uses Google Search) |
 
-Web search must be allowed for your API organisation: console.anthropic.com → Settings → Privacy /
+No AI key? Add companies yourself and use **✍️ Write email myself** — sending, tracking and follow-up limits still work.
+
+With Claude, web search must be allowed for your API organisation: console.anthropic.com → Settings → Privacy /
 Web search (enable if it is off).
 
 ### Vercel function time

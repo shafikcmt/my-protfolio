@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
-import { ownerDecisionMessages, runSalesAgent, type LeadDoc } from '@/lib/salesAgent'
+import { runSalesAgent, type LeadDoc } from '@/lib/salesAgent'
 import { escapeHtml, telegramApi, type InlineButton } from '@/lib/telegram'
 import Lead from '@/models/Lead'
 import Proposal from '@/models/Proposal'
@@ -54,7 +54,7 @@ const DECISIONS: Record<string, { status: string; label: string; text: (lead: an
 async function applyDecision(lead: any, decision: string, status: string, label: string) {
   lead.status = status
   lead.ownerNotes.push({ at: new Date(), text: decision.slice(0, 1000) })
-  const reply = await runSalesAgent(lead as LeadDoc, ownerDecisionMessages(decision))
+  const reply = await runSalesAgent(lead as LeadDoc, { owner: decision })
   lead.transcript.push({ role: 'assistant', text: reply, at: new Date() })
   await lead.save()
 

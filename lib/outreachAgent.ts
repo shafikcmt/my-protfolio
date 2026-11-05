@@ -3,6 +3,8 @@ import Project from '@/models/Project'
 import { CAREER_PROFILE } from '@/lib/careerProfile'
 import { PROJECT_LIST, SITE_URL } from '@/lib/constants'
 import { OUTREACH_CONFIG } from '@/lib/outreachConfig'
+import { activeAiProvider } from '@/lib/ai/provider'
+import { extractJson, geminiGenerate } from '@/lib/ai/gemini'
 
 /**
  * AI side of client prospecting: finds businesses on the web, researches a
@@ -28,14 +30,44 @@ const nullableString = { anyOf: [{ type: 'string' }, { type: 'null' }] }
  * Runs the model with server tools (web search/fetch) plus one client tool,
  * and returns the input of the first call to that client tool.
  */
-async function runWithTool<T>(opts: {
+interface StructuredRequest {
   system: string
   prompt: string
   tool: Anthropic.Beta.BetaTool
   search?: number
   fetch?: number
   effort?: 'low' | 'medium' | 'high'
-}): Promise<T | null> {
+}
+
+/** Runs the request on the configured AI and returns the structured result. */
+async function runWithTool<T>(opts: StructuredRequest): Promise<T | null> {
+  return activeAiProvider() === 'gemini' ? runWithGemini<T>(opts) : runWithClaude<T>(opts)
+}
+
+/**
+ * Gemini (free tier): Google Search grounding / URL context for research,
+ * and the result as JSON in the answer text (matching the tool's schema).
+ */
+async function runWithGemini<T>(opts: StructuredRequest): Promise<T | null> {
+  const prompt =
+    opts.prompt.replace(/(then )?call (the )?save_\w+( tool)?( now)?( with[^.]*)?\.?/gi, '').trim() +
+    `\n\nReply with ONLY one JSON object (no other text) matching this JSON Schema:\n${JSON.stringify(opts.tool.input_schema)}`
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await geminiGenerate({
+      system: opts.system.replace(/web_fetch/g, 'reading the page').replace(/web_search/g, 'Google Search'),
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      googleSearch: Boolean(opts.search),
+      urlContext: Boolean(opts.fetch),
+      maxOutputTokens: 8000,
+    })
+    if (res.blocked) return null
+    const json = extractJson<T>(res.text)
+    if (json) return json
+  }
+  return null
+}
+
+async function runWithClaude<T>(opts: StructuredRequest): Promise<T | null> {
   const tools: BetaToolUnion[] = [{ ...opts.tool, strict: true }]
   if (opts.search) tools.push({ type: 'web_search_20260209', name: 'web_search', max_uses: opts.search })
   if (opts.fetch) tools.push({ type: 'web_fetch_20260209', name: 'web_fetch', max_uses: opts.fetch })

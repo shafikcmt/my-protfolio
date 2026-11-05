@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import { withAdminAuth } from '@/lib/crud'
+import { AI_SETUP_MESSAGE, aiAvailable } from '@/lib/ai/provider'
 import { domainOf, isValidEmail } from '@/lib/outreach'
 import { discoverCompanies } from '@/lib/outreachAgent'
 import Prospect from '@/models/Prospect'
@@ -13,8 +14,8 @@ export async function POST(request: NextRequest) {
   if (!(await withAdminAuth(request))) {
     return NextResponse.json({ success: false, message: 'Unauthorized: Admin access required' }, { status: 401 })
   }
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json({ success: false, message: 'Add ANTHROPIC_API_KEY in Vercel first.' }, { status: 400 })
+  if (!aiAvailable()) {
+    return NextResponse.json({ success: false, message: AI_SETUP_MESSAGE }, { status: 400 })
   }
 
   const body = await request.json().catch(() => ({}))

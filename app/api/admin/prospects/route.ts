@@ -4,6 +4,7 @@ import { withAdminAuth } from '@/lib/crud'
 import { approveAndSend, domainOf, isValidEmail, sentTodayCount } from '@/lib/outreach'
 import { OUTREACH_CONFIG, outreachSendingConfigured } from '@/lib/outreachConfig'
 import Prospect, { PROSPECT_STATUSES } from '@/models/Prospect'
+import { activeAiProvider } from '@/lib/ai/provider'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
       data: items,
       stats,
       sending: { configured: outreachSendingConfigured(), sentToday, dailyLimit: OUTREACH_CONFIG.dailySendLimit },
+      ai: activeAiProvider(),
     })
   } catch (error: any) {
     return fail(error?.message || 'Failed to load prospects', 500)
@@ -108,6 +110,18 @@ export async function PATCH(request: NextRequest) {
 
     let message = 'Saved'
     switch (body.action) {
+      case 'manual':
+        // Write the email myself (no AI): start from a simple template
+        if (!prospect.draft?.body) {
+          prospect.draft = {
+            subject: `Software help for ${prospect.company}`.slice(0, 150),
+            body: `Hi${prospect.contactName ? ` ${prospect.contactName}` : ''},\n\n[Write 2–4 sentences: what you noticed about their business and how you can help.]\n\nYou can see my work here: {{PORTFOLIO_LINK}}\n\nWould a short call next week be useful?\n\nShafiqul`,
+          }
+        }
+        prospect.status = prospect.email ? 'draft' : 'needs_email'
+        await prospect.save()
+        message = 'Template ready — edit it under "To review"'
+        break
       case 'send': {
         await prospect.save()
         const result = await approveAndSend(prospect)
