@@ -4,6 +4,7 @@ import { withAdminAuth } from '@/lib/crud'
 import { trackedPortfolioUrl } from '@/lib/careerProfile'
 import { escapeHtml, sendTelegram } from '@/lib/telegram'
 import Job from '@/models/Job'
+import Prospect from '@/models/Prospect'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,6 +16,24 @@ const ALERT_GAP_MS = 30 * 60 * 1000 // one Telegram alert per visit session
  * (https://www.shafiqul.dev/?ref=<code>) and alerts me on Telegram.
  * Always answers 204 so the public site never shows errors.
  */
+/** Outreach emails use the same ?ref= links; alert me when a prospect opens the portfolio. */
+async function trackProspectVisit(ref: string, path: string) {
+  const prospect = await Prospect.findOne({ refCode: ref })
+  if (!prospect) return
+  const now = new Date()
+  const isNewSession = !prospect.lastVisitAt || now.getTime() - new Date(prospect.lastVisitAt).getTime() > ALERT_GAP_MS
+  await Prospect.updateOne({ _id: prospect._id }, { $inc: { visitCount: 1 }, $set: { lastVisitAt: now } })
+  if (isNewSession) {
+    await sendTelegram(
+      `👀 <b>${escapeHtml(prospect.company)}</b> opened your portfolio from your outreach email!
+Page: ${escapeHtml(path)}
+
+Good moment for a friendly follow-up 🙂
+https://www.shafiqul.dev/dashboard/admin/outreach`
+    )
+  }
+}
+
 export async function POST(request: NextRequest) {
   const done = new NextResponse(null, { status: 204 })
   try {
@@ -28,7 +47,10 @@ export async function POST(request: NextRequest) {
 
     await connectDB()
     const job = await Job.findOne({ refCode: ref })
-    if (!job) return done
+    if (!job) {
+      await trackProspectVisit(ref, path)
+      return done
+    }
 
     const now = new Date()
     const isNewSession = !job.lastVisitAt || now.getTime() - new Date(job.lastVisitAt).getTime() > ALERT_GAP_MS

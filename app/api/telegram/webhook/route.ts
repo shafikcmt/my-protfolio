@@ -5,6 +5,9 @@ import { ownerDecisionMessages, runSalesAgent, type LeadDoc } from '@/lib/salesA
 import { escapeHtml, telegramApi, type InlineButton } from '@/lib/telegram'
 import Lead from '@/models/Lead'
 import Proposal from '@/models/Proposal'
+import Prospect from '@/models/Prospect'
+import { approveAndSend, sendDraftCard } from '@/lib/outreach'
+import { reviseDraft } from '@/lib/outreachAgent'
 import { createProposal, formatUsd } from '@/lib/proposals'
 
 export const dynamic = 'force-dynamic'
@@ -69,6 +72,41 @@ async function applyDecision(lead: any, decision: string, status: string, label:
     parse_mode: 'HTML',
     disable_web_page_preview: true,
     ...(buttons.length ? { reply_markup: { inline_keyboard: buttons } } : {}),
+  })
+}
+
+/** Buttons on outreach messages: send / skip a draft, mark replied, stop follow-ups. */
+async function handleProspectAction(callback: any, ownerChat: string) {
+  const [, action, id] = String(callback.data).split(':')
+  const prospect = mongoose.Types.ObjectId.isValid(id) ? await Prospect.findById(id) : null
+  if (!prospect) {
+    await telegramApi('answerCallbackQuery', { callback_query_id: callback.id, text: 'Prospect not found' })
+    return
+  }
+
+  let label = ''
+  if (action === 'send') {
+    if (!['draft', 'approved'].includes(prospect.status)) {
+      label = `Already ${prospect.status}`
+    } else {
+      const result: any = await approveAndSend(prospect)
+      label = result.ok ? '✅ Sent' : result.limited ? '⏳ Queued — daily limit reached' : `⚠️ ${String(result.error).slice(0, 60)}`
+    }
+  } else if (action === 'skip' || action === 'replied' || action === 'stop') {
+    prospect.status = action === 'skip' ? 'skipped' : action === 'replied' ? 'replied' : 'stopped'
+    prospect.nextSendAt = undefined
+    await prospect.save()
+    label = action === 'skip' ? '❌ Skipped' : action === 'replied' ? '💬 Replied — follow-ups stopped' : '🛑 Follow-ups stopped'
+  } else {
+    await telegramApi('answerCallbackQuery', { callback_query_id: callback.id })
+    return
+  }
+
+  await telegramApi('answerCallbackQuery', { callback_query_id: callback.id, text: label })
+  await telegramApi('editMessageReplyMarkup', {
+    chat_id: ownerChat,
+    message_id: callback.message.message_id,
+    reply_markup: { inline_keyboard: [[{ text: label, callback_data: 'noop' }]] },
   })
 }
 
@@ -139,6 +177,10 @@ export async function POST(request: NextRequest) {
       await handleProposalAction(callback, ownerChat)
       return ok()
     }
+    if (callback && String(callback.data || '').startsWith('prospect:')) {
+      await handleProspectAction(callback, ownerChat)
+      return ok()
+    }
     if (callback && !String(callback.data || '').startsWith('lead:')) {
       await telegramApi('answerCallbackQuery', { callback_query_id: callback.id })
       return ok()
@@ -175,9 +217,23 @@ export async function POST(request: NextRequest) {
     const message = update.message
     const repliedTo = message?.reply_to_message?.message_id
     if (message?.text && repliedTo) {
+      // Reply to an outreach draft card = rewrite the email with my instructions
+      const prospect = await Prospect.findOne({ telegramMessageId: repliedTo })
+      if (prospect) {
+        const revised = prospect.draft?.body ? await reviseDraft(prospect.draft, String(message.text).slice(0, 1000)) : null
+        if (!revised) {
+          await telegramApi('sendMessage', { chat_id: ownerChat, text: 'Could not revise that draft — edit it in Admin → Outreach.' })
+          return ok()
+        }
+        prospect.draft = { subject: revised.subject.slice(0, 150), body: revised.body.slice(0, 3000) }
+        await prospect.save()
+        await sendDraftCard(prospect) // new card with Send / Skip for the revised email
+        return ok()
+      }
+
       const lead = await Lead.findOne({ telegramMessageId: repliedTo })
       if (!lead) {
-        await telegramApi('sendMessage', { chat_id: ownerChat, text: 'Reply to an AI lead card to change its proposal.' })
+        await telegramApi('sendMessage', { chat_id: ownerChat, text: 'Reply to an AI lead card or outreach draft to change it.' })
         return ok()
       }
       const instructions = String(message.text).slice(0, 1500)

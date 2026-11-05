@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import { withAdminAuth } from '@/lib/crud'
 import { runJobFinder } from '@/lib/jobFinder'
+import { runDailyOutreach } from '@/lib/outreach'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 60
+export const maxDuration = 300
 
 /**
  * Runs the remote job finder. Called daily by Vercel Cron (see vercel.json,
@@ -20,7 +21,16 @@ async function handle(request: NextRequest) {
   try {
     await connectDB()
     const result = await runJobFinder()
-    return NextResponse.json({ success: true, data: result })
+    // Daily client outreach (follow-ups, queued emails, new drafts) rides on the same daily cron
+    let outreach: unknown = null
+    if (fromCron && process.env.ANTHROPIC_API_KEY) {
+      try {
+        outreach = await runDailyOutreach()
+      } catch (error: any) {
+        outreach = { error: error?.message || String(error) }
+      }
+    }
+    return NextResponse.json({ success: true, data: result, outreach })
   } catch (error: any) {
     console.error('Job finder error:', error)
     return NextResponse.json({ success: false, message: error?.message || 'Job finder failed' }, { status: 500 })

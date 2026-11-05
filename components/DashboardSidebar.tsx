@@ -14,6 +14,7 @@ import {
   GraduationCap,
   Home,
   LayoutDashboard,
+  Megaphone,
   MessageSquare,
   ScrollText,
   SearchCheck,
@@ -75,6 +76,7 @@ const roleSections: Record<UserRole, SidebarSection[]> = {
         { label: 'Bookings', href: '/dashboard/admin/bookings',        icon: CalendarDays },
         { label: 'Messages', href: '/dashboard/admin/contact-messages', icon: MessageSquare },
         { label: 'Job Finder', href: '/dashboard/admin/jobs',          icon: SearchCheck },
+        { label: 'Client Outreach', href: '/dashboard/admin/outreach', icon: Megaphone },
       ],
     },
     {
