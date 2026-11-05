@@ -1,6 +1,7 @@
-# AI Sales Assistant (Sadika)
+# AI Sales Assistant
 
-Website chat ("Get a project estimate") where Sadika, the project assistant, talks with potential clients, learns
+Website chat ("Get a project estimate") where the project assistant (default name **Mira**, change it in
+Admin → Settings → AI & Assistant) talks with potential clients, learns
 their real budget, drafts priced packages and sends them to you on Telegram.
 You approve or change the proposal with one tap; the assistant then continues
 with the client. It never confirms a price, deadline or agreement on its own.
@@ -49,7 +50,7 @@ Gemini free tier: low daily limits, and Google may use free-tier prompts to impr
 ## Proposal → payment flow
 
 1. You approve in Telegram → a proposal page is created (`/proposal/<private link>`) with exactly the
-   packages you approved, and Sadika sends the link. If you reply with changes instead, Sadika publishes
+   packages you approved, and the assistant sends the link. If you reply with changes instead, the assistant publishes
    a proposal with your packages and you get a **📄 Proposal published** message with a
    **↩️ Withdraw** button in case anything is off.
 2. Telegram tells you when the client **opens** it (👀) and **accepts** a package (🎉, with the advance amount).
@@ -63,7 +64,13 @@ with the Download PDF button.
 **Before going live:** fill in your real payment details in `paymentMethods` (empty ones are hidden),
 and review `paymentSchedule` and `proposalTerms`.
 
+## Choosing the AI
+
+Admin → Settings → **AI & Assistant**: Auto / Claude / Gemini (free) / Off, the assistant's name, and a
+**Test** button per key. If the chosen AI fails (e.g. Claude has no credit), the other key is used
+automatically, so the chat keeps working.
+
 ## Honesty rule
 
-Sadika introduces herself by name and does not announce she is an AI, but if a client sincerely asks
+The assistant introduces itself by name and does not announce she is an AI, but if a client sincerely asks
 whether they are talking to a human or a bot, she answers honestly and never claims to be human.

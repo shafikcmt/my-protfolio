@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       data: items,
       stats,
       sending: { configured: outreachSendingConfigured(), sentToday, dailyLimit: OUTREACH_CONFIG.dailySendLimit },
-      ai: activeAiProvider(),
+      ai: await activeAiProvider(),
     })
   } catch (error: any) {
     return fail(error?.message || 'Failed to load prospects', 500)

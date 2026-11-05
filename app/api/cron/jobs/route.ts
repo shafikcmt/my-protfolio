@@ -24,7 +24,7 @@ async function handle(request: NextRequest) {
     const result = await runJobFinder()
     // Daily client outreach (follow-ups, queued emails, new drafts) rides on the same daily cron
     let outreach: unknown = null
-    if (fromCron && aiAvailable()) {
+    if (fromCron && (await aiAvailable())) {
       try {
         outreach = await runDailyOutreach()
       } catch (error: any) {

@@ -3,7 +3,7 @@ import Project from '@/models/Project'
 import { CAREER_PROFILE } from '@/lib/careerProfile'
 import { PROJECT_LIST, SITE_URL } from '@/lib/constants'
 import { OUTREACH_CONFIG } from '@/lib/outreachConfig'
-import { activeAiProvider } from '@/lib/ai/provider'
+import { activeAiProvider, fallbackProvider } from '@/lib/ai/provider'
 import { extractJson, geminiGenerate } from '@/lib/ai/gemini'
 
 /**
@@ -41,7 +41,17 @@ interface StructuredRequest {
 
 /** Runs the request on the configured AI and returns the structured result. */
 async function runWithTool<T>(opts: StructuredRequest): Promise<T | null> {
-  return activeAiProvider() === 'gemini' ? runWithGemini<T>(opts) : runWithClaude<T>(opts)
+  const provider = await activeAiProvider()
+  if (!provider) throw new Error('AI is turned off or has no key')
+  const run = (p: 'anthropic' | 'gemini') => (p === 'gemini' ? runWithGemini<T>(opts) : runWithClaude<T>(opts))
+  try {
+    return await run(provider)
+  } catch (error: any) {
+    const backup = fallbackProvider(provider)
+    if (!backup) throw error
+    console.error(`Outreach AI: ${provider} failed (${error?.message}); using ${backup}`)
+    return run(backup)
+  }
 }
 
 /**

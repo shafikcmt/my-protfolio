@@ -5,6 +5,7 @@ import DashboardLayout from '@/components/DashboardLayout'
 import AdminCrudForm from '@/components/admin/AdminCrudForm'
 import { websiteSettingFields } from '@/components/admin/resourceFields'
 import TelegramSetupCard from '@/components/admin/TelegramSetupCard'
+import AiSettingsCard from '@/components/admin/AiSettingsCard'
 
 export default function AdminSettingsPage() {
   return (
@@ -16,6 +17,7 @@ export default function AdminSettingsPage() {
           { label: 'Settings', href: '/dashboard/admin/settings' },
         ]}
       >
+        <AiSettingsCard />
         <TelegramSetupCard />
         <AdminCrudForm
           title="Website Settings"

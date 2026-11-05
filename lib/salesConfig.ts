@@ -25,8 +25,8 @@ export const SALES_CONFIG = {
   advancePercent: 40,
   bookingUrl: '/book-consultation',
 
-  /** Name the project assistant introduces itself with. */
-  assistantName: 'Sadika',
+  /** Default assistant name; change it in Admin → Settings → AI & Assistant. */
+  assistantName: 'Mira',
 
   // ── Proposals (/proposal/<link>) ──
   proposalValidDays: 14,

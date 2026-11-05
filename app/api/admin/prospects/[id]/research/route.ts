@@ -14,7 +14,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   if (!(await withAdminAuth(request))) {
     return NextResponse.json({ success: false, message: 'Unauthorized: Admin access required' }, { status: 401 })
   }
-  if (!aiAvailable()) {
+  if (!(await aiAvailable())) {
     return NextResponse.json({ success: false, message: AI_SETUP_MESSAGE }, { status: 400 })
   }
   try {

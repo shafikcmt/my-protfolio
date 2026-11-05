@@ -8,10 +8,10 @@ interface ChatMessage {
   text: string
 }
 
-const GREETING: ChatMessage = {
+const greeting = (name: string): ChatMessage => ({
   role: 'assistant',
-  text: "Hi! 👋 I'm Sadika, Shafiqul's project assistant. Tell me about your project and I'll help you plan it and prepare a proposal — Shafiqul personally reviews every proposal. বাংলায়ও লিখতে পারেন।",
-}
+  text: `Hi! 👋 I'm ${name}, Shafiqul's project assistant. Tell me about your project and I'll help you plan it and prepare a proposal — Shafiqul personally reviews every proposal. বাংলায়ও লিখতে পারেন।`,
+})
 
 const QUICK_STARTS = ['I need a website', 'Web app, SaaS or ERP', 'Mobile app', 'Automation or AI chatbot', 'Fix or improve my existing software', 'How much will my project cost?']
 
@@ -38,6 +38,7 @@ function Linkified({ text }: { text: string }) {
 
 export default function SalesChat() {
   const [enabled, setEnabled] = useState(false)
+  const [name, setName] = useState('Mira')
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [status, setStatus] = useState('new')
@@ -51,6 +52,7 @@ export default function SalesChat() {
       const res = await fetch('/api/chat', { cache: 'no-store' })
       const data = await res.json()
       setEnabled(Boolean(data.enabled))
+      if (data.assistantName) setName(data.assistantName)
       if (Array.isArray(data.messages)) setMessages(data.messages)
       if (data.status) setStatus(data.status)
     } catch {
@@ -105,7 +107,7 @@ export default function SalesChat() {
 
   if (!enabled) return null
 
-  const shown = messages.length ? messages : [GREETING]
+  const shown = messages.length ? messages : [greeting(name)]
 
   return (
     <>
@@ -114,7 +116,7 @@ export default function SalesChat() {
           type="button"
           onClick={() => setOpen(true)}
           className="no-print fixed bottom-24 right-6 z-50 flex items-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-slate-800"
-          aria-label="Chat with Sadika, Shafiqul's project assistant"
+          aria-label={`Chat with ${name}, Shafiqul's project assistant`}
         >
           <Sparkles className="h-4 w-4 text-teal-300" />
           <span className="hidden sm:inline">Get a project estimate</span>
@@ -129,9 +131,9 @@ export default function SalesChat() {
           className="no-print fixed inset-x-3 bottom-3 z-[60] flex h-[min(620px,calc(100dvh-24px))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[380px]"
         >
           <header className="flex items-center gap-3 bg-slate-900 px-4 py-3 text-white">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-500/20 text-sm font-black text-teal-300">S</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-500/20 text-sm font-black text-teal-300">{name.charAt(0).toUpperCase()}</span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold">Sadika · Project Assistant</p>
+              <p className="text-sm font-bold">{name} · Project Assistant</p>
               <p className="truncate text-[11px] text-slate-300">Usually replies instantly · Shafiqul reviews every proposal</p>
             </div>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close chat" className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10 hover:text-white">

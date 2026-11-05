@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import { runSalesAgent, salesAssistantEnabled, type LeadDoc } from '@/lib/salesAgent'
 import { escapeHtml, sendTelegram } from '@/lib/telegram'
+import { getAiSettings } from '@/lib/ai/provider'
 import Lead from '@/models/Lead'
 
 export const dynamic = 'force-dynamic'
@@ -35,21 +36,22 @@ function publicView(lead: any) {
 
 /** Whether the assistant is on, plus the visitor's conversation (for restoring and polling). */
 export async function GET(request: NextRequest) {
-  if (!salesAssistantEnabled()) return NextResponse.json({ success: true, enabled: false })
+  if (!(await salesAssistantEnabled())) return NextResponse.json({ success: true, enabled: false })
+  const { assistantName } = await getAiSettings()
   const sid = request.cookies.get(COOKIE)?.value
-  if (!sid) return NextResponse.json({ success: true, enabled: true, status: 'new', messages: [] })
+  if (!sid) return NextResponse.json({ success: true, enabled: true, assistantName, status: 'new', messages: [] })
   try {
     await connectDB()
     const lead = await Lead.findOne({ sessionId: sid }).select('status transcript').lean()
-    return NextResponse.json({ success: true, enabled: true, ...(lead ? publicView(lead) : { status: 'new', messages: [] }) })
+    return NextResponse.json({ success: true, enabled: true, assistantName, ...(lead ? publicView(lead) : { status: 'new', messages: [] }) })
   } catch {
-    return NextResponse.json({ success: true, enabled: true, status: 'new', messages: [] })
+    return NextResponse.json({ success: true, enabled: true, assistantName, status: 'new', messages: [] })
   }
 }
 
 /** Visitor sends a message; the assistant replies. */
 export async function POST(request: NextRequest) {
-  if (!salesAssistantEnabled()) {
+  if (!(await salesAssistantEnabled())) {
     return NextResponse.json({ success: false, message: 'Chat is not available right now.' }, { status: 503 })
   }
 

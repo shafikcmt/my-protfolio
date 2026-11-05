@@ -1,6 +1,6 @@
 /**
  * Minimal Google Gemini REST client (free tier via an AI Studio key).
- * Used as the free alternative to Claude for Sadika and outreach.
+ * Used as the free alternative to Claude for the project assistant and outreach.
  *
  * Note: on Gemini's free tier Google may use prompts and responses to improve
  * its products, and rate limits are low — use Claude for heavier, private use.
