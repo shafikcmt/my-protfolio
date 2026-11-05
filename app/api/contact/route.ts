@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       phone: phone?.trim() || undefined,
       inquiryType,
       serviceNeeded: serviceNeeded || undefined,
-      budget: budget || undefined,
+      budget: budget ? String(budget).trim().slice(0, 80) || undefined : undefined,
       timeline: timeline || undefined,
       subject: subject.trim(),
       message: message.trim(),

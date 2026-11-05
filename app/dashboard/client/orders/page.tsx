@@ -8,6 +8,7 @@ import OrderStatusTimeline from '@/components/OrderStatusTimeline'
 import StatusBadge from '@/components/StatusBadge'
 import axios from 'axios'
 import { IProjectOrder } from '@/types/models'
+import BudgetField from '@/components/BudgetField'
 
 const orderStatuses = ['pending', 'discussing', 'accepted', 'in_progress', 'testing', 'delivered', 'completed', 'cancelled']
 
@@ -212,10 +213,12 @@ export default function ClientOrdersPage() {
                 <input name="projectType" value={formData.projectType} onChange={handleChange} required placeholder="Project type / service name" className="input-field" />
                 <input name="companyName" value={formData.companyName} onChange={handleChange} placeholder="Company name" className="input-field" />
                 <input name="clientPhone" value={formData.clientPhone} onChange={handleChange} placeholder="Phone / WhatsApp" className="input-field" />
-                <div className="grid grid-cols-2 gap-4">
-                  <input name="budgetRange" value={formData.budgetRange} onChange={handleChange} placeholder="Budget range" className="input-field" />
-                  <input name="deadline" value={formData.deadline} onChange={handleChange} placeholder="Deadline" className="input-field" />
-                </div>
+                <BudgetField
+                  id="budgetRange"
+                  value={formData.budgetRange}
+                  onChange={(budgetRange) => setFormData((prev) => ({ ...prev, budgetRange }))}
+                />
+                <input name="deadline" value={formData.deadline} onChange={handleChange} placeholder="Deadline" className="input-field" />
                 <input name="preferredTechnology" value={formData.preferredTechnology} onChange={handleChange} placeholder="Preferred technology" className="input-field" />
                 <textarea name="description" value={formData.description} onChange={handleChange} required rows={5} placeholder="Project description" className="input-field" />
                 <input name="referenceLinks" value={formData.referenceLinks} onChange={handleChange} placeholder="Reference links, comma separated" className="input-field" />

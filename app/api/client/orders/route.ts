@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       projectType,
       serviceTitle: body.serviceTitle || projectType,
       title: body.title || projectType,
-      budgetRange: body.budgetRange || (body.budget ? `$${body.budget}` : ''),
+      budgetRange: String(body.budgetRange || (body.budget ? `$${body.budget}` : '')).trim().slice(0, 80),
       budget: Number(body.budget) || undefined,
       deadline: body.deadline || body.timeline || '',
       timeline: body.timeline || body.deadline || '',

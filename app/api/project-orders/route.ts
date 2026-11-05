@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       projectType: body.projectType,
       serviceTitle: body.projectType,
       title: body.projectType,
-      budgetRange: body.budgetRange,
+      budgetRange: body.budgetRange ? String(body.budgetRange).trim().slice(0, 80) : undefined,
       deadline: body.deadline,
       preferredTechnology: body.preferredTechnology,
       description: body.description,

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { CheckCircle, AlertCircle } from 'lucide-react'
+import BudgetField from '@/components/BudgetField'
 
 export default function OrderForm({ initialProject }: { initialProject?: string }) {
   const [formData, setFormData] = useState({
@@ -158,16 +159,12 @@ export default function OrderForm({ initialProject }: { initialProject?: string 
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-slate-700">Budget Range</label>
-            <select name="budgetRange" value={formData.budgetRange} onChange={handleChange} className="input-field">
-              <option value="">Select budget...</option>
-              <option value="Under $500">Under $500</option>
-              <option value="$500 – $1,000">$500 – $1,000</option>
-              <option value="$1,000 – $3,000">$1,000 – $3,000</option>
-              <option value="$3,000+">$3,000+</option>
-              <option value="To be discussed">To be discussed</option>
-            </select>
+          <div className="sm:col-span-2">
+            <BudgetField
+              id="budgetRange"
+              value={formData.budgetRange}
+              onChange={(budgetRange) => setFormData((prev) => ({ ...prev, budgetRange }))}
+            />
           </div>
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-slate-700">Deadline</label>

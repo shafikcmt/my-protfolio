@@ -21,6 +21,7 @@ import {
 import toast, { Toaster } from 'react-hot-toast'
 import { Reveal } from '@/components/motion/Reveal'
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from '@/lib/constants'
+import BudgetField from '@/components/BudgetField'
 
 // ─── Options ──────────────────────────────────────────────────────────────────
 
@@ -42,15 +43,6 @@ const SERVICES = [
   { value: 'Bug Fixing', label: 'Bug Fixing' },
   { value: 'Deployment', label: 'Deployment' },
   { value: 'Other', label: 'Other' },
-]
-
-const BUDGETS = [
-  { value: '', label: 'Select budget range...' },
-  { value: 'Need Discussion', label: 'Need Discussion' },
-  { value: 'Under $100', label: 'Under $100' },
-  { value: '$100 - $300', label: '$100 – $300' },
-  { value: '$300 - $700', label: '$300 – $700' },
-  { value: '$700+', label: '$700+' },
 ]
 
 const INITIAL_FORM = {
@@ -448,7 +440,7 @@ export default function ContactPage() {
                 </div>
 
                 {/* Service + Budget */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label htmlFor="serviceNeeded" className="mb-1.5 block text-sm font-medium text-slate-700">
                       Service Needed
@@ -465,21 +457,11 @@ export default function ContactPage() {
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <label htmlFor="budget" className="mb-1.5 block text-sm font-medium text-slate-700">
-                      Budget Range
-                    </label>
-                    <select
-                      id="budget"
-                      name="budget"
+                  <div className="sm:col-span-2">
+                    <BudgetField
                       value={formData.budget}
-                      onChange={handleChange}
-                      className={selectCls('budget')}
-                    >
-                      {BUDGETS.map((b) => (
-                        <option key={b.value} value={b.value}>{b.label}</option>
-                      ))}
-                    </select>
+                      onChange={(budget) => setFormData((prev) => ({ ...prev, budget }))}
+                    />
                   </div>
                 </div>
 
