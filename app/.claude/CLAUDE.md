@@ -94,6 +94,13 @@ I am a web developer who provides:
 - Web development course
 - Live training program
 
+Client scope is not limited to the project types in the portfolio: I take on any
+software / web development work I can build with AI-assisted development tools
+(Claude Code, Codex, etc.) — websites, web apps, SaaS, ERP, ecommerce, mobile apps,
+APIs and integrations, automation, bots, AI features, bug fixes and maintenance.
+Portfolio projects are proof of quality, not a limit. Keep website copy, forms and
+the AI sales assistant (lib/salesAgent.ts, lib/salesConfig.ts) consistent with this.
+
 Use clear CTAs:
 - Hire Me
 - View Projects

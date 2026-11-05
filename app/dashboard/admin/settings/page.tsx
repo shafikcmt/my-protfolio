@@ -4,6 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/DashboardLayout'
 import AdminCrudForm from '@/components/admin/AdminCrudForm'
 import { websiteSettingFields } from '@/components/admin/resourceFields'
+import TelegramSetupCard from '@/components/admin/TelegramSetupCard'
 
 export default function AdminSettingsPage() {
   return (
@@ -15,6 +16,7 @@ export default function AdminSettingsPage() {
           { label: 'Settings', href: '/dashboard/admin/settings' },
         ]}
       >
+        <TelegramSetupCard />
         <AdminCrudForm
           title="Website Settings"
           resourceName="Website Settings"

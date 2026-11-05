@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import VisitTracker from '@/components/VisitTracker'
+import SalesChat from '@/components/SalesChat'
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
@@ -51,6 +52,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       </main>
       {showLayout && <Footer />}
       {showLayout && <WhatsAppButton />}
+      {showLayout && <SalesChat />}
     </AuthProvider>
   )
 }
