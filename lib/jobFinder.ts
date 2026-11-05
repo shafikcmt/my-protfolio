@@ -7,6 +7,7 @@
  */
 import Job from '@/models/Job'
 import { escapeHtml, sendTelegram } from '@/lib/telegram'
+import { cleanJobText } from '@/lib/jobText'
 
 export interface RawJob {
   source: string
@@ -57,23 +58,7 @@ export const ALERT_SCORE = 9
 const FETCH_TIMEOUT_MS = 12000
 const UA = 'Mozilla/5.0 (compatible; ShafiqulPortfolioJobFinder/1.0; +https://www.shafiqul.dev)'
 
-function decodeEntities(text: string) {
-  return text
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
-    .replace(/&amp;/g, '&')
-}
-
-// Some feeds (We Work Remotely) entity-escape their HTML, so decode first, then strip tags.
-function stripHtml(html = '') {
-  let text = html
-  for (let i = 0; i < 2; i++) text = decodeEntities(text).replace(/<[^>]*>/g, ' ')
-  return text.replace(/\s+/g, ' ').trim()
-}
+const stripHtml = cleanJobText
 
 async function getJson(url: string) {
   const res = await fetch(url, {

@@ -1,4 +1,5 @@
 import { CAREER_PROFILE } from '@/lib/careerProfile'
+import { cleanJobText } from '@/lib/jobText'
 
 /**
  * Builds prompts I paste into my own Claude (claude.ai) for cover letters and
@@ -45,7 +46,7 @@ function jobBlock(job: PromptJob) {
     `Job link: ${job.url}`,
     '',
     'Job description:',
-    (job.description || job.excerpt || '(not available — open the job link)').slice(0, 4000),
+    cleanJobText(job.description || job.excerpt || '').slice(0, 4000) || '(not available — open the job link)',
   ]
     .filter((line) => typeof line === 'string')
     .join('\n')

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 import {
   Bookmark,
+  Globe,
   Building2,
   CalendarClock,
   CheckCircle2,
@@ -25,6 +26,7 @@ import {
 import ProtectedRoute from '@/components/ProtectedRoute'
 import DashboardLayout from '@/components/DashboardLayout'
 import { trackedPortfolioUrl } from '@/lib/careerProfile'
+import { cleanJobText } from '@/lib/jobText'
 import { buildCoverLetterPrompt, buildInterviewPrepPrompt, openInClaude, type PromptProject } from '@/lib/jobPrompts'
 
 type JobStatus = 'new' | 'saved' | 'applied' | 'interview' | 'offer' | 'hired' | 'rejected'
@@ -405,7 +407,7 @@ function JobCard({
                 </span>
               )}
             </div>
-            {job.excerpt && <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{job.excerpt}</p>}
+            {job.excerpt && <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{cleanJobText(job.excerpt)}</p>}
             {job.matchedSkills?.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {job.matchedSkills.map((skill) => (
@@ -436,6 +438,17 @@ function JobCard({
           >
             <Send className="h-3.5 w-3.5" /> Open &amp; Apply
           </a>
+          {job.company && (
+            <a
+              href={`https://www.google.com/search?q=${encodeURIComponent(`${job.company} careers ${job.title}`)}`}
+              target="_blank"
+              rel="noreferrer"
+              title="Find this job on the company's own website and apply there directly"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:border-teal-200 hover:text-teal-700"
+            >
+              <Globe className="h-3.5 w-3.5" /> Company Site
+            </a>
+          )}
           <StatusButton onClick={copyLink} icon={copied ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Link2 className="h-3.5 w-3.5" />} label={copied ? 'Copied!' : 'Copy Tracking Link'} />
 
           {job.status === 'new' && <StatusButton onClick={() => onUpdate({ status: 'saved' })} icon={<Bookmark className="h-3.5 w-3.5" />} label="Save" />}
@@ -458,6 +471,13 @@ function JobCard({
           </button>
         </div>
       </div>
+
+      {job.source === 'RemoteOK' && (
+        <p className="border-t border-slate-100 bg-amber-50/60 px-5 py-2 text-[11px] leading-5 text-amber-800">
+          RemoteOK may show a paid “Premium” page — you don’t need it. Look for the skip / continue link at the bottom,
+          or use <b>Company Site</b> to apply directly on the company’s own website.
+        </p>
+      )}
 
       {/* Details: pipeline + notes + tracking */}
       {open && (
