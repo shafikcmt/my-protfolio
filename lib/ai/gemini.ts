@@ -6,7 +6,27 @@
  * its products, and rate limits are low — use Claude for heavier, private use.
  */
 
-export const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest'
+/**
+ * Models tried in order. Free-tier quota differs per model and project (newer
+ * preview models often have none), so on a quota / not-found error the next
+ * one is tried and the one that worked is remembered for a while.
+ * Set GEMINI_MODEL to put your own choice first.
+ */
+const MODEL_CHAIN = Array.from(
+  new Set([process.env.GEMINI_MODEL, 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite', 'gemini-flash-lite-latest'].filter(Boolean) as string[])
+)
+export const GEMINI_MODEL = MODEL_CHAIN[0]
+
+const REMEMBER_MS = 30 * 60 * 1000
+let preferred: { model: string; at: number } | null = null
+
+function modelsToTry() {
+  if (preferred && Date.now() - preferred.at < REMEMBER_MS) {
+    return [preferred.model, ...MODEL_CHAIN.filter((m) => m !== preferred!.model)]
+  }
+  return MODEL_CHAIN
+}
+
 const BASE_URL = process.env.GEMINI_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta'
 
 export interface GeminiPart {
@@ -46,22 +66,41 @@ export async function geminiGenerate(req: GeminiRequest) {
   if (req.googleSearch) tools.push({ googleSearch: {} })
   if (req.urlContext) tools.push({ urlContext: {} })
 
-  const res = await fetch(`${BASE_URL}/models/${GEMINI_MODEL}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: req.system }] },
-      contents: req.contents,
-      ...(tools.length ? { tools } : {}),
-      generationConfig: { maxOutputTokens: req.maxOutputTokens || 4000 },
-    }),
-    signal: AbortSignal.timeout(90_000),
+  const body = JSON.stringify({
+    systemInstruction: { parts: [{ text: req.system }] },
+    contents: req.contents,
+    ...(tools.length ? { tools } : {}),
+    generationConfig: { maxOutputTokens: req.maxOutputTokens || 4000 },
   })
-  const json: any = await res.json().catch(() => ({}))
-  if (!res.ok) {
-    const message = json?.error?.message || `Gemini error ${res.status}`
-    throw new Error(res.status === 429 ? `Gemini free-tier limit reached, try again later (${message})` : message)
+
+  let json: any = null
+  let usedModel = ''
+  const failures: string[] = []
+  for (const model of modelsToTry()) {
+    const res = await fetch(`${BASE_URL}/models/${model}:generateContent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+      body,
+      signal: AbortSignal.timeout(90_000),
+    })
+    const data: any = await res.json().catch(() => ({}))
+    if (res.ok) {
+      json = data
+      usedModel = model
+      break
+    }
+    const message = data?.error?.message || `Gemini error ${res.status}`
+    // Quota exhausted / model not available for this key → try the next model
+    if (res.status === 429 || res.status === 404 || (res.status === 400 && /not (found|supported)/i.test(message))) {
+      failures.push(`${model}: ${res.status === 429 ? 'no free quota left' : 'not available'}`)
+      continue
+    }
+    throw new Error(message)
   }
+  if (!json) {
+    throw new Error(`Gemini free-tier limit reached on every model, try again later (${failures.join('; ')})`)
+  }
+  preferred = { model: usedModel, at: Date.now() }
 
   const candidate = json?.candidates?.[0]
   const content: GeminiContent = candidate?.content?.parts ? { role: 'model', parts: candidate.content.parts } : { role: 'model', parts: [] }
@@ -72,7 +111,7 @@ export async function geminiGenerate(req: GeminiRequest) {
     .trim()
   const functionCalls = content.parts.filter((p) => p.functionCall).map((p) => p.functionCall!)
   const blocked = Boolean(json?.promptFeedback?.blockReason) || candidate?.finishReason === 'SAFETY'
-  return { content, text, functionCalls, blocked }
+  return { content, text, functionCalls, blocked, model: usedModel }
 }
 
 /** Pulls the first JSON object out of a model's text answer (it may wrap it in ```json fences or prose). */

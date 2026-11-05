@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import { withAdminAuth } from '@/lib/crud'
 import { aiKeys, clearAiSettingsCache, getAiSettings, resolveProvider, type AiChoice } from '@/lib/ai/provider'
-import { geminiGenerate, GEMINI_MODEL } from '@/lib/ai/gemini'
+import { geminiGenerate } from '@/lib/ai/gemini'
 import { SALES_MODEL } from '@/lib/salesAgent'
 import AiSetting from '@/models/AiSetting'
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     if (provider === 'gemini') {
       if (!process.env.GEMINI_API_KEY) return NextResponse.json({ success: false, message: 'GEMINI_API_KEY is not set in Vercel.' })
       const res = await geminiGenerate({ system: 'Answer briefly.', contents: [{ role: 'user', parts: [{ text: 'Reply with just: OK' }] }], maxOutputTokens: 64 })
-      return NextResponse.json({ success: true, message: `Gemini works ✅ (${GEMINI_MODEL}) — replied “${res.text.slice(0, 20) || 'OK'}”` })
+      return NextResponse.json({ success: true, message: `Gemini works ✅ (${res.model}) — replied “${res.text.slice(0, 20) || 'OK'}”` })
     }
     return NextResponse.json({ success: false, message: 'Unknown provider' }, { status: 400 })
   } catch (error: any) {
